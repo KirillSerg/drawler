@@ -5,7 +5,7 @@ import Toolbar from './components/Toolbar';
 
 const App = () => {
   return (
-    <div className="flex flex-col h-[100vh] relative">
+    <div className="flex flex-col h-screen relative">
       <Toolbar />
       <Canvas />
       <Inspector />
