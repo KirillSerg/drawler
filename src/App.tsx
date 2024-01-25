@@ -1,13 +1,21 @@
+import { useState } from 'react';
 import Canvas from './components/Canvas';
 import Inspector from './components/Inspector';
 import Layers from './components/Layers';
 import Toolbar from './components/Toolbar';
+import { Element } from './types/Common';
 
 const App = () => {
+  const [elements, setElements] = useState<Element[]>([]);
+
+  const hendleCreateElement = (value: Element) => {
+    setElements((prev) => [...prev, value]);
+  };
+
   return (
     <div className="flex flex-col h-screen relative">
-      <Toolbar />
-      <Canvas />
+      <Toolbar create={hendleCreateElement} />
+      <Canvas elements={elements} />
       <Inspector />
       <Layers />
     </div>
