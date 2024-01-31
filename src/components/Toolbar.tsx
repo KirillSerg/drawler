@@ -5,7 +5,7 @@ interface Props {
 }
 
 const emptyElement = {
-  id: '0',
+  id: '',
   x: 0,
   y: 0,
   width: 240,
