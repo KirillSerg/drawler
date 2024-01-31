@@ -1,10 +1,11 @@
 import { Element } from '../types/Common';
 
 interface Props {
-  create: (value: Element) => void;
+  onCreate: (value: Element) => void;
 }
 
 const emptyElement = {
+  id: '0',
   x: 0,
   y: 0,
   width: 240,
@@ -14,10 +15,10 @@ const emptyElement = {
   fill: 'none',
 };
 
-const Toolbar = ({ create }: Props) => {
+const Toolbar = ({ onCreate }: Props) => {
   return (
     <header className="h-[6%] sticky top-0 flex justify-center gap-4 border-4 border-black">
-      <button onClick={() => create({ ...emptyElement, type: 'rect' })}>
+      <button onClick={() => onCreate({ ...emptyElement, type: 'rect' })}>
         <svg
           viewBox="0 0 24 24"
           height="50%"

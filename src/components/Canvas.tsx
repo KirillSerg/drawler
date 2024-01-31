@@ -14,16 +14,10 @@ const Canvas = ({ elements }: Props) => {
       height="100%"
       xmlns="http://www.w3.org/2000/svg"
     >
-      {elements.map((block, i) => (
+      {elements.map((block) => (
         <block.type //flexible&dynemic rendering svg-elements
-          key={i}
-          x={block.x}
-          y={block.y}
-          width={block.width}
-          height={block.height}
-          stroke={block.stroke}
-          strokeWidth={block.strokeWidth}
-          fill={block.fill}
+          key={block.id}
+          {...block}
         />
       ))}
     </svg>

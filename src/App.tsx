@@ -8,13 +8,18 @@ import { Element } from './types/Common';
 const App = () => {
   const [elements, setElements] = useState<Element[]>([]);
 
-  const hendleCreateElement = (value: Element) => {
-    setElements((prev) => [...prev, value]);
+  const handleCreateElement = (value: Element) => {
+    setElements((prev) => {
+      // uuid = latest/biger prev id +1
+      const uuid =
+        prev.length > 0 ? (+prev[prev.length - 1].id + 1).toString() : '1';
+      return [...prev, { ...value, id: uuid }];
+    });
   };
 
   return (
     <div className="flex flex-col h-screen relative">
-      <Toolbar create={hendleCreateElement} />
+      <Toolbar onCreate={handleCreateElement} />
       <Canvas elements={elements} />
       <Inspector />
       <Layers />
