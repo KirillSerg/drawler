@@ -11,7 +11,7 @@ const emptyElement = {
   width: 240,
   height: 300,
   stroke: 'black',
-  strokeWidth: 2,
+  strokeWidth: 8,
   fill: 'none',
 };
 
@@ -30,7 +30,7 @@ const Toolbar = ({ onCreate }: Props) => {
             width="100%"
             height="100%"
             stroke="black"
-            strokeWidth="2"
+            strokeWidth="4"
             fill="none"
           />
         </svg>
