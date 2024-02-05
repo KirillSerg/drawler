@@ -1,5 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { Element } from '../types/Common';
+import { transformCoordinates } from '../assets/utilities';
 
 interface Props {
   elements: Element[];
@@ -16,8 +17,7 @@ const Canvas = ({ elements, setElements }: Props) => {
   const [x, setX] = useState<number | undefined>();
   const [y, setY] = useState<number | undefined>();
 
-  const screenWidthToViewbox = 1920 / window.innerWidth;
-  const screenHeightToViewbox = 1080 / window.outerHeight;
+  const svgContainerRef = useRef<SVGSVGElement>(null);
 
   const handleMouseDown = (
     // maybe need complex type
@@ -32,19 +32,31 @@ const Canvas = ({ elements, setElements }: Props) => {
     setSelectedElement(selectedEl);
     setX(selectedEl?.x);
     setY(selectedEl?.y);
-    setStartPosition({
-      x: e.clientX,
-      y: e.clientY,
-    });
+
+    if (svgContainerRef.current) {
+      const { transX, transY } = transformCoordinates(
+        svgContainerRef.current,
+        e.clientX,
+        e.clientY,
+      );
+      setStartPosition({ x: transX, y: transY });
+    }
   };
 
   const handleMouseMove = (e: MouseEvent) => {
-    if (isDragging && x !== undefined && y !== undefined) {
-      console.log(e.clientX);
-      console.log(startPosition?.x);
-      console.log(x);
-      const newX = screenWidthToViewbox * (e.clientX - startPosition.x) + x;
-      const newY = screenHeightToViewbox * (e.clientY - startPosition.y) + y;
+    if (
+      isDragging &&
+      x !== undefined &&
+      y !== undefined &&
+      svgContainerRef.current
+    ) {
+      const { transX, transY } = transformCoordinates(
+        svgContainerRef.current,
+        e.clientX,
+        e.clientY,
+      );
+      const newX = transX - startPosition.x + x;
+      const newY = transY - startPosition.y + y;
       setElements((prev) =>
         prev.map((el) =>
           el.id === selectedElement?.id ? { ...el, x: newX, y: newY } : el,
@@ -76,8 +88,9 @@ const Canvas = ({ elements, setElements }: Props) => {
 
   return (
     <svg
+      ref={svgContainerRef}
       className="border-4 border-green-600"
-      // preserveAspectRatio="xMinYMin meet" //for the SVG container to be on the entire screen, while the elements inside kept the proportions and x=0, y=0 viewBox started from the upper left corner
+      preserveAspectRatio="xMinYMin meet" //for the SVG container to be on the entire screen, while the elements inside kept the proportions and x=0, y=0 viewBox started from the upper left corner
       viewBox="0 0 1920 1080"
       width="100%"
       height="100%"
