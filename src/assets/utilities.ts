@@ -1,4 +1,4 @@
-export const transformCoordinates = (canvas: SVGSVGElement, x: number, y: number) => {
+export const transformCoordinates = (canvas: SVGSVGElement | null, x: number, y: number) => {
   let transX = 0, transY = 0
   if (canvas) {
     const CTM = canvas.getScreenCTM();
@@ -7,5 +7,5 @@ export const transformCoordinates = (canvas: SVGSVGElement, x: number, y: number
       transY = (y - CTM.f) / CTM.d;
     }
   }
-  return { transX: transX || 0, transY: transY || 0 };
+  return { transX: transX, transY: transY };
 }
