@@ -6,7 +6,7 @@ interface Props {
 
 const emptyElement = {
   id: '',
-  x: 0,
+  x: 960,
   y: 0,
   width: 240,
   height: 300,

@@ -13,14 +13,14 @@ const Canvas = ({ elements, setElements }: Props) => {
     y: 0,
   });
   const [selectedElement, setSelectedElement] = useState<Element | undefined>();
-  const [x, setX] = useState<number>(0);
-  const [y, setY] = useState<number>(0);
+  const [x, setX] = useState<number | undefined>();
+  const [y, setY] = useState<number | undefined>();
 
   const screenWidthToViewbox = 1920 / window.innerWidth;
   const screenHeightToViewbox = 1080 / window.outerHeight;
 
   const handleMouseDown = (
-    // need complex type
+    // maybe need complex type
     e:
       | React.MouseEvent<SVGRectElement, MouseEvent>
       | React.MouseEvent<SVGCircleElement, MouseEvent>
@@ -28,7 +28,10 @@ const Canvas = ({ elements, setElements }: Props) => {
     id: string,
   ) => {
     setIsDragging(true);
-    setSelectedElement(elements.find((el) => el.id === id));
+    const selectedEl = elements.find((el) => el.id === id);
+    setSelectedElement(selectedEl);
+    setX(selectedEl?.x);
+    setY(selectedEl?.y);
     setStartPosition({
       x: e.clientX,
       y: e.clientY,
@@ -36,7 +39,10 @@ const Canvas = ({ elements, setElements }: Props) => {
   };
 
   const handleMouseMove = (e: MouseEvent) => {
-    if (isDragging) {
+    if (isDragging && x !== undefined && y !== undefined) {
+      console.log(e.clientX);
+      console.log(startPosition?.x);
+      console.log(x);
       const newX = screenWidthToViewbox * (e.clientX - startPosition.x) + x;
       const newY = screenHeightToViewbox * (e.clientY - startPosition.y) + y;
       setElements((prev) =>
@@ -67,15 +73,6 @@ const Canvas = ({ elements, setElements }: Props) => {
     };
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [isDragging]);
-
-  useEffect(() => {
-    const x = elements.find((el) => el.id === selectedElement?.id)?.x;
-    const y = elements.find((el) => el.id === selectedElement?.id)?.y;
-    if (x && y) {
-      setX(x);
-      setY(y);
-    }
-  }, [elements, selectedElement]);
 
   return (
     <svg
