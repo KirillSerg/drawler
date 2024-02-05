@@ -57,11 +57,7 @@ const SingleElement = ({ element, setElements, svgContainerRef }: Props) => {
     if (isDragging) {
       window.addEventListener('mousemove', handleMouseMove);
       window.addEventListener('mouseup', handleMouseUp);
-    } else {
-      window.removeEventListener('mousemove', handleMouseMove);
-      window.removeEventListener('mouseup', handleMouseUp);
     }
-
     return () => {
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('mouseup', handleMouseUp);
@@ -70,13 +66,11 @@ const SingleElement = ({ element, setElements, svgContainerRef }: Props) => {
   }, [isDragging]);
 
   return (
-    <>
-      <element.type //flexible&dynemic rendering svg-elements
-        {...element}
-        style={{ cursor: 'pointer' }}
-        onMouseDown={(e) => handleMouseDown(e)}
-      />
-    </>
+    <element.type //flexible&dynemic rendering svg-elements
+      {...element}
+      style={{ cursor: 'pointer' }}
+      onMouseDown={(e) => handleMouseDown(e)}
+    />
   );
 };
 
