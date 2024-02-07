@@ -31,29 +31,29 @@ const SingleElement = ({ element, setElements, svgContainerRef }: Props) => {
     setIsDragging(true);
   };
 
-  const handleMouseMove = (e: MouseEvent) => {
-    if (isDragging && element.x !== undefined && element.y !== undefined) {
-      const { transX, transY } = transformCoordinates(
-        svgContainerRef,
-        e.clientX,
-        e.clientY,
-      );
-      const newX = transX - startMovePosition.x + element.x;
-      const newY = transY - startMovePosition.y + element.y;
-      setElements((prev) =>
-        prev.map((el) =>
-          el.id === element.id ? { ...el, x: newX, y: newY } : el,
-        ),
-      );
-    }
-  };
-
   const handleMouseUp = () => {
     setIsDragging(false);
   };
 
   // Add event listeners for mouse move and mouse up when dragging
   useEffect(() => {
+    const handleMouseMove = (e: MouseEvent) => {
+      if (isDragging && element.x !== undefined && element.y !== undefined) {
+        const { transX, transY } = transformCoordinates(
+          svgContainerRef,
+          e.clientX,
+          e.clientY,
+        );
+        const newX = transX - startMovePosition.x + element.x;
+        const newY = transY - startMovePosition.y + element.y;
+        setStartMovePosition({ x: transX, y: transY });
+        setElements((prev) =>
+          prev.map((el) =>
+            el.id === element.id ? { ...el, x: newX, y: newY } : el,
+          ),
+        );
+      }
+    };
     if (isDragging) {
       window.addEventListener('mousemove', handleMouseMove);
       window.addEventListener('mouseup', handleMouseUp);
@@ -62,8 +62,7 @@ const SingleElement = ({ element, setElements, svgContainerRef }: Props) => {
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('mouseup', handleMouseUp);
     };
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [isDragging]);
+  }, [isDragging, element, setElements, startMovePosition, svgContainerRef]);
 
   return (
     <element.type //flexible&dynemic rendering svg-elements
