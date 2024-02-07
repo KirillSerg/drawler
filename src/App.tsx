@@ -15,7 +15,7 @@ const App = () => {
   return (
     <div className="flex flex-col h-screen relative">
       <Toolbar onCreate={handleCreateElement} />
-      <Canvas elements={elements} />
+      <Canvas elements={elements} setElements={setElements} />
       <Inspector />
       <Layers />
     </div>
