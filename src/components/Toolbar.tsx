@@ -1,8 +1,5 @@
-import { Element } from '../types/Common';
-
-interface Props {
-  onCreate: (value: Element) => void;
-}
+import { useAtom } from 'jotai';
+import { addElementsAtom } from '../store/store';
 
 const emptyElement = {
   id: '',
@@ -15,10 +12,12 @@ const emptyElement = {
   fill: 'none',
 };
 
-const Toolbar = ({ onCreate }: Props) => {
+const Toolbar = () => {
+  const [, addElements] = useAtom(addElementsAtom);
+
   return (
     <header className="h-[6%] sticky top-0 flex justify-center gap-4 border-4 border-black">
-      <button onClick={() => onCreate({ ...emptyElement, type: 'rect' })}>
+      <button onClick={() => addElements({ ...emptyElement, type: 'rect' })}>
         <svg
           viewBox="0 0 24 24"
           height="50%"
@@ -35,7 +34,9 @@ const Toolbar = ({ onCreate }: Props) => {
           />
         </svg>
       </button>
+
       <button className="border border-blue-700">elips</button>
+
       <button className="border border-blue-700">line</button>
     </header>
   );

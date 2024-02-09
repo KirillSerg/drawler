@@ -1,13 +1,11 @@
 import { useRef } from 'react';
-import { Element } from '../types/Common';
 import SingleElement from './SingleElement';
+import { useAtomValue } from 'jotai';
+import { elementsAtom } from '../store/store';
 
-interface Props {
-  elements: Element[];
-  setElements: React.Dispatch<React.SetStateAction<Element[]>>;
-}
+const Canvas = () => {
+  const elements = useAtomValue(elementsAtom);
 
-const Canvas = ({ elements, setElements }: Props) => {
   const svgContainerRef = useRef<SVGSVGElement>(null);
 
   return (
@@ -24,7 +22,6 @@ const Canvas = ({ elements, setElements }: Props) => {
         <SingleElement
           key={element.id}
           element={element}
-          setElements={setElements}
           svgContainerRef={svgContainerRef.current}
         />
       ))}

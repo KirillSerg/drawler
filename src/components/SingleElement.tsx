@@ -1,14 +1,16 @@
 import { useEffect, useState } from 'react';
 import { Element } from '../types/Common';
 import { transformCoordinates } from '../assets/utilities';
+import { useAtom } from 'jotai';
+import { updateElementsAtom } from '../store/store';
 
 interface Props {
   element: Element;
-  setElements: React.Dispatch<React.SetStateAction<Element[]>>;
   svgContainerRef: SVGSVGElement | null;
 }
 
-const SingleElement = ({ element, setElements, svgContainerRef }: Props) => {
+const SingleElement = ({ element, svgContainerRef }: Props) => {
+  const [, updateElements] = useAtom(updateElementsAtom);
   const [isDragging, setIsDragging] = useState<boolean>(false);
   const [startMovePosition, setStartMovePosition] = useState<{
     x: number;
@@ -47,11 +49,7 @@ const SingleElement = ({ element, setElements, svgContainerRef }: Props) => {
         const newX = transX - startMovePosition.x + element.x;
         const newY = transY - startMovePosition.y + element.y;
         setStartMovePosition({ x: transX, y: transY });
-        setElements((prev) =>
-          prev.map((el) =>
-            el.id === element.id ? { ...el, x: newX, y: newY } : el,
-          ),
-        );
+        updateElements({ ...element, x: newX, y: newY });
       }
     };
     if (isDragging) {
@@ -62,7 +60,7 @@ const SingleElement = ({ element, setElements, svgContainerRef }: Props) => {
       window.removeEventListener('mousemove', handleMouseMove);
       window.removeEventListener('mouseup', handleMouseUp);
     };
-  }, [isDragging, element, setElements, startMovePosition, svgContainerRef]);
+  }, [isDragging, element, updateElements, startMovePosition, svgContainerRef]);
 
   return (
     <element.type //flexible&dynemic rendering svg-elements
