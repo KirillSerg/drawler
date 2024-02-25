@@ -11,6 +11,9 @@
     "format": "prettier --write ./src"
   },
   "dependencies": {
+    "immer": "^10.0.3",
+    "jotai": "^2.6.4",
+    "jotai-immer": "^0.3.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0"
   },
