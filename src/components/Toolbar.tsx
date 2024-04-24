@@ -1,22 +1,22 @@
 import { useAtom } from 'jotai';
-import { activeElementTypeAtom } from '../store/store';
+import { creatingElementTypeAtom } from '../store/store';
 
 const Toolbar = () => {
-  const [activeElementType, setActiveElementType] = useAtom(
-    activeElementTypeAtom,
+  const [creatingElementType, setCreatingElementType] = useAtom(
+    creatingElementTypeAtom,
   );
 
   return (
     <header className="h-[6%] sticky top-0 flex justify-center gap-4 border-4 border-black">
       <button
-        className={`${activeElementType === 'free' ? 'bg-orange-500' : 'bg-inherit'}`}
-        onClick={() => setActiveElementType('free')}
+        className={`${creatingElementType === 'free' ? 'bg-orange-500' : 'bg-inherit'}`}
+        onClick={() => setCreatingElementType('free')}
       >
         🖱️
       </button>
       <button
-        className={`${activeElementType === 'rect' ? 'bg-orange-500' : 'bg-inherit'}`}
-        onClick={() => setActiveElementType('rect')}
+        className={`${creatingElementType === 'rect' ? 'bg-orange-500' : 'bg-inherit'}`}
+        onClick={() => setCreatingElementType('rect')}
       >
         <svg
           viewBox="0 0 24 24"
@@ -35,14 +35,14 @@ const Toolbar = () => {
         </svg>
       </button>
       <button
-        className={`${activeElementType === 'ellipse' ? 'bg-orange-500' : 'bg-inherit'}`}
-        onClick={() => setActiveElementType('ellipse')}
+        className={`${creatingElementType === 'ellipse' ? 'bg-orange-500' : 'bg-inherit'}`}
+        onClick={() => setCreatingElementType('ellipse')}
       >
         elips
       </button>
       <button
-        className={`${activeElementType === 'line' ? 'bg-orange-500' : 'bg-inherit'}`}
-        onClick={() => setActiveElementType('line')}
+        className={`${creatingElementType === 'line' ? 'bg-orange-500' : 'bg-inherit'}`}
+        onClick={() => setCreatingElementType('line')}
       >
         line
       </button>

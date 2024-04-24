@@ -7,5 +7,5 @@ export const transformCoordinates = (canvas: SVGSVGElement | null, x: number, y:
       transY = (y - CTM.f) / CTM.d;
     }
   }
-  return { transX: transX, transY: transY };
+  return { transX, transY };
 }
