@@ -5,10 +5,10 @@ import { atomWithStorage } from 'jotai/utils'
 const initialElement: Element = {
   type: "rect",
   id: '',
-  x: 960,
-  y: 540,
-  width: 240,
-  height: 300,
+  x: 0,
+  y: 0,
+  width: 1,
+  height: 1,
   stroke: 'black',
   strokeWidth: 8,
   fill: 'none',
@@ -46,6 +46,12 @@ export const onMouseDownAtom = atom(
       endX: 0,
       endY: 0
     })
+    if (get(isDrawingAtom)) {
+      const creatingElementType = get(creatingElementTypeAtom)
+      const newEl = { ...initialElement, type: creatingElementType, id: crypto.randomUUID(), x: update.x, y: update.y }
+      set(elementsAtom, (prev) => [...prev, newEl])
+      set(selectedElementAtom, newEl)
+    }
   }
 )
 
@@ -72,6 +78,11 @@ export const onMouseMoveAtom = atom(
         const newY = selectedElement.y + (update.y - selectingArea.startY)
         set(updateElementsAtom, { ...selectedElement, x: newX, y: newY })
       }
+      if (get(isDrawingAtom) && selectedElement?.x && selectedElement.y) {
+        const newWidth = update.x - selectedElement.x
+        const newHeight = update.y - selectedElement.y
+        set(updateElementsAtom, { ...selectedElement, width: newWidth, height: newHeight })
+      }
       set(selectingAreaAtom, { ...selectingArea, endX: update.x, endY: update.y })
     }
   }
@@ -79,15 +90,13 @@ export const onMouseMoveAtom = atom(
 
 export const onMouseUpAtom = atom(
   null,
-  (get, set) => {
+  (_get, set) => {
     console.log("onMouseUpAtom")
-    if (get(isDrawingAtom)) {
-      const creatingElementType = get(creatingElementTypeAtom)
-      const newEl = { ...initialElement, type: creatingElementType, id: crypto.randomUUID() }
-      set(elementsAtom, (prev) => [...prev, newEl])
-      set(selectedElementAtom, newEl)
-      set(creatingElementTypeAtom, "free")
-    }
+    // if (get(isDrawingAtom)) {
+    //   const newEl = get(elementsAtom)[get(elementsAtom).length - 1]
+    //   set(selectedElementAtom, newEl)
+    // }
+    set(creatingElementTypeAtom, "free")
     set(isDraggingAtom, false)
     set(selectingAreaAtom, null)
   }
