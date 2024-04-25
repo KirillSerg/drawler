@@ -79,9 +79,20 @@ export const onMouseMoveAtom = atom(
         set(updateElementsAtom, { ...selectedElement, x: newX, y: newY })
       }
       if (get(isDrawingAtom) && selectedElement?.x && selectedElement.y) {
-        const newWidth = update.x - selectedElement.x
-        const newHeight = update.y - selectedElement.y
-        set(updateElementsAtom, { ...selectedElement, width: newWidth, height: newHeight })
+        let newX = selectedElement.x
+        let newWidth = update.x - selectedElement.x
+        if (newWidth < 0) {
+          newX = selectedElement.x + newWidth
+          newWidth = Math.abs(newWidth)
+        }
+
+        let newHeight = update.y - selectedElement.y
+        let newY = selectedElement.y
+        if (newHeight < 0) {
+          newY = selectedElement.y + newHeight
+          newHeight = Math.abs(newHeight)
+        }
+        set(updateElementsAtom, { ...selectedElement, x: newX, y: newY, width: newWidth, height: newHeight })
       }
       set(selectingAreaAtom, { ...selectingArea, endX: update.x, endY: update.y })
     }
