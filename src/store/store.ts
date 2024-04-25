@@ -38,6 +38,7 @@ export const deleteElementsAtom = atom(
   (get, set) => {
     const selectedElement = get(selectedElementAtom)
     set(elementsAtom, (prev) => prev.filter((el) => el.id !== selectedElement?.id))
+    set(selectedElementAtom, null)
   }
 )
 
