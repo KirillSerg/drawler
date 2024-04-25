@@ -33,6 +33,14 @@ export const updateElementsAtom = atom(
   }
 )
 
+export const deleteElementsAtom = atom(
+  null,
+  (get, set) => {
+    const selectedElement = get(selectedElementAtom)
+    set(elementsAtom, (prev) => prev.filter((el) => el.id !== selectedElement?.id))
+  }
+)
+
 export const onMouseDownAtom = atom(
   null,
   (get, set, update: Coordinates) => {
@@ -103,10 +111,6 @@ export const onMouseUpAtom = atom(
   null,
   (_get, set) => {
     console.log("onMouseUpAtom")
-    // if (get(isDrawingAtom)) {
-    //   const newEl = get(elementsAtom)[get(elementsAtom).length - 1]
-    //   set(selectedElementAtom, newEl)
-    // }
     set(creatingElementTypeAtom, "free")
     set(isDraggingAtom, false)
     set(selectingAreaAtom, null)
