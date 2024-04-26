@@ -7,12 +7,16 @@ const initialElement: Element = {
   id: '',
   x: 960,
   y: 540,
+  width: 240,
+  height: 300,
   cx: 960,
   cy: 540,
   rx: 25,
   ry: 15,
-  width: 240,
-  height: 300,
+  x1: 960,
+  y1: 540,
+  x2: 1060,
+  y2: 540,
   stroke: 'black',
   strokeWidth: 4,
   fill: 'none',
@@ -76,7 +80,11 @@ export const onMouseMoveAtom = atom(
         const newY = ((selectedElement.y || 0) + (update.y - selectingArea.startY))
         const newCX = ((selectedElement.cx || 0) + (update.x - selectingArea.startX))
         const newCY = ((selectedElement.cy || 0) + (update.y - selectingArea.startY))
-        set(updateElementsAtom, { ...selectedElement, x: newX, y: newY, cx: newCX, cy: newCY })
+        const newX1 = ((selectedElement.x1 || 0) + (update.x - selectingArea.startX))
+        const newY1 = ((selectedElement.y1 || 0) + (update.y - selectingArea.startY))
+        const newX2 = ((selectedElement.x2 || 0) + (update.x - selectingArea.startX))
+        const newY2 = ((selectedElement.y2 || 0) + (update.y - selectingArea.startY))
+        set(updateElementsAtom, { ...selectedElement, x: newX, y: newY, cx: newCX, cy: newCY, y1: newY1, x1: newX1, y2: newY2, x2: newX2 })
       }
       set(selectingAreaAtom, { ...selectingArea, endX: update.x, endY: update.y })
     }
