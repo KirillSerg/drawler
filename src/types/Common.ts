@@ -3,6 +3,10 @@ export interface Element {
   type: "free" | "rect" | "ellipse" | "line" | "polygon";
   x?: number;
   y?: number;
+  cx?: number;
+  cy?: number;
+  rx?: number;
+  ry?: number;
   width?: number;
   height?: number;
   stroke?: string;
