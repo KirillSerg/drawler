@@ -5,10 +5,10 @@ import { atomWithStorage } from 'jotai/utils'
 const initialElement: Element = {
   type: "rect",
   id: '',
-  x: 960,
-  y: 540,
-  width: 240,
-  height: 300,
+  x: 0,
+  y: 0,
+  width: 1,
+  height: 1,
   cx: 960,
   cy: 540,
   rx: 25,
@@ -41,6 +41,15 @@ export const updateElementsAtom = atom(
   }
 )
 
+export const deleteElementsAtom = atom(
+  null,
+  (get, set) => {
+    const selectedElement = get(selectedElementAtom)
+    set(elementsAtom, (prev) => prev.filter((el) => el.id !== selectedElement?.id))
+    set(selectedElementAtom, null)
+  }
+)
+
 export const onMouseDownAtom = atom(
   null,
   (get, set, update: Coordinates) => {
@@ -54,6 +63,12 @@ export const onMouseDownAtom = atom(
       endX: 0,
       endY: 0
     })
+    if (get(isDrawingAtom)) {
+      const creatingElementType = get(creatingElementTypeAtom)
+      const newEl = { ...initialElement, type: creatingElementType, id: crypto.randomUUID(), x: update.x, y: update.y }
+      set(elementsAtom, (prev) => [...prev, newEl])
+      set(selectedElementAtom, newEl)
+    }
   }
 )
 
@@ -86,6 +101,22 @@ export const onMouseMoveAtom = atom(
         const newY2 = ((selectedElement.y2 || 0) + (update.y - selectingArea.startY))
         set(updateElementsAtom, { ...selectedElement, x: newX, y: newY, cx: newCX, cy: newCY, y1: newY1, x1: newX1, y2: newY2, x2: newX2 })
       }
+      if (get(isDrawingAtom) && selectedElement?.x && selectedElement.y) {
+        let newX = selectedElement.x
+        let newWidth = update.x - selectedElement.x
+        if (newWidth < 0) {
+          newX = selectedElement.x + newWidth
+          newWidth = Math.abs(newWidth)
+        }
+
+        let newHeight = update.y - selectedElement.y
+        let newY = selectedElement.y
+        if (newHeight < 0) {
+          newY = selectedElement.y + newHeight
+          newHeight = Math.abs(newHeight)
+        }
+        set(updateElementsAtom, { ...selectedElement, x: newX, y: newY, width: newWidth, height: newHeight })
+      }
       set(selectingAreaAtom, { ...selectingArea, endX: update.x, endY: update.y })
     }
   }
@@ -93,15 +124,9 @@ export const onMouseMoveAtom = atom(
 
 export const onMouseUpAtom = atom(
   null,
-  (get, set) => {
+  (_get, set) => {
     console.log("onMouseUpAtom")
-    if (get(isDrawingAtom)) {
-      const creatingElementType = get(creatingElementTypeAtom)
-      const newEl = { ...initialElement, type: creatingElementType, id: crypto.randomUUID() }
-      set(elementsAtom, (prev) => [...prev, newEl])
-      set(selectedElementAtom, newEl)
-      set(creatingElementTypeAtom, "free")
-    }
+    set(creatingElementTypeAtom, "free")
     set(isDraggingAtom, false)
     set(selectingAreaAtom, null)
   }
