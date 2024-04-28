@@ -9,14 +9,14 @@ const initialElement: Element = {
   y: 0,
   width: 1,
   height: 1,
-  cx: 960,
-  cy: 540,
-  rx: 25,
-  ry: 15,
-  x1: 960,
-  y1: 540,
-  x2: 1060,
-  y2: 540,
+  cx: 0,
+  cy: 0,
+  rx: 0.5,
+  ry: 0.5,
+  x1: 0,
+  y1: 0,
+  x2: 0,
+  y2: 0,
   stroke: 'black',
   strokeWidth: 4,
   fill: 'none',
@@ -65,7 +65,19 @@ export const onMouseDownAtom = atom(
     })
     if (get(isDrawingAtom)) {
       const creatingElementType = get(creatingElementTypeAtom)
-      const newEl = { ...initialElement, type: creatingElementType, id: crypto.randomUUID(), x: update.x, y: update.y }
+      const newEl = {
+        ...initialElement,
+        type: creatingElementType,
+        id: crypto.randomUUID(),
+        x: update.x,
+        y: update.y,
+        cx: update.x,
+        cy: update.y,
+        x1: update.x,
+        y1: update.y,
+        x2: update.x,
+        y2: update.y
+      }
       set(elementsAtom, (prev) => [...prev, newEl])
       set(selectedElementAtom, newEl)
     }
@@ -91,31 +103,47 @@ export const onMouseMoveAtom = atom(
     if (selectingArea) {
       const selectedElement = get(selectedElementAtom)
       if (get(isDraggingAtom) && selectedElement) {
-        const newX = ((selectedElement.x || 0) + (update.x - selectingArea.startX))
-        const newY = ((selectedElement.y || 0) + (update.y - selectingArea.startY))
-        const newCX = ((selectedElement.cx || 0) + (update.x - selectingArea.startX))
-        const newCY = ((selectedElement.cy || 0) + (update.y - selectingArea.startY))
-        const newX1 = ((selectedElement.x1 || 0) + (update.x - selectingArea.startX))
-        const newY1 = ((selectedElement.y1 || 0) + (update.y - selectingArea.startY))
-        const newX2 = ((selectedElement.x2 || 0) + (update.x - selectingArea.startX))
-        const newY2 = ((selectedElement.y2 || 0) + (update.y - selectingArea.startY))
+        const newX = selectedElement.x + (update.x - selectingArea.startX)
+        const newY = selectedElement.y + (update.y - selectingArea.startY)
+        const newCX = selectedElement.cx + (update.x - selectingArea.startX)
+        const newCY = selectedElement.cy + (update.y - selectingArea.startY)
+        const newX1 = selectedElement.x1 + (update.x - selectingArea.startX)
+        const newY1 = selectedElement.y1 + (update.y - selectingArea.startY)
+        const newX2 = selectedElement.x2 + (update.x - selectingArea.startX)
+        const newY2 = selectedElement.y2 + (update.y - selectingArea.startY)
         set(updateElementsAtom, { ...selectedElement, x: newX, y: newY, cx: newCX, cy: newCY, y1: newY1, x1: newX1, y2: newY2, x2: newX2 })
       }
-      if (get(isDrawingAtom) && selectedElement?.x && selectedElement.y) {
+      if (get(isDrawingAtom) && selectedElement) {
         let newX = selectedElement.x
         let newWidth = update.x - selectedElement.x
+        let newRX = (update.x - selectedElement.x) / 2
         if (newWidth < 0) {
           newX = selectedElement.x + newWidth
           newWidth = Math.abs(newWidth)
+          newRX = Math.abs(newRX)
         }
-
         let newHeight = update.y - selectedElement.y
         let newY = selectedElement.y
+        let newRY = (update.y - selectedElement.y) / 2
         if (newHeight < 0) {
           newY = selectedElement.y + newHeight
           newHeight = Math.abs(newHeight)
+          newRY = Math.abs(newRY)
         }
-        set(updateElementsAtom, { ...selectedElement, x: newX, y: newY, width: newWidth, height: newHeight })
+
+        set(updateElementsAtom, {
+          ...selectedElement,
+          x: newX,
+          y: newY,
+          width: newWidth,
+          height: newHeight,
+          cx: selectedElement.cx + (update.x - selectedElement.x) / 2,
+          cy: selectedElement.cy + (update.y - selectedElement.y) / 2,
+          rx: newRX,
+          ry: newRY,
+          x2: update.x,
+          y2: update.y
+        })
       }
       set(selectingAreaAtom, { ...selectingArea, endX: update.x, endY: update.y })
     }

@@ -1,21 +1,21 @@
 export interface Element {
   id: string;
   type: "free" | "rect" | "ellipse" | "line" | "polygon";
-  x?: number;
-  y?: number;
-  width?: number;
-  height?: number;
-  cx?: number;
-  cy?: number;
-  rx?: number;
-  ry?: number;
-  x1?: number;
-  y1?: number;
-  x2?: number;
-  y2?: number;
-  stroke?: string;
-  strokeWidth?: number;
-  fill?: string;
+  x: number;
+  y: number;
+  width: number;
+  height: number;
+  cx: number;
+  cy: number;
+  rx: number;
+  ry: number;
+  x1: number;
+  y1: number;
+  x2: number;
+  y2: number;
+  stroke: string;
+  strokeWidth: number;
+  fill: string;
 }
 
 export interface Area {
