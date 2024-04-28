@@ -139,8 +139,8 @@ export const onMouseMoveAtom = atom(
           height: newHeight,
           cx: selectedElement.cx + (update.x - selectedElement.x) / 2,
           cy: selectedElement.cy + (update.y - selectedElement.y) / 2,
-          rx: newRX,
-          ry: newRY,
+          rx: selectedElement.type === "ellipse" ? newRX : selectedElement.rx,
+          ry: selectedElement.type === "ellipse" ? newRY : selectedElement.ry,
           x2: update.x,
           y2: update.y
         })
