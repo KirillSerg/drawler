@@ -50,6 +50,7 @@ const Canvas = () => {
 
   return (
     <svg
+      id="canvas"
       ref={svgContainerRef}
       onMouseDown={(e) => handleMouseDown(e)}
       onMouseMove={(e) => handleMouseMove(e)}
