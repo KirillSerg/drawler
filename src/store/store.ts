@@ -1,5 +1,5 @@
 import { atom } from "jotai";
-import { Area, Coordinates, Element } from "../types/Common";
+import { Area, Coordinates, Element } from "../types/CommonTypes";
 import { atomWithStorage } from 'jotai/utils'
 
 const initialElement: Element = {

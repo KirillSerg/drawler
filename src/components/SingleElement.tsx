@@ -1,4 +1,4 @@
-import { ElemenEvent, Element } from '../types/Common';
+import { ElemenEvent, Element } from '../types/CommonTypes';
 import { transformCoordinates } from '../assets/utilities';
 import { useAtom } from 'jotai';
 import { onDragStartAtom, onMouseUpAtom } from '../store/store';
