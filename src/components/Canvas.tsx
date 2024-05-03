@@ -1,18 +1,23 @@
 import { useRef } from 'react';
 import { useAtom, useAtomValue } from 'jotai';
 import SingleElement from './SingleElement';
+import SelectingArea from './SelectingArea';
 import {
   onMouseUpAtom,
   elementsAtom,
   onMouseDownAtom,
   onMouseMoveAtom,
   deleteElementsAtom,
+  isDraggingAtom,
+  isDrawingAtom,
 } from '../store/store';
 import { ElemenEvent } from '../types/Common';
 import { transformCoordinates } from '../assets/utilities';
 
 const Canvas = () => {
   const elements = useAtomValue(elementsAtom);
+  const isDragging = useAtomValue(isDraggingAtom);
+  const isDrawing = useAtomValue(isDrawingAtom);
   const [, onMouseUp] = useAtom(onMouseUpAtom);
   const [, onMouseDown] = useAtom(onMouseDownAtom);
   const [, onMouseMove] = useAtom(onMouseMoveAtom);
@@ -70,6 +75,8 @@ const Canvas = () => {
           svgContainerRef={svgContainerRef.current}
         />
       ))}
+
+      {!isDragging && !isDrawing && <SelectingArea />}
     </svg>
   );
 };

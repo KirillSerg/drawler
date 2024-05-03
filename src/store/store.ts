@@ -1,6 +1,7 @@
 import { atom } from "jotai";
 import { Area, Coordinates, Element } from "../types/Common";
 import { atomWithStorage } from 'jotai/utils'
+import { useUpdateXYAndDistance } from "../assets/utilities";
 
 const initialElement: Element = {
   type: "rect",
@@ -52,8 +53,8 @@ export const onMouseDownAtom = atom(
     set(selectingAreaAtom, {
       startX: update.x,
       startY: update.y,
-      endX: 0,
-      endY: 0
+      endX: update.x,
+      endY: update.y
     })
     if (get(isDrawingAtom)) {
       const creatingElementType = get(creatingElementTypeAtom)
@@ -80,29 +81,25 @@ export const onMouseMoveAtom = atom(
   (get, set, update: Coordinates) => {
     console.log("onMouseMoveAtom")
     const selectingArea = get(selectingAreaAtom)
+    const selectedElement = get(selectedElementAtom)
     if (selectingArea) {
-      const selectedElement = get(selectedElementAtom)
+      // if Drag& drop
       if (get(isDraggingAtom) && selectedElement?.x && selectedElement.y) {
         const newX = selectedElement.x + (update.x - selectingArea.startX)
         const newY = selectedElement.y + (update.y - selectingArea.startY)
         set(updateElementsAtom, { ...selectedElement, x: newX, y: newY })
       }
+      // if drawwing 
       if (get(isDrawingAtom) && selectedElement?.x && selectedElement.y) {
-        let newX = selectedElement.x
-        let newWidth = update.x - selectedElement.x
-        if (newWidth < 0) {
-          newX = selectedElement.x + newWidth
-          newWidth = Math.abs(newWidth)
-        }
-
-        let newHeight = update.y - selectedElement.y
-        let newY = selectedElement.y
-        if (newHeight < 0) {
-          newY = selectedElement.y + newHeight
-          newHeight = Math.abs(newHeight)
-        }
+        const { newX, newY, newWidth, newHeight } = useUpdateXYAndDistance(
+          selectedElement.x,
+          selectedElement.y,
+          update.x,
+          update.y
+        )
         set(updateElementsAtom, { ...selectedElement, x: newX, y: newY, width: newWidth, height: newHeight })
       }
+
       set(selectingAreaAtom, { ...selectingArea, endX: update.x, endY: update.y })
     }
   }
