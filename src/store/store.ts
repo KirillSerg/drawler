@@ -1,6 +1,7 @@
 import { atom } from "jotai";
 import { Area, Coordinates, Element } from "../types/CommonTypes";
 import { atomWithStorage } from 'jotai/utils'
+import { useUpdateXYAndDistance } from "../assets/utilities";
 
 const initialElement: Element = {
   type: "rect",
@@ -60,8 +61,8 @@ export const onMouseDownAtom = atom(
     set(selectingAreaAtom, {
       startX: update.x,
       startY: update.y,
-      endX: 0,
-      endY: 0
+      endX: update.x,
+      endY: update.y
     })
     if (get(isDrawingAtom)) {
       const creatingElementType = get(creatingElementTypeAtom)
@@ -100,8 +101,9 @@ export const onMouseMoveAtom = atom(
   (get, set, update: Coordinates) => {
     console.log("onMouseMoveAtom")
     const selectingArea = get(selectingAreaAtom)
+    const selectedElement = get(selectedElementAtom)
     if (selectingArea) {
-      const selectedElement = get(selectedElementAtom)
+      // if Drag& drop
       if (get(isDraggingAtom) && selectedElement) {
         const newX = selectedElement.x + (update.x - selectingArea.startX)
         const newY = selectedElement.y + (update.y - selectingArea.startY)
@@ -111,26 +113,26 @@ export const onMouseMoveAtom = atom(
         const newY1 = selectedElement.y1 + (update.y - selectingArea.startY)
         const newX2 = selectedElement.x2 + (update.x - selectingArea.startX)
         const newY2 = selectedElement.y2 + (update.y - selectingArea.startY)
-        set(updateElementsAtom, { ...selectedElement, x: newX, y: newY, cx: newCX, cy: newCY, y1: newY1, x1: newX1, y2: newY2, x2: newX2 })
+        set(updateElementsAtom, {
+          ...selectedElement,
+          x: newX,
+          y: newY,
+          cx: newCX,
+          cy: newCY,
+          y1: newY1,
+          x1: newX1,
+          y2: newY2,
+          x2: newX2
+        })
       }
+      // if drawwing
       if (get(isDrawingAtom) && selectedElement) {
-        let newX = selectedElement.x
-        let newWidth = update.x - selectedElement.x
-        let newRX = (update.x - selectedElement.x) / 2
-        if (newWidth < 0) {
-          newX = selectedElement.x + newWidth
-          newWidth = Math.abs(newWidth)
-          newRX = Math.abs(newRX)
-        }
-        let newHeight = update.y - selectedElement.y
-        let newY = selectedElement.y
-        let newRY = (update.y - selectedElement.y) / 2
-        if (newHeight < 0) {
-          newY = selectedElement.y + newHeight
-          newHeight = Math.abs(newHeight)
-          newRY = Math.abs(newRY)
-        }
-
+        const { newX, newY, newWidth, newHeight, newRX, newRY } = useUpdateXYAndDistance(
+          selectedElement.x,
+          selectedElement.y,
+          update.x,
+          update.y
+        )
         set(updateElementsAtom, {
           ...selectedElement,
           x: newX,
@@ -145,6 +147,7 @@ export const onMouseMoveAtom = atom(
           y2: update.y
         })
       }
+
       set(selectingAreaAtom, { ...selectingArea, endX: update.x, endY: update.y })
     }
   }
