@@ -8,7 +8,7 @@ import {
   onMouseMoveAtom,
   deleteElementsAtom,
 } from '../store/store';
-import { ElemenEvent } from '../types/Common';
+import { ElemenEvent } from '../types/CommonTypes';
 import { transformCoordinates } from '../assets/utilities';
 
 const Canvas = () => {
@@ -50,6 +50,7 @@ const Canvas = () => {
 
   return (
     <svg
+      id="canvas"
       ref={svgContainerRef}
       onMouseDown={(e) => handleMouseDown(e)}
       onMouseMove={(e) => handleMouseMove(e)}
