@@ -5,7 +5,7 @@ import { useUpdateXYAndDistance } from "../assets/utilities";
 
 const initialElement: Element = {
   type: "rect",
-  id: '',
+  id: "",
   x: 0,
   y: 0,
   width: 1,
@@ -18,6 +18,7 @@ const initialElement: Element = {
   y1: 0,
   x2: 0,
   y2: 0,
+  points: "",
   stroke: 'black',
   strokeWidth: 4,
   fill: 'none',
@@ -77,7 +78,8 @@ export const onMouseDownAtom = atom(
         x1: update.x,
         y1: update.y,
         x2: update.x,
-        y2: update.y
+        y2: update.y,
+        // points: `${}`,
       }
       set(elementsAtom, (prev) => [...prev, newEl])
       set(selectedElementAtom, newEl)
@@ -144,7 +146,13 @@ export const onMouseMoveAtom = atom(
           rx: selectedElement.type === "ellipse" ? newRX : selectedElement.rx,
           ry: selectedElement.type === "ellipse" ? newRY : selectedElement.ry,
           x2: update.x,
-          y2: update.y
+          y2: update.y,
+          // left-bottom, top, right-bottom
+          points: `
+            ${selectedElement.x},${update.y}
+            ${selectedElement.x + ((update.x - selectedElement.x) / 2)},${selectedElement.y}
+            ${update.x},${update.y}
+          `
         })
       }
 

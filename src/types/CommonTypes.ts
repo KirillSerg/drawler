@@ -13,6 +13,7 @@ export interface Element {
   y1: number;
   x2: number;
   y2: number;
+  points: string  //"x,y x,y x,y ..."
   stroke: string;
   strokeWidth: number;
   fill: string;
