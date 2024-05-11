@@ -18,7 +18,8 @@ const initialElement: Element = {
   y1: 0,
   x2: 0,
   y2: 0,
-  points: "",
+  pointsarr: [[0, 0], [0, 0], [0, 0]],
+  points: ``,
   stroke: 'black',
   strokeWidth: 4,
   fill: 'none',
@@ -56,7 +57,7 @@ export const onMouseDownAtom = atom(
   null,
   (get, set, update: Coordinates) => {
     console.log("onMouseDownAtom")
-    if (!get(isDraggingAtom)) {
+    if (!get(isDraggingAtom) && !get(isDrawingAtom)) {
       set(selectedElementAtom, null)
     }
     set(selectingAreaAtom, {
@@ -105,16 +106,28 @@ export const onMouseMoveAtom = atom(
     const selectingArea = get(selectingAreaAtom)
     const selectedElement = get(selectedElementAtom)
     if (selectingArea) {
-      // if Drag& drop
+      // if Drag&drop
       if (get(isDraggingAtom) && selectedElement) {
+        // rect
         const newX = selectedElement.x + (update.x - selectingArea.startX)
         const newY = selectedElement.y + (update.y - selectingArea.startY)
+        // ellipse
         const newCX = selectedElement.cx + (update.x - selectingArea.startX)
         const newCY = selectedElement.cy + (update.y - selectingArea.startY)
+        // line
         const newX1 = selectedElement.x1 + (update.x - selectingArea.startX)
         const newY1 = selectedElement.y1 + (update.y - selectingArea.startY)
         const newX2 = selectedElement.x2 + (update.x - selectingArea.startX)
         const newY2 = selectedElement.y2 + (update.y - selectingArea.startY)
+        // triangle(polygon)
+        const newPointsArr = selectedElement.pointsarr.map((point) =>
+          [
+            point[0] + (update.x - selectingArea.startX),
+            point[1] + (update.y - selectingArea.startY)
+          ]
+        )
+        const newPoints = `${newPointsArr[0].join()} ${newPointsArr[1].join()} ${newPointsArr[2].join()}`
+
         set(updateElementsAtom, {
           ...selectedElement,
           x: newX,
@@ -124,7 +137,9 @@ export const onMouseMoveAtom = atom(
           y1: newY1,
           x1: newX1,
           y2: newY2,
-          x2: newX2
+          x2: newX2,
+          pointsarr: newPointsArr,
+          points: newPoints,
         })
       }
       // if drawwing
@@ -148,6 +163,11 @@ export const onMouseMoveAtom = atom(
           x2: update.x,
           y2: update.y,
           // left-bottom, top, right-bottom
+          pointsarr: [
+            [selectedElement.x, update.y],
+            [selectedElement.x + ((update.x - selectedElement.x) / 2), selectedElement.y],
+            [update.x, update.y]
+          ],
           points: `
             ${selectedElement.x},${update.y}
             ${selectedElement.x + ((update.x - selectedElement.x) / 2)},${selectedElement.y}
