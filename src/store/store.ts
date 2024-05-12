@@ -1,7 +1,7 @@
 import { atom } from "jotai";
 import { Area, Coordinates, Element } from "../types/CommonTypes";
 import { atomWithStorage } from 'jotai/utils'
-import { useUpdateXYAndDistance } from "../assets/utilities";
+import { getPointsArrFromString, useUpdateXYAndDistance } from "../assets/utilities";
 
 const initialElement: Element = {
   type: "rect",
@@ -18,8 +18,7 @@ const initialElement: Element = {
   y1: 0,
   x2: 0,
   y2: 0,
-  pointsarr: [[0, 0], [0, 0], [0, 0]],
-  points: ``,
+  points: "",
   stroke: 'black',
   strokeWidth: 4,
   fill: 'none',
@@ -120,13 +119,13 @@ export const onMouseMoveAtom = atom(
         const newX2 = selectedElement.x2 + (update.x - selectingArea.startX)
         const newY2 = selectedElement.y2 + (update.y - selectingArea.startY)
         // triangle(polygon)
-        const newPointsArr = selectedElement.pointsarr.map((point) =>
+        const newPointsArr = getPointsArrFromString(selectedElement.points).map((point) =>
           [
-            point[0] + (update.x - selectingArea.startX),
-            point[1] + (update.y - selectingArea.startY)
+            +point[0] + (update.x - selectingArea.startX),
+            +point[1] + (update.y - selectingArea.startY)
           ]
         )
-        const newPoints = `${newPointsArr[0].join()} ${newPointsArr[1].join()} ${newPointsArr[2].join()}`
+        const newPoints = newPointsArr.map(points => points.join()).join(" ")
 
         set(updateElementsAtom, {
           ...selectedElement,
@@ -138,7 +137,6 @@ export const onMouseMoveAtom = atom(
           x1: newX1,
           y2: newY2,
           x2: newX2,
-          pointsarr: newPointsArr,
           points: newPoints,
         })
       }
@@ -163,19 +161,9 @@ export const onMouseMoveAtom = atom(
           x2: update.x,
           y2: update.y,
           // left-bottom, top, right-bottom
-          pointsarr: [
-            [selectedElement.x, update.y],
-            [selectedElement.x + ((update.x - selectedElement.x) / 2), selectedElement.y],
-            [update.x, update.y]
-          ],
-          points: `
-            ${selectedElement.x},${update.y}
-            ${selectedElement.x + ((update.x - selectedElement.x) / 2)},${selectedElement.y}
-            ${update.x},${update.y}
-          `
+          points: `${selectedElement.x},${update.y} ${selectedElement.x + ((update.x - selectedElement.x) / 2)},${selectedElement.y} ${update.x},${update.y}`
         })
       }
-
       set(selectingAreaAtom, { ...selectingArea, endX: update.x, endY: update.y })
     }
   }

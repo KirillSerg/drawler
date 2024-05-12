@@ -13,7 +13,7 @@ export interface Element {
   y1: number;
   x2: number;
   y2: number;
-  pointsarr: Array<number[]>;  //[[x,y], [x,y], [x,y], ...]
+  // pointsarr: Array<number[]>;  //[[x,y], [x,y], [x,y], ...]
   points: string  //"x,y x,y x,y ..."
   stroke: string;
   strokeWidth: number;
