@@ -1,5 +1,6 @@
 import { useAtom } from 'jotai';
 import { creatingElementTypeAtom } from '../store/store';
+import TextIcon from '../assets/icons/Text.svg';
 
 const Toolbar = () => {
   const [creatingElementType, setCreatingElementType] = useAtom(
@@ -24,10 +25,10 @@ const Toolbar = () => {
           xmlns="http://www.w3.org/2000/svg"
         >
           <rect
-            x="0"
-            y="0"
-            width="100%"
-            height="100%"
+            x="2"
+            y="2"
+            width="80%"
+            height="80%"
             stroke="black"
             strokeWidth="2"
             fill="none"
@@ -91,6 +92,12 @@ const Toolbar = () => {
             strokeWidth="2"
           />
         </svg>
+      </button>
+      <button
+        className={`${creatingElementType === 'text' ? 'bg-orange-500' : 'bg-inherit'}`}
+        onClick={() => setCreatingElementType('text')}
+      >
+        <img src={TextIcon} alt="text" width={32} />
       </button>
     </header>
   );

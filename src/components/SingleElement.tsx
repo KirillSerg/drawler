@@ -35,7 +35,9 @@ const SingleElement = ({ element, svgContainerRef }: Props) => {
           style={{ cursor: 'pointer' }}
           onMouseDown={(e) => handleMouseDown(e)}
           onMouseUp={onMouseUp}
-        />
+        >
+          {element.children}
+        </element.type>
       )}
     </>
   );

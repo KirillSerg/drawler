@@ -19,9 +19,11 @@ const initialElement: Element = {
   x2: 0,
   y2: 0,
   points: "",
+  children: " text",
   stroke: 'black',
   strokeWidth: 4,
   fill: 'none',
+  fontSize: "28px"
 }
 
 export const creatingElementTypeAtom = atom<Element["type"]>("free")
@@ -80,6 +82,7 @@ export const onMouseDownAtom = atom(
         x2: update.x,
         y2: update.y,
         // points: `${}`,
+        // fontSize: ,
       }
       set(elementsAtom, (prev) => [...prev, newEl])
       set(selectedElementAtom, newEl)
@@ -140,6 +143,7 @@ export const onMouseMoveAtom = atom(
           points: newPoints,
         })
       }
+
       // if drawwing
       if (get(isDrawingAtom) && selectedElement) {
         const { newX, newY, newWidth, newHeight, newRX, newRY } = useUpdateXYAndDistance(
@@ -151,7 +155,7 @@ export const onMouseMoveAtom = atom(
         set(updateElementsAtom, {
           ...selectedElement,
           x: newX,
-          y: newY,
+          y: selectedElement.type === "text" ? update.y : newY,
           width: newWidth,
           height: newHeight,
           cx: selectedElement.cx + (update.x - selectedElement.x) / 2,
@@ -161,7 +165,8 @@ export const onMouseMoveAtom = atom(
           x2: update.x,
           y2: update.y,
           // left-bottom, top, right-bottom
-          points: `${selectedElement.x},${update.y} ${selectedElement.x + ((update.x - selectedElement.x) / 2)},${selectedElement.y} ${update.x},${update.y}`
+          points: `${selectedElement.x},${update.y} ${selectedElement.x + ((update.x - selectedElement.x) / 2)},${selectedElement.y} ${update.x},${update.y}`,
+          fontSize: newHeight.toString(),
         })
       }
       set(selectingAreaAtom, { ...selectingArea, endX: update.x, endY: update.y })
