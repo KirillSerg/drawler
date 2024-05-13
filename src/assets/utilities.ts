@@ -33,3 +33,9 @@ export const useUpdateXYAndDistance = (prevX?: number, prevY?: number, nextX?: n
 
   return { newX, newY, newWidth, newHeight, newRX, newRY }
 }
+
+export const getPointsArrFromString = (stringPoints: string) => {
+  const firstArrLevel = stringPoints.split(" ")
+  const secondArr = firstArrLevel.map(xy => xy.split(","))
+  return secondArr
+}

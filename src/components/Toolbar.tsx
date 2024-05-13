@@ -54,6 +54,25 @@ const Toolbar = () => {
           />
         </svg>
       </button>
+
+      <button
+        className={`${creatingElementType === 'polygon' ? 'bg-orange-500' : 'bg-inherit'} p-[6px]`}
+        onClick={() => setCreatingElementType('polygon')}
+      >
+        <svg
+          viewBox="0 0 24 24"
+          height="100%"
+          xmlns="http://www.w3.org/2000/svg"
+        >
+          <polygon
+            points="12,0 24,24 0,24"
+            fill="none"
+            stroke="black"
+            strokeWidth="2"
+          />
+        </svg>
+      </button>
+
       <button
         className={`${creatingElementType === 'line' ? 'bg-orange-500' : 'bg-inherit'} p-[6px]`}
         onClick={() => setCreatingElementType('line')}
