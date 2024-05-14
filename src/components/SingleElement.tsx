@@ -36,7 +36,13 @@ const SingleElement = ({ element, svgContainerRef }: Props) => {
           onMouseDown={(e) => handleMouseDown(e)}
           onMouseUp={onMouseUp}
         >
-          {element.children}
+          {element.type === 'foreignObject' && (
+            <textarea
+              style={{ width: 'auto', height: 'fit-content' }}
+              defaultValue={'tttteeeexxxttt'}
+              name="text-element"
+            />
+          )}
         </element.type>
       )}
     </>

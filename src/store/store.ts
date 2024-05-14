@@ -19,7 +19,7 @@ const initialElement: Element = {
   x2: 0,
   y2: 0,
   points: "",
-  children: " text",
+  // children: " text",
   stroke: 'black',
   strokeWidth: 4,
   fill: 'none',
@@ -155,7 +155,8 @@ export const onMouseMoveAtom = atom(
         set(updateElementsAtom, {
           ...selectedElement,
           x: newX,
-          y: selectedElement.type === "text" ? update.y : newY,
+          // y: selectedElement.type === "foreignObject" ? update.y : newY,
+          y: newY,
           width: newWidth,
           height: newHeight,
           cx: selectedElement.cx + (update.x - selectedElement.x) / 2,
@@ -166,7 +167,7 @@ export const onMouseMoveAtom = atom(
           y2: update.y,
           // left-bottom, top, right-bottom
           points: `${selectedElement.x},${update.y} ${selectedElement.x + ((update.x - selectedElement.x) / 2)},${selectedElement.y} ${update.x},${update.y}`,
-          fontSize: newHeight.toString(),
+          // fontSize: (newHeight / 2).toString(),
         })
       }
       set(selectingAreaAtom, { ...selectingArea, endX: update.x, endY: update.y })

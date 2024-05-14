@@ -94,8 +94,8 @@ const Toolbar = () => {
         </svg>
       </button>
       <button
-        className={`${creatingElementType === 'text' ? 'bg-orange-500' : 'bg-inherit'}`}
-        onClick={() => setCreatingElementType('text')}
+        className={`${creatingElementType === 'foreignObject' ? 'bg-orange-500' : 'bg-inherit'}`}
+        onClick={() => setCreatingElementType('foreignObject')}
       >
         <img src={TextIcon} alt="text" width={32} />
       </button>

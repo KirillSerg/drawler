@@ -1,6 +1,6 @@
 export interface Element {
   id: string;
-  type: "free" | "rect" | "ellipse" | "line" | "polygon" | "text";
+  type: "free" | "rect" | "ellipse" | "line" | "polygon" | "foreignObject";
   x: number;
   y: number;
   width: number;
@@ -14,7 +14,7 @@ export interface Element {
   x2: number;
   y2: number;
   points: string  //"x,y x,y x,y ..."
-  children: string;
+  // children: string;
   stroke: string;
   strokeWidth: number;
   fill: string;
@@ -40,3 +40,4 @@ export type ElemenEvent =
   | React.MouseEvent<SVGPolygonElement, MouseEvent>
   | React.MouseEvent<SVGSVGElement, MouseEvent>
   | React.MouseEvent<SVGTextElement, MouseEvent>
+  | React.MouseEvent<SVGForeignObjectElement, MouseEvent>
