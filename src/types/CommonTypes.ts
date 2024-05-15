@@ -13,12 +13,12 @@ export interface Element {
   y1: number;
   x2: number;
   y2: number;
-  points: string  //"x,y x,y x,y ..."
-  // children: string;
+  points: string;  //"x,y x,y x,y ..."
   stroke: string;
   strokeWidth: number;
   fill: string;
   fontSize: string;
+  textvalue: string;
 }
 
 export interface Area {

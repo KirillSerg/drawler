@@ -19,11 +19,11 @@ const initialElement: Element = {
   x2: 0,
   y2: 0,
   points: "",
-  // children: " text",
   stroke: 'black',
   strokeWidth: 4,
   fill: 'none',
-  fontSize: "28px"
+  fontSize: "28px",
+  textvalue: "",
 }
 
 export const creatingElementTypeAtom = atom<Element["type"]>("free")
@@ -184,3 +184,12 @@ export const onMouseUpAtom = atom(
     set(selectingAreaAtom, null)
   }
 )
+
+// export const onChangeTextElement = atom(
+//   null,
+//   (_get, set) => {
+//     set(updateElementsAtom, {
+
+//     })
+//   }
+// )
