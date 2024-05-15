@@ -59,8 +59,8 @@ test("Create triangle(polygon)", async ({ page }) => {
 
 test("Create text", async ({ page }) => {
   await page.goto('http://localhost:5173/');
-  await page.pause()
-  const toolbarText = page.getByAltText('text')
+  // await page.pause()
+  const toolbarText = page.locator('header > button > svg > text')
   await toolbarText.click()
   await page.mouse.move(300, 300);
   await page.mouse.down();
