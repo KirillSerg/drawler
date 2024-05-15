@@ -48,8 +48,11 @@ const SingleElement = ({ element, svgContainerRef }: Props) => {
                 width: '100%',
                 height: '100%',
                 resize: 'none',
-                backgroundColor: 'transparent',
+                border: 'none',
+                scrollbarWidth: 'none',
+                // backgroundColor: 'transparent',
               }}
+              placeholder="text"
               value={element.textvalue}
               onChange={(event) =>
                 onChangeTextElValue({

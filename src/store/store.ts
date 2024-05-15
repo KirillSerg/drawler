@@ -8,8 +8,8 @@ const initialElement: Element = {
   id: "",
   x: 0,
   y: 0,
-  width: 1,
-  height: 1,
+  width: 100,
+  height: 50,
   cx: 0,
   cy: 0,
   rx: 0.5,
@@ -167,7 +167,7 @@ export const onMouseMoveAtom = atom(
           y2: update.y,
           // left-bottom, top, right-bottom
           points: `${selectedElement.x},${update.y} ${selectedElement.x + ((update.x - selectedElement.x) / 2)},${selectedElement.y} ${update.x},${update.y}`,
-          // fontSize: (newHeight / 2).toString(),
+          fontSize: (newHeight / 1.5).toString(), // i don't know why but 1.5 is working good
         })
       }
       set(selectingAreaAtom, { ...selectingArea, endX: update.x, endY: update.y })
