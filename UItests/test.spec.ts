@@ -42,7 +42,6 @@ test("Create rect", async ({ page }) => {
 test("Create triangle(polygon)", async ({ page }) => {
   await page.goto('http://localhost:5173/');
   const toolbarTriangle = page.locator('header > button > svg > polygon')
-  await page.pause()
   await toolbarTriangle.click()
   await page.mouse.move(300, 300);
   await page.mouse.down();
@@ -53,12 +52,28 @@ test("Create triangle(polygon)", async ({ page }) => {
   await page.mouse.down();
   await page.mouse.move(700, 400);
   await page.mouse.up();
-  // drag&drop variant 2 -- not work becase of header height
-  // await page.dragAndDrop('id=canvas', 'id=canvas', {
-  //   sourcePosition: { x: 700, y: 400 },
-  //   targetPosition: { x: 100, y: 500 },
-  // });
+  // delete element
+  await page.press("id=canvas", "Delete")
+  await checkNumberOfElementsInLocalStorage(page, 0)
+})
 
+test.only("Create text", async ({ page }) => {
+  await page.goto('http://localhost:5173/');
+  await page.pause()
+  const toolbarText = page.getByAltText('text')
+  await toolbarText.click()
+  await page.mouse.move(300, 300);
+  await page.mouse.down();
+  await page.mouse.move(500, 500);
+  await page.mouse.up();
+  await checkElementInLocalStorage(page, "foreignObject")
+  // tap the text
+  await page.locator("foreignObject > textarea").fill("I just type some text")
+  // drag&drop variant 1
+  await page.mouse.move(400, 400);
+  await page.mouse.down();
+  await page.mouse.move(700, 400);
+  await page.mouse.up();
   // delete element
   await page.press("id=canvas", "Delete")
   await checkNumberOfElementsInLocalStorage(page, 0)
