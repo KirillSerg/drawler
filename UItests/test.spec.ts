@@ -57,7 +57,7 @@ test("Create triangle(polygon)", async ({ page }) => {
   await checkNumberOfElementsInLocalStorage(page, 0)
 })
 
-test.only("Create text", async ({ page }) => {
+test("Create text", async ({ page }) => {
   await page.goto('http://localhost:5173/');
   await page.pause()
   const toolbarText = page.getByAltText('text')
