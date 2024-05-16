@@ -155,7 +155,6 @@ export const onMouseMoveAtom = atom(
         set(updateElementsAtom, {
           ...selectedElement,
           x: newX,
-          // y: selectedElement.type === "foreignObject" ? update.y : newY,
           y: newY,
           width: newWidth,
           height: newHeight,
@@ -184,12 +183,3 @@ export const onMouseUpAtom = atom(
     set(selectingAreaAtom, null)
   }
 )
-
-// export const onChangeTextElement = atom(
-//   null,
-//   (_get, set) => {
-//     set(updateElementsAtom, {
-
-//     })
-//   }
-// )
