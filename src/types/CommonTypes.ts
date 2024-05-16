@@ -14,11 +14,11 @@ export interface Element {
   x2: number;
   y2: number;
   points: string;  //"x,y x,y x,y ..."
+  textvalue: string;
   stroke: string;
   strokeWidth: number;
   fill: string;
   fontSize: string;
-  textvalue: string;
 }
 
 export interface Area {

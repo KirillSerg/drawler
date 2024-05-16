@@ -19,11 +19,11 @@ const initialElement: Element = {
   x2: 0,
   y2: 0,
   points: "",
+  textvalue: "",
   stroke: 'black',
   strokeWidth: 4,
-  fill: 'none',
+  fill: 'transparent',
   fontSize: "28px",
-  textvalue: "",
 }
 
 export const creatingElementTypeAtom = atom<Element["type"]>("free")

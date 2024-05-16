@@ -1,11 +1,8 @@
+import Textarea from './Textarea';
+import { useAtom } from 'jotai';
+import { onDragStartAtom, onMouseUpAtom } from '../store/store';
 import { ElemenEvent, Element } from '../types/CommonTypes';
 import { transformCoordinates } from '../assets/utilities';
-import { useAtom } from 'jotai';
-import {
-  onDragStartAtom,
-  onMouseUpAtom,
-  updateElementsAtom,
-} from '../store/store';
 
 interface Props {
   element: Element;
@@ -15,7 +12,6 @@ interface Props {
 const SingleElement = ({ element, svgContainerRef }: Props) => {
   const [, onDragStart] = useAtom(onDragStartAtom);
   const [, onMouseUp] = useAtom(onMouseUpAtom);
-  const [, onChangeTextElValue] = useAtom(updateElementsAtom);
 
   const handleMouseDown = (e: ElemenEvent) => {
     const { transX, transY } = transformCoordinates(
@@ -41,28 +37,7 @@ const SingleElement = ({ element, svgContainerRef }: Props) => {
           onMouseDown={(e) => handleMouseDown(e)}
           onMouseUp={onMouseUp}
         >
-          {element.type === 'foreignObject' && (
-            <textarea
-              autoFocus
-              style={{
-                width: '100%',
-                height: '100%',
-                resize: 'none',
-                border: 'none',
-                scrollbarWidth: 'none',
-                // backgroundColor: 'transparent',
-              }}
-              placeholder="text"
-              value={element.textvalue}
-              onChange={(event) =>
-                onChangeTextElValue({
-                  ...element,
-                  textvalue: event.target.value,
-                })
-              }
-              name="text-element"
-            />
-          )}
+          {element.type === 'foreignObject' && <Textarea element={element} />}
         </element.type>
       )}
     </>

@@ -61,7 +61,6 @@ const Canvas = () => {
       onMouseMove={(e) => handleMouseMove(e)}
       onMouseUp={onMouseUp}
       onKeyDown={(e) => handleKeyPress(e.key)}
-      className="border-4 border-green-600"
       preserveAspectRatio="xMinYMin meet" //for the SVG container to be on the entire screen, while the elements inside kept the proportions and x=0, y=0 viewBox started from the upper left corner
       viewBox="0 0 1920 1080"
       width="100%"
