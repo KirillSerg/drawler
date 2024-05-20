@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useEffect, useState } from 'react';
 import { useAtom } from 'jotai';
 import { creatingElementTypeAtom, initialElementAtom } from '../store/store';
 import { Element } from '../types/CommonTypes';
@@ -15,7 +15,9 @@ const elementsType = {
 const Toolbar = () => {
   const [elementTypeName, setElementTypeName] =
     useState<keyof typeof elementsType>('free');
-  const [, setCreatingElementType] = useAtom(creatingElementTypeAtom);
+  const [creatingElementType, setCreatingElementType] = useAtom(
+    creatingElementTypeAtom,
+  );
   const [, setInitialElement] = useAtom(initialElementAtom);
 
   const handlerSetElementTypeName = (typeName: keyof typeof elementsType) => {
@@ -27,6 +29,12 @@ const Toolbar = () => {
         return { ...prev, markerEnd: 'url(#arrow)' };
       });
   };
+
+  useEffect(() => {
+    if (creatingElementType === 'free') {
+      setElementTypeName('free');
+    }
+  }, [creatingElementType]);
 
   return (
     <header className="h-[6%] sticky top-0 flex justify-center gap-4 border-4 border-black">
