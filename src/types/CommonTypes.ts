@@ -15,6 +15,7 @@ export interface Element {
   y2: number;
   // pointsarr: Array<number[]>;  //[[x,y], [x,y], [x,y], ...]
   points: string  //"x,y x,y x,y ..."
+  markerEnd: string;
   stroke: string;
   strokeWidth: number;
   fill: string;

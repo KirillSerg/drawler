@@ -19,11 +19,13 @@ const initialElement: Element = {
   x2: 0,
   y2: 0,
   points: "",
+  markerEnd: "",
   stroke: 'black',
   strokeWidth: 4,
   fill: 'none',
 }
 
+export const initialElementAtom = atom<Element>(initialElement)
 export const creatingElementTypeAtom = atom<Element["type"]>("free")
 export const elementsAtom = atomWithStorage<Element[]>("elements", [])
 export const selectedElementAtom = atom<Element | null>(null)
@@ -68,7 +70,7 @@ export const onMouseDownAtom = atom(
     if (get(isDrawingAtom)) {
       const creatingElementType = get(creatingElementTypeAtom)
       const newEl = {
-        ...initialElement,
+        ...get(initialElementAtom),
         type: creatingElementType,
         id: crypto.randomUUID(),
         x: update.x,
@@ -176,5 +178,6 @@ export const onMouseUpAtom = atom(
     set(creatingElementTypeAtom, "free")
     set(isDraggingAtom, false)
     set(selectingAreaAtom, null)
+    set(initialElementAtom, initialElement)
   }
 )

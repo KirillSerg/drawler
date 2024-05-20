@@ -1,22 +1,44 @@
+import { useState } from 'react';
 import { useAtom } from 'jotai';
-import { creatingElementTypeAtom } from '../store/store';
+import { creatingElementTypeAtom, initialElementAtom } from '../store/store';
+import { Element } from '../types/CommonTypes';
+
+const elementsType = {
+  free: 'free',
+  rect: 'rect',
+  ellipse: 'ellipse',
+  polygon: 'polygon',
+  line: 'line',
+  arrow_line: 'line',
+};
 
 const Toolbar = () => {
-  const [creatingElementType, setCreatingElementType] = useAtom(
-    creatingElementTypeAtom,
-  );
+  const [elementTypeName, setElementTypeName] =
+    useState<keyof typeof elementsType>('free');
+  const [, setCreatingElementType] = useAtom(creatingElementTypeAtom);
+  const [, setInitialElement] = useAtom(initialElementAtom);
+
+  const handlerSetElementTypeName = (typeName: keyof typeof elementsType) => {
+    setElementTypeName(typeName);
+    setCreatingElementType(elementsType[typeName] as Element['type']);
+
+    if (typeName === 'arrow_line')
+      setInitialElement((prev) => {
+        return { ...prev, markerEnd: 'url(#arrow)' };
+      });
+  };
 
   return (
     <header className="h-[6%] sticky top-0 flex justify-center gap-4 border-4 border-black">
       <button
-        className={`${creatingElementType === 'free' ? 'bg-orange-500' : 'bg-inherit'} p-[6px]`}
-        onClick={() => setCreatingElementType('free')}
+        className={`${elementTypeName === 'free' ? 'bg-orange-500' : 'bg-inherit'} p-[6px]`}
+        onClick={() => handlerSetElementTypeName('free')}
       >
         🖱️
       </button>
       <button
-        className={`${creatingElementType === 'rect' ? 'bg-orange-500' : 'bg-inherit'} p-[6px]`}
-        onClick={() => setCreatingElementType('rect')}
+        className={`${elementTypeName === 'rect' ? 'bg-orange-500' : 'bg-inherit'} p-[6px]`}
+        onClick={() => handlerSetElementTypeName('rect')}
       >
         <svg
           viewBox="0 0 24 24"
@@ -35,8 +57,8 @@ const Toolbar = () => {
         </svg>
       </button>
       <button
-        className={`${creatingElementType === 'ellipse' ? 'bg-orange-500' : 'bg-inherit'} p-[6px]`}
-        onClick={() => setCreatingElementType('ellipse')}
+        className={`${elementTypeName === 'ellipse' ? 'bg-orange-500' : 'bg-inherit'} p-[6px]`}
+        onClick={() => handlerSetElementTypeName('ellipse')}
       >
         <svg
           viewBox="0 0 24 24"
@@ -56,8 +78,8 @@ const Toolbar = () => {
       </button>
 
       <button
-        className={`${creatingElementType === 'polygon' ? 'bg-orange-500' : 'bg-inherit'} p-[6px]`}
-        onClick={() => setCreatingElementType('polygon')}
+        className={`${elementTypeName === 'polygon' ? 'bg-orange-500' : 'bg-inherit'} p-[6px]`}
+        onClick={() => handlerSetElementTypeName('polygon')}
       >
         <svg
           viewBox="0 0 24 24"
@@ -74,8 +96,8 @@ const Toolbar = () => {
       </button>
 
       <button
-        className={`${creatingElementType === 'line' ? 'bg-orange-500' : 'bg-inherit'} p-[6px]`}
-        onClick={() => setCreatingElementType('line')}
+        className={`${elementTypeName === 'line' ? 'bg-orange-500' : 'bg-inherit'} p-[6px]`}
+        onClick={() => handlerSetElementTypeName('line')}
       >
         <svg
           viewBox="0 0 24 24"
@@ -94,8 +116,8 @@ const Toolbar = () => {
       </button>
 
       <button
-        className={`${creatingElementType === 'line' ? 'bg-orange-500' : 'bg-inherit'} p-[6px]`}
-        onClick={() => setCreatingElementType('line')}
+        className={`${elementTypeName === 'arrow_line' ? 'bg-orange-500' : 'bg-inherit'} p-[6px]`}
+        onClick={() => handlerSetElementTypeName('arrow_line')}
       >
         <svg
           viewBox="0 0 24 24"
@@ -121,7 +143,7 @@ const Toolbar = () => {
             y2="12"
             stroke="black"
             strokeWidth="2"
-            marker-end="url(#arrow)"
+            markerEnd="url(#arrow)"
           />
         </svg>
       </button>
