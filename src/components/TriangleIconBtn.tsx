@@ -1,14 +1,14 @@
 import { ElementsType } from './Toolbar';
 
 interface Props {
-  elementTypeName: ElementsType;
+  active: boolean;
   handlerClick: (typeName: ElementsType) => void;
 }
 
-const TriangleIconBtn = ({ elementTypeName, handlerClick }: Props) => {
+const TriangleIconBtn = ({ active, handlerClick }: Props) => {
   return (
     <button
-      className={`${elementTypeName === 'polygon' ? 'bg-orange-500' : 'bg-inherit'} p-[6px]`}
+      className={`${active ? 'bg-orange-500' : 'bg-inherit'} p-[6px]`}
       onClick={() => handlerClick('polygon')}
     >
       <svg viewBox="0 0 24 24" height="100%" xmlns="http://www.w3.org/2000/svg">

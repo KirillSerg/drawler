@@ -1,8 +1,8 @@
 import { useAtom } from 'jotai';
 import deleteIcon from '../assets/icons/trash.svg';
 import { deleteElementsAtom, selectedElementAtom } from '../store/store';
-import LineIconBtn from './LineIconBtn';
-import LineArrowIconBtn from './LineArrowIconBtn';
+// import LineIconBtn from './LineIconBtn';
+// import LineArrowIconBtn from './LineArrowIconBtn';
 
 const Inspector = () => {
   const [, deleteElements] = useAtom(deleteElementsAtom);
@@ -20,12 +20,12 @@ const Inspector = () => {
           height={25}
         />
       )}
-
-      {selectedElement?.type === "line" ? (
-        <LineIconBtn elementTypeName={} />
-        <LineArrowIconBtn/>
-      ) : ""}
-
+      {/* {selectedElement?.type === 'line' ? (
+        // <LineIconBtn active={false} handlerClick={} />
+      ) : (
+        // <LineArrowIconBtn/>
+        ''
+      )} */}
     </aside>
   );
 };

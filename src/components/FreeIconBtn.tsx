@@ -1,14 +1,14 @@
 import { ElementsType } from './Toolbar';
 
 interface Props {
-  elementTypeName: ElementsType;
+  active: boolean;
   handlerClick: (typeName: ElementsType) => void;
 }
 
-const FreeIconBtn = ({ elementTypeName, handlerClick }: Props) => {
+const FreeIconBtn = ({ active, handlerClick }: Props) => {
   return (
     <button
-      className={`${elementTypeName === 'free' ? 'bg-orange-500' : 'bg-inherit'} p-[6px]`}
+      className={`${active ? 'bg-orange-500' : 'bg-inherit'} p-[6px]`}
       onClick={() => handlerClick('free')}
     >
       <svg

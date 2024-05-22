@@ -4,7 +4,7 @@ import { atomWithStorage } from 'jotai/utils'
 import { getPointsArrFromString, useUpdateXYAndDistance } from "../assets/utilities";
 
 const initialElement: Element = {
-  type: "rect",
+  type: "free",
   id: "",
   x: 0,
   y: 0,
@@ -26,19 +26,17 @@ const initialElement: Element = {
 }
 
 export const initialElementAtom = atom<Element>(initialElement)
-export const creatingElementTypeAtom = atom<Element["type"]>("free")
 export const elementsAtom = atomWithStorage<Element[]>("elements", [])
 export const selectedElementAtom = atom<Element | null>(null)
 export const selectingAreaAtom = atom<Area | null>(null)
 export const isDraggingAtom = atom(false)
 export const isDrawingAtom = atom(
-  (get) => get(creatingElementTypeAtom) === "free" ? false : true
+  (get) => get(initialElementAtom).type === "free" ? false : true
 )
 
 export const updateElementsAtom = atom(
   null,
   (_get, set, updatedElement: Element) => {
-    // console.log("updateElementsAtom")
     set(elementsAtom, (prev) => prev.map((el) =>
       el.id === updatedElement.id ? updatedElement : el,
     ))
@@ -68,10 +66,8 @@ export const onMouseDownAtom = atom(
       endY: update.y
     })
     if (get(isDrawingAtom)) {
-      const creatingElementType = get(creatingElementTypeAtom)
       const newEl = {
         ...get(initialElementAtom),
-        type: creatingElementType,
         id: crypto.randomUUID(),
         x: update.x,
         y: update.y,
@@ -175,7 +171,6 @@ export const onMouseUpAtom = atom(
   null,
   (_get, set) => {
     console.log("onMouseUpAtom")
-    set(creatingElementTypeAtom, "free")
     set(isDraggingAtom, false)
     set(selectingAreaAtom, null)
     set(initialElementAtom, initialElement)

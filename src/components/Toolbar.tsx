@@ -1,6 +1,6 @@
-import { useEffect, useState } from 'react';
+import { useState } from 'react';
 import { useAtom } from 'jotai';
-import { creatingElementTypeAtom, initialElementAtom } from '../store/store';
+import { initialElementAtom } from '../store/store';
 import { Element } from '../types/CommonTypes';
 import LineIconBtn from './LineIconBtn';
 import LineArrowIconBtn from './LineArrowIconBtn';
@@ -22,56 +22,48 @@ export type ElementsType = keyof typeof elementsType;
 
 const Toolbar = () => {
   const [elementTypeName, setElementTypeName] = useState<ElementsType>('free');
-  const [creatingElementType, setCreatingElementType] = useAtom(
-    creatingElementTypeAtom,
-  );
   const [, setInitialElement] = useAtom(initialElementAtom);
 
-  const handlerSetElementTypeName = (typeName: ElementsType) => {
+  const handlerSelectElement = (typeName: ElementsType) => {
     setElementTypeName(typeName);
-    setCreatingElementType(elementsType[typeName] as Element['type']);
-
-    if (typeName === 'arrow_line')
-      setInitialElement((prev) => {
-        return { ...prev, markerEnd: 'url(#arrow)' };
-      });
+    setInitialElement((prev) => {
+      return {
+        ...prev,
+        type: elementsType[typeName] as Element['type'],
+        markerEnd: typeName === 'arrow_line' ? 'url(#arrow)' : prev.markerEnd,
+      };
+    });
   };
-
-  useEffect(() => {
-    if (creatingElementType === 'free') {
-      setElementTypeName('free');
-    }
-  }, [creatingElementType]);
 
   return (
     <header className="h-[6%] sticky top-0 flex justify-center gap-4 border-4 border-black">
       <FreeIconBtn
-        elementTypeName={elementTypeName}
-        handlerClick={handlerSetElementTypeName}
+        active={elementTypeName === 'free'}
+        handlerClick={handlerSelectElement}
       />
 
       <RectIconBtn
-        elementTypeName={elementTypeName}
-        handlerClick={handlerSetElementTypeName}
+        active={elementTypeName === 'rect'}
+        handlerClick={handlerSelectElement}
       />
 
       <EllipseIconBtn
-        elementTypeName={elementTypeName}
-        handlerClick={handlerSetElementTypeName}
+        active={elementTypeName === 'ellipse'}
+        handlerClick={handlerSelectElement}
       />
 
       <TriangleIconBtn
-        elementTypeName={elementTypeName}
-        handlerClick={handlerSetElementTypeName}
+        active={elementTypeName === 'polygon'}
+        handlerClick={handlerSelectElement}
       />
 
       <LineIconBtn
-        elementTypeName={elementTypeName}
-        handlerClick={handlerSetElementTypeName}
+        active={elementTypeName === 'line'}
+        handlerClick={handlerSelectElement}
       />
       <LineArrowIconBtn
-        elementTypeName={elementTypeName}
-        handlerClick={handlerSetElementTypeName}
+        active={elementTypeName === 'arrow_line'}
+        handlerClick={handlerSelectElement}
       />
     </header>
   );
