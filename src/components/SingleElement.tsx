@@ -1,7 +1,8 @@
-import { ElemenEvent, Element } from '../types/CommonTypes';
-import { transformCoordinates } from '../assets/utilities';
+import Textarea from './Textarea';
 import { useAtom } from 'jotai';
 import { onDragStartAtom, onMouseUpAtom } from '../store/store';
+import { ElemenEvent, Element } from '../types/CommonTypes';
+import { transformCoordinates } from '../assets/utilities';
 
 interface Props {
   element: Element;
@@ -35,7 +36,9 @@ const SingleElement = ({ element, svgContainerRef }: Props) => {
           style={{ cursor: 'pointer' }}
           onMouseDown={(e) => handleMouseDown(e)}
           onMouseUp={onMouseUp}
-        />
+        >
+          {element.type === 'foreignObject' && <Textarea element={element} />}
+        </element.type>
       )}
     </>
   );

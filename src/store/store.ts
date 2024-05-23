@@ -8,8 +8,8 @@ const initialElement: Element = {
   id: "",
   x: 0,
   y: 0,
-  width: 1,
-  height: 1,
+  width: 100,
+  height: 50,
   cx: 0,
   cy: 0,
   rx: 0.5,
@@ -19,10 +19,12 @@ const initialElement: Element = {
   x2: 0,
   y2: 0,
   points: "",
+  textvalue: "",
   markerEnd: "",
   stroke: 'black',
   strokeWidth: 4,
-  fill: 'none',
+  fill: 'transparent',
+  fontSize: "28px",
 }
 
 export const initialElementAtom = atom<Element>(initialElement)
@@ -82,6 +84,7 @@ export const onMouseDownAtom = atom(
         x2: update.x,
         y2: update.y,
         // points: `${}`,
+        // fontSize: ,
       }
       set(elementsAtom, (prev) => [...prev, newEl])
       set(selectedElementAtom, newEl)
@@ -142,6 +145,7 @@ export const onMouseMoveAtom = atom(
           points: newPoints,
         })
       }
+
       // if drawwing
       if (get(isDrawingAtom) && selectedElement) {
         const { newX, newY, newWidth, newHeight, newRX, newRY } = useUpdateXYAndDistance(
@@ -163,7 +167,8 @@ export const onMouseMoveAtom = atom(
           x2: update.x,
           y2: update.y,
           // left-bottom, top, right-bottom
-          points: `${selectedElement.x},${update.y} ${selectedElement.x + ((update.x - selectedElement.x) / 2)},${selectedElement.y} ${update.x},${update.y}`
+          points: `${selectedElement.x},${update.y} ${selectedElement.x + ((update.x - selectedElement.x) / 2)},${selectedElement.y} ${update.x},${update.y}`,
+          fontSize: (newHeight / 1.5).toString(), // i don't know why but 1.5 is working good
         })
       }
       set(selectingAreaAtom, { ...selectingArea, endX: update.x, endY: update.y })

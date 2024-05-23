@@ -1,6 +1,6 @@
 export interface Element {
   id: string;
-  type: "free" | "rect" | "ellipse" | "line" | "polygon";
+  type: "free" | "rect" | "ellipse" | "line" | "polygon" | "foreignObject";
   x: number;
   y: number;
   width: number;
@@ -15,10 +15,12 @@ export interface Element {
   y2: number;
   // pointsarr: Array<number[]>;  //[[x,y], [x,y], [x,y], ...]
   points: string  //"x,y x,y x,y ..."
+  textvalue: string;
   markerEnd: string;
   stroke: string;
   strokeWidth: number;
   fill: string;
+  fontSize: string;
 }
 
 export interface Area {
@@ -39,3 +41,5 @@ export type ElemenEvent =
   | React.MouseEvent<SVGLineElement, MouseEvent>
   | React.MouseEvent<SVGPolygonElement, MouseEvent>
   | React.MouseEvent<SVGSVGElement, MouseEvent>
+  | React.MouseEvent<SVGTextElement, MouseEvent>
+  | React.MouseEvent<SVGForeignObjectElement, MouseEvent>
