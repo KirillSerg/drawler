@@ -1,6 +1,7 @@
 export interface Element {
   id: string;
   type: "free" | "rect" | "ellipse" | "line" | "polygon";
+  type_name: ElementsTypeName;
   x: number;
   y: number;
   width: number;
@@ -13,7 +14,6 @@ export interface Element {
   y1: number;
   x2: number;
   y2: number;
-  // pointsarr: Array<number[]>;  //[[x,y], [x,y], [x,y], ...]
   points: string  //"x,y x,y x,y ..."
   markerEnd: string;
   stroke: string;
@@ -39,3 +39,15 @@ export type ElemenEvent =
   | React.MouseEvent<SVGLineElement, MouseEvent>
   | React.MouseEvent<SVGPolygonElement, MouseEvent>
   | React.MouseEvent<SVGSVGElement, MouseEvent>
+
+
+export const ELEMENT_TYPE_VARIANTS = {
+  free: 'free',
+  rect: 'rect',
+  ellipse: 'ellipse',
+  polygon: 'polygon',
+  line: 'line',
+  arrow_line: 'line',
+};
+
+export type ElementsTypeName = keyof typeof ELEMENT_TYPE_VARIANTS;

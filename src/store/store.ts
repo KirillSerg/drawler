@@ -5,6 +5,7 @@ import { getPointsArrFromString, useUpdateXYAndDistance } from "../assets/utilit
 
 const initialElement: Element = {
   type: "free",
+  type_name: "free",
   id: "",
   x: 0,
   y: 0,
@@ -36,10 +37,12 @@ export const isDrawingAtom = atom(
 
 export const updateElementsAtom = atom(
   null,
-  (_get, set, updatedElement: Element) => {
+  (get, set, updatedElement: Element) => {
     set(elementsAtom, (prev) => prev.map((el) =>
       el.id === updatedElement.id ? updatedElement : el,
     ))
+    const isSelected = get(selectedElementAtom)?.id === updatedElement.id
+    if (isSelected) set(selectedElementAtom, updatedElement)
   }
 )
 

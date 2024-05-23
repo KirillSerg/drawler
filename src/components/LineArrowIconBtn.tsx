@@ -1,14 +1,14 @@
-import { ElementsType } from './Toolbar';
+import { ElementsTypeName } from '../types/CommonTypes';
 
 interface Props {
-  active: boolean;
-  handlerClick: (typeName: ElementsType) => void;
+  className: string;
+  handlerClick: (typeName: ElementsTypeName) => void;
 }
 
-const LineArrowIconBtn = ({ active, handlerClick }: Props) => {
+const LineArrowIconBtn = ({ className, handlerClick }: Props) => {
   return (
     <button
-      className={`${active ? 'bg-orange-500' : 'bg-inherit'} p-[6px]`}
+      className={`${className}`}
       onClick={() => handlerClick('arrow_line')}
     >
       <svg viewBox="0 0 24 24" height="100%" xmlns="http://www.w3.org/2000/svg">

@@ -1,68 +1,61 @@
-import { useState } from 'react';
 import { useAtom } from 'jotai';
-import { initialElementAtom } from '../store/store';
-import { Element } from '../types/CommonTypes';
+import { initialElementAtom, selectedElementAtom } from '../store/store';
 import LineIconBtn from './LineIconBtn';
 import LineArrowIconBtn from './LineArrowIconBtn';
 import TriangleIconBtn from './TriangleIconBtn';
 import EllipseIconBtn from './EllipseIconBtn';
 import RectIconBtn from './RectIconBtn';
 import FreeIconBtn from './FreeIconBtn';
-
-const elementsType = {
-  free: 'free',
-  rect: 'rect',
-  ellipse: 'ellipse',
-  polygon: 'polygon',
-  line: 'line',
-  arrow_line: 'line',
-};
-
-export type ElementsType = keyof typeof elementsType;
+import {
+  ELEMENT_TYPE_VARIANTS,
+  Element,
+  ElementsTypeName,
+} from '../types/CommonTypes';
 
 const Toolbar = () => {
-  const [elementTypeName, setElementTypeName] = useState<ElementsType>('free');
-  const [, setInitialElement] = useAtom(initialElementAtom);
+  const [initialElement, setInitialElement] = useAtom(initialElementAtom);
+  const [, setSelectedElement] = useAtom(selectedElementAtom);
 
-  const handlerSelectElement = (typeName: ElementsType) => {
-    setElementTypeName(typeName);
+  const handlerSelectElement = (typeName: ElementsTypeName) => {
     setInitialElement((prev) => {
       return {
         ...prev,
-        type: elementsType[typeName] as Element['type'],
-        markerEnd: typeName === 'arrow_line' ? 'url(#arrow)' : prev.markerEnd,
+        type: ELEMENT_TYPE_VARIANTS[typeName] as Element['type'],
+        type_name: typeName,
+        markerEnd: typeName === 'arrow_line' ? 'url(#arrow)' : '',
       };
     });
+    setSelectedElement(null);
   };
 
   return (
     <header className="h-[6%] sticky top-0 flex justify-center gap-4 border-4 border-black">
       <FreeIconBtn
-        active={elementTypeName === 'free'}
+        className={`${initialElement.type_name === 'free' ? 'bg-orange-500' : 'bg-inherit'} h-8 w-8 p-[6px]`}
         handlerClick={handlerSelectElement}
       />
 
       <RectIconBtn
-        active={elementTypeName === 'rect'}
+        className={`${initialElement.type_name === 'rect' ? 'bg-orange-500' : 'bg-inherit'} h-8 w-8 p-[6px]`}
         handlerClick={handlerSelectElement}
       />
 
       <EllipseIconBtn
-        active={elementTypeName === 'ellipse'}
+        className={`${initialElement.type_name === 'ellipse' ? 'bg-orange-500' : 'bg-inherit'} h-8 w-8 p-[6px]`}
         handlerClick={handlerSelectElement}
       />
 
       <TriangleIconBtn
-        active={elementTypeName === 'polygon'}
+        className={`${initialElement.type_name === 'polygon' ? 'bg-orange-500' : 'bg-inherit'} h-8 w-8 p-[6px]`}
         handlerClick={handlerSelectElement}
       />
 
       <LineIconBtn
-        active={elementTypeName === 'line'}
+        className={`${initialElement.type_name === 'line' ? 'bg-orange-500' : 'bg-inherit'} h-8 w-8 p-[6px]`}
         handlerClick={handlerSelectElement}
       />
       <LineArrowIconBtn
-        active={elementTypeName === 'arrow_line'}
+        className={`${initialElement.type_name === 'arrow_line' ? 'bg-orange-500' : 'bg-inherit'} h-8 w-8 p-[6px]`}
         handlerClick={handlerSelectElement}
       />
     </header>
