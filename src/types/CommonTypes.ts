@@ -13,8 +13,10 @@ export interface Element {
   y1: number;
   x2: number;
   y2: number;
-  points: string;  //"x,y x,y x,y ..."
+  // pointsarr: Array<number[]>;  //[[x,y], [x,y], [x,y], ...]
+  points: string  //"x,y x,y x,y ..."
   textvalue: string;
+  markerEnd: string;
   stroke: string;
   strokeWidth: number;
   fill: string;
