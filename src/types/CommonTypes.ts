@@ -1,7 +1,7 @@
 export interface Element {
   id: string;
-  type: "free" | "rect" | "ellipse" | "line" | "polygon";
   type_name: ElementsTypeName;
+  type: "free" | "rect" | "ellipse" | "line" | "polygon" | "foreignObject";
   x: number;
   y: number;
   width: number;
@@ -15,10 +15,12 @@ export interface Element {
   x2: number;
   y2: number;
   points: string  //"x,y x,y x,y ..."
+  textvalue: string;
   markerEnd: string;
   stroke: string;
   strokeWidth: number;
   fill: string;
+  fontSize: string;
 }
 
 export interface Area {
@@ -39,7 +41,8 @@ export type ElemenEvent =
   | React.MouseEvent<SVGLineElement, MouseEvent>
   | React.MouseEvent<SVGPolygonElement, MouseEvent>
   | React.MouseEvent<SVGSVGElement, MouseEvent>
-
+  | React.MouseEvent<SVGTextElement, MouseEvent>
+  | React.MouseEvent<SVGForeignObjectElement, MouseEvent>
 
 export const ELEMENT_TYPE_VARIANTS = {
   free: 'free',
@@ -48,6 +51,7 @@ export const ELEMENT_TYPE_VARIANTS = {
   polygon: 'polygon',
   line: 'line',
   arrow_line: 'line',
+  text: "foreignObject",
 };
 
 export type ElementsTypeName = keyof typeof ELEMENT_TYPE_VARIANTS;

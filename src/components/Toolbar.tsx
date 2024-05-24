@@ -11,6 +11,7 @@ import {
   Element,
   ElementsTypeName,
 } from '../types/CommonTypes';
+import TextIconBtn from './TextIconBtn';
 
 const Toolbar = () => {
   const [initialElement, setInitialElement] = useAtom(initialElementAtom);
@@ -54,8 +55,14 @@ const Toolbar = () => {
         className={`${initialElement.type_name === 'line' ? 'bg-orange-500' : 'bg-inherit'} h-8 w-8 p-[6px]`}
         handlerClick={handlerSelectElement}
       />
+
       <LineArrowIconBtn
         className={`${initialElement.type_name === 'arrow_line' ? 'bg-orange-500' : 'bg-inherit'} h-8 w-8 p-[6px]`}
+        handlerClick={handlerSelectElement}
+      />
+
+      <TextIconBtn
+        className={`${initialElement.type_name === 'text' ? 'bg-orange-500' : 'bg-inherit'} h-8 w-8 p-[6px]`}
         handlerClick={handlerSelectElement}
       />
     </header>

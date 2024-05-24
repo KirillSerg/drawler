@@ -9,8 +9,8 @@ const initialElement: Element = {
   id: "",
   x: 0,
   y: 0,
-  width: 1,
-  height: 1,
+  width: 100,
+  height: 50,
   cx: 0,
   cy: 0,
   rx: 0.5,
@@ -20,10 +20,12 @@ const initialElement: Element = {
   x2: 0,
   y2: 0,
   points: "",
+  textvalue: "",
   markerEnd: "",
   stroke: 'black',
   strokeWidth: 4,
-  fill: 'none',
+  fill: 'transparent',
+  fontSize: "28px",
 }
 
 export const initialElementAtom = atom<Element>(initialElement)
@@ -42,7 +44,11 @@ export const updateElementsAtom = atom(
       el.id === updatedElement.id ? updatedElement : el,
     ))
     const isSelected = get(selectedElementAtom)?.id === updatedElement.id
-    if (isSelected) set(selectedElementAtom, updatedElement)
+    // if changes from inspector
+    if (isSelected
+      && !get(isDraggingAtom)
+      && !get(isDrawingAtom)
+    ) set(selectedElementAtom, updatedElement)
   }
 )
 
@@ -58,7 +64,7 @@ export const deleteElementsAtom = atom(
 export const onMouseDownAtom = atom(
   null,
   (get, set, update: Coordinates) => {
-    console.log("onMouseDownAtom")
+    // console.log("onMouseDownAtom")
     if (!get(isDraggingAtom) && !get(isDrawingAtom)) {
       set(selectedElementAtom, null)
     }
@@ -81,6 +87,7 @@ export const onMouseDownAtom = atom(
         x2: update.x,
         y2: update.y,
         // points: `${}`,
+        // fontSize: ,
       }
       set(elementsAtom, (prev) => [...prev, newEl])
       set(selectedElementAtom, newEl)
@@ -91,7 +98,7 @@ export const onMouseDownAtom = atom(
 export const onDragStartAtom = atom(
   null,
   (get, set, update: { element: Element, position: Coordinates }) => {
-    console.log("onDragStartAtom")
+    // console.log("onDragStartAtom")
     if (!get(isDrawingAtom)) {
       set(selectedElementAtom, update.element)
       set(isDraggingAtom, true)
@@ -102,7 +109,7 @@ export const onDragStartAtom = atom(
 export const onMouseMoveAtom = atom(
   null,
   (get, set, update: Coordinates) => {
-    console.log("onMouseMoveAtom")
+    // console.log("onMouseMoveAtom")
     const selectingArea = get(selectingAreaAtom)
     const selectedElement = get(selectedElementAtom)
     if (selectingArea) {
@@ -141,6 +148,7 @@ export const onMouseMoveAtom = atom(
           points: newPoints,
         })
       }
+
       // if drawwing
       if (get(isDrawingAtom) && selectedElement) {
         const { newX, newY, newWidth, newHeight, newRX, newRY } = useUpdateXYAndDistance(
@@ -162,7 +170,8 @@ export const onMouseMoveAtom = atom(
           x2: update.x,
           y2: update.y,
           // left-bottom, top, right-bottom
-          points: `${selectedElement.x},${update.y} ${selectedElement.x + ((update.x - selectedElement.x) / 2)},${selectedElement.y} ${update.x},${update.y}`
+          points: `${selectedElement.x},${update.y} ${selectedElement.x + ((update.x - selectedElement.x) / 2)},${selectedElement.y} ${update.x},${update.y}`,
+          fontSize: (newHeight / 1.5).toString(), // i don't know why but 1.5 is working good
         })
       }
       set(selectingAreaAtom, { ...selectingArea, endX: update.x, endY: update.y })
@@ -172,8 +181,12 @@ export const onMouseMoveAtom = atom(
 
 export const onMouseUpAtom = atom(
   null,
-  (_get, set) => {
-    console.log("onMouseUpAtom")
+  (get, set) => {
+    // console.log("onMouseUpAtom")
+    const selectedElement = get(selectedElementAtom)
+    if (selectedElement) {
+      set(selectedElementAtom, get(elementsAtom).find(el => el.id === selectedElement.id) || selectedElement)
+    }
     set(isDraggingAtom, false)
     set(selectingAreaAtom, null)
     set(initialElementAtom, initialElement)
