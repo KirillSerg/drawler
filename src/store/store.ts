@@ -4,7 +4,8 @@ import { atomWithStorage } from 'jotai/utils'
 import { getPointsArrFromString, useUpdateXYAndDistance } from "../assets/utilities";
 
 const initialElement: Element = {
-  type: "rect",
+  type: "free",
+  type_name: "free",
   id: "",
   x: 0,
   y: 0,
@@ -28,22 +29,26 @@ const initialElement: Element = {
 }
 
 export const initialElementAtom = atom<Element>(initialElement)
-export const creatingElementTypeAtom = atom<Element["type"]>("free")
 export const elementsAtom = atomWithStorage<Element[]>("elements", [])
 export const selectedElementAtom = atom<Element | null>(null)
 export const selectingAreaAtom = atom<Area | null>(null)
 export const isDraggingAtom = atom(false)
 export const isDrawingAtom = atom(
-  (get) => get(creatingElementTypeAtom) === "free" ? false : true
+  (get) => get(initialElementAtom).type === "free" ? false : true
 )
 
 export const updateElementsAtom = atom(
   null,
-  (_get, set, updatedElement: Element) => {
-    // console.log("updateElementsAtom")
+  (get, set, updatedElement: Element) => {
     set(elementsAtom, (prev) => prev.map((el) =>
       el.id === updatedElement.id ? updatedElement : el,
     ))
+    const isSelected = get(selectedElementAtom)?.id === updatedElement.id
+    // if changes from inspector
+    if (isSelected
+      && !get(isDraggingAtom)
+      && !get(isDrawingAtom)
+    ) set(selectedElementAtom, updatedElement)
   }
 )
 
@@ -59,7 +64,7 @@ export const deleteElementsAtom = atom(
 export const onMouseDownAtom = atom(
   null,
   (get, set, update: Coordinates) => {
-    console.log("onMouseDownAtom")
+    // console.log("onMouseDownAtom")
     if (!get(isDraggingAtom) && !get(isDrawingAtom)) {
       set(selectedElementAtom, null)
     }
@@ -70,10 +75,8 @@ export const onMouseDownAtom = atom(
       endY: update.y
     })
     if (get(isDrawingAtom)) {
-      const creatingElementType = get(creatingElementTypeAtom)
       const newEl = {
         ...get(initialElementAtom),
-        type: creatingElementType,
         id: crypto.randomUUID(),
         x: update.x,
         y: update.y,
@@ -95,7 +98,7 @@ export const onMouseDownAtom = atom(
 export const onDragStartAtom = atom(
   null,
   (get, set, update: { element: Element, position: Coordinates }) => {
-    console.log("onDragStartAtom")
+    // console.log("onDragStartAtom")
     if (!get(isDrawingAtom)) {
       set(selectedElementAtom, update.element)
       set(isDraggingAtom, true)
@@ -106,7 +109,7 @@ export const onDragStartAtom = atom(
 export const onMouseMoveAtom = atom(
   null,
   (get, set, update: Coordinates) => {
-    console.log("onMouseMoveAtom")
+    // console.log("onMouseMoveAtom")
     const selectingArea = get(selectingAreaAtom)
     const selectedElement = get(selectedElementAtom)
     if (selectingArea) {
@@ -178,9 +181,12 @@ export const onMouseMoveAtom = atom(
 
 export const onMouseUpAtom = atom(
   null,
-  (_get, set) => {
-    console.log("onMouseUpAtom")
-    set(creatingElementTypeAtom, "free")
+  (get, set) => {
+    // console.log("onMouseUpAtom")
+    const selectedElement = get(selectedElementAtom)
+    if (selectedElement) {
+      set(selectedElementAtom, get(elementsAtom).find(el => el.id === selectedElement.id) || selectedElement)
+    }
     set(isDraggingAtom, false)
     set(selectingAreaAtom, null)
     set(initialElementAtom, initialElement)
