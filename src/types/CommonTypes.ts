@@ -1,7 +1,7 @@
 export interface Element {
   id: string;
   type_name: ElementsTypeName;
-  type: "free" | "rect" | "ellipse" | "line" | "polygon" | "foreignObject";
+  type: "free" | "rect" | "ellipse" | "line" | "polygon" | "foreignObject" | "path";
   x: number;
   y: number;
   width: number;
@@ -52,6 +52,7 @@ export const ELEMENT_TYPE_VARIANTS = {
   line: 'line',
   arrow_line: 'line',
   text: "foreignObject",
+  pencil: "path",
 };
 
 export type ElementsTypeName = keyof typeof ELEMENT_TYPE_VARIANTS;

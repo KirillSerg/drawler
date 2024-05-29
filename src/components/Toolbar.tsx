@@ -12,6 +12,7 @@ import {
   ElementsTypeName,
 } from '../types/CommonTypes';
 import TextIconBtn from './TextIconBtn';
+import PencilIconBtn from './PencilIconBtn';
 
 const Toolbar = () => {
   const [initialElement, setInitialElement] = useAtom(initialElementAtom);
@@ -63,6 +64,11 @@ const Toolbar = () => {
 
       <TextIconBtn
         className={`${initialElement.type_name === 'text' ? 'bg-orange-500' : 'bg-inherit'} h-8 w-8 p-[6px]`}
+        handlerClick={handlerSelectElement}
+      />
+
+      <PencilIconBtn
+        className={`${initialElement.type_name === 'pencil' ? 'bg-orange-500' : 'bg-inherit'} h-8 w-8 p-[6px]`}
         handlerClick={handlerSelectElement}
       />
     </header>
