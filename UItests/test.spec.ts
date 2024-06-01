@@ -114,7 +114,11 @@ test("Create curved line", async ({ page }) => {
   await page.mouse.move(320, 310);
   await page.mouse.up();
   await checkElementInLocalStorage(page, "path")
+  // escape from pensil mode
+  await page.press("id=canvas", "Escape")
   // drag&drop variant 1
+  // moove to one pixel back to fix bug in firefox test
+  await page.mouse.move(319, 309);
   await page.mouse.down();
   await page.mouse.move(700, 400);
   await page.mouse.up();
