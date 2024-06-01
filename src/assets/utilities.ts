@@ -34,8 +34,15 @@ export const useUpdateXYAndDistance = (prevX?: number, prevY?: number, nextX?: n
   return { newX, newY, newWidth, newHeight, newRX, newRY }
 }
 
-export const getPointsArrFromString = (stringPoints: string) => {
+export const getTrianglePointsArrFromString = (stringPoints: string) => {
   const firstArrLevel = stringPoints.split(" ")
-  const secondArr = firstArrLevel.map(xy => xy.split(","))
-  return secondArr
+  const ArrOfXYPairArr = firstArrLevel.map(xy => xy.split(","))
+  return ArrOfXYPairArr
+}
+
+export const getPencilPointsArrFromString = (stringPoints: string) => {
+  const trimmedStart = stringPoints.slice(2)
+  const firstArrLevel = trimmedStart.split(" L ")
+  const ArrOfXYPairArr = firstArrLevel.map(xy => xy.split(" "))
+  return ArrOfXYPairArr
 }

@@ -1,7 +1,7 @@
 import { atom } from "jotai";
 import { Area, Coordinates, Element } from "../types/CommonTypes";
 import { atomWithStorage } from 'jotai/utils'
-import { getPointsArrFromString, useUpdateXYAndDistance } from "../assets/utilities";
+import { getPencilPointsArrFromString, getTrianglePointsArrFromString, useUpdateXYAndDistance } from "../assets/utilities";
 
 const initialElement: Element = {
   type: "free",
@@ -21,6 +21,7 @@ const initialElement: Element = {
   y2: 0,
   points: "",
   textvalue: "",
+  d: "",
   markerEnd: "",
   stroke: 'black',
   strokeWidth: 4,
@@ -49,6 +50,8 @@ export const updateElementsAtom = atom(
       && !get(isDraggingAtom)
       && !get(isDrawingAtom)
     ) set(selectedElementAtom, updatedElement)
+    // if drawing with pencil we need to put fresh d
+    if (updatedElement.type_name === "pencil" && get(isDrawingAtom)) set(selectedElementAtom, updatedElement)
   }
 )
 
@@ -86,6 +89,7 @@ export const onMouseDownAtom = atom(
         y1: update.y,
         x2: update.x,
         y2: update.y,
+        d: `M ${update.x} ${update.y}`
         // points: `${}`,
         // fontSize: ,
       }
@@ -127,13 +131,21 @@ export const onMouseMoveAtom = atom(
         const newX2 = selectedElement.x2 + (update.x - selectingArea.startX)
         const newY2 = selectedElement.y2 + (update.y - selectingArea.startY)
         // triangle(polygon)
-        const newPointsArr = getPointsArrFromString(selectedElement.points).map((point) =>
+        const newTrianglePointsArr = getTrianglePointsArrFromString(selectedElement.points).map((point) =>
           [
             +point[0] + (update.x - selectingArea.startX),
             +point[1] + (update.y - selectingArea.startY)
           ]
         )
-        const newPoints = newPointsArr.map(points => points.join()).join(" ")
+        const newPoints = newTrianglePointsArr.map(points => points.join()).join(" ")
+        // pencil
+        const newPencilPointsArr = getPencilPointsArrFromString(selectedElement.d).map((point) =>
+          [
+            +point[0] + (update.x - selectingArea.startX),
+            +point[1] + (update.y - selectingArea.startY)
+          ]
+        )
+        const newPathData = "M " + newPencilPointsArr.map(points => points.join(" ")).join(" L ")
 
         set(updateElementsAtom, {
           ...selectedElement,
@@ -146,6 +158,7 @@ export const onMouseMoveAtom = atom(
           y2: newY2,
           x2: newX2,
           points: newPoints,
+          d: newPathData,
         })
       }
 
@@ -172,6 +185,7 @@ export const onMouseMoveAtom = atom(
           // left-bottom, top, right-bottom
           points: `${selectedElement.x},${update.y} ${selectedElement.x + ((update.x - selectedElement.x) / 2)},${selectedElement.y} ${update.x},${update.y}`,
           fontSize: (newHeight / 1.5).toString(), // i don't know why but 1.5 is working good
+          d: selectedElement.d + ` L ${update.x} ${update.y}`
         })
       }
       set(selectingAreaAtom, { ...selectingArea, endX: update.x, endY: update.y })
