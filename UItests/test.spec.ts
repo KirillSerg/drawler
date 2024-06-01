@@ -78,6 +78,51 @@ test("Create text", async ({ page }) => {
   await checkNumberOfElementsInLocalStorage(page, 0)
 })
 
+test("Create line", async ({ page }) => {
+  await page.goto('http://localhost:5173/');
+  const toolbarPencil = page.locator('header > button > [id=line]')
+  await toolbarPencil.click()
+  await page.mouse.move(300, 300);
+  await page.mouse.down();
+  await page.mouse.move(500, 250);
+  await page.mouse.up();
+  await checkElementInLocalStorage(page, "line")
+  // drag&drop variant 1
+  await page.mouse.down();
+  await page.mouse.move(700, 400);
+  await page.mouse.up();
+  // delete element
+  await page.press("id=canvas", "Delete")
+  await checkNumberOfElementsInLocalStorage(page, 0)
+})
+
+test("Create curved line", async ({ page }) => {
+  await page.goto('http://localhost:5173/');
+  const toolbarPencil = page.locator('header > button > [id=pencil]')
+  await toolbarPencil.click()
+  await page.mouse.move(300, 300);
+  await page.mouse.down();
+  await page.mouse.move(305, 295);
+  await page.mouse.move(310, 305);
+  await page.mouse.move(312, 315);
+  await page.mouse.move(305, 325);
+  await page.mouse.move(300, 330);
+  await page.mouse.move(300, 320);
+  await page.mouse.move(305, 315);
+  await page.mouse.move(310, 310);
+  await page.mouse.move(315, 305);
+  await page.mouse.move(320, 310);
+  await page.mouse.up();
+  await checkElementInLocalStorage(page, "path")
+  // drag&drop variant 1
+  await page.mouse.down();
+  await page.mouse.move(700, 400);
+  await page.mouse.up();
+  // delete element
+  await page.press("id=canvas", "Delete")
+  await checkNumberOfElementsInLocalStorage(page, 0)
+})
+
 async function checkElementInLocalStorage(page: Page, elementType: string) {
   return await page.waitForFunction(type => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
