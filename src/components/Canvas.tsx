@@ -7,9 +7,9 @@ import {
   elementsAtom,
   onMouseDownAtom,
   onMouseMoveAtom,
-  deleteElementsAtom,
   isDraggingAtom,
   isDrawingAtom,
+  onKeyPressAtom,
 } from '../store/store';
 import { ElemenEvent } from '../types/CommonTypes';
 import { transformCoordinates } from '../assets/utilities';
@@ -21,7 +21,7 @@ const Canvas = () => {
   const [, onMouseUp] = useAtom(onMouseUpAtom);
   const [, onMouseDown] = useAtom(onMouseDownAtom);
   const [, onMouseMove] = useAtom(onMouseMoveAtom);
-  const [, deleteElements] = useAtom(deleteElementsAtom);
+  const [, onKeyPress] = useAtom(onKeyPressAtom);
 
   const svgContainerRef = useRef<SVGSVGElement>(null);
 
@@ -49,10 +49,6 @@ const Canvas = () => {
     });
   };
 
-  const handleKeyPress = (key: string) => {
-    if (key === 'Delete') deleteElements();
-  };
-
   return (
     <svg
       id="canvas"
@@ -60,7 +56,7 @@ const Canvas = () => {
       onMouseDown={(e) => handleMouseDown(e)}
       onMouseMove={(e) => handleMouseMove(e)}
       onMouseUp={onMouseUp}
-      onKeyDown={(e) => handleKeyPress(e.key)}
+      onKeyDown={(e) => onKeyPress(e.key)}
       preserveAspectRatio="xMinYMin meet" //for the SVG container to be on the entire screen, while the elements inside kept the proportions and x=0, y=0 viewBox started from the upper left corner
       viewBox="0 0 1920 1080"
       width="100%"

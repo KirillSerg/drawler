@@ -203,6 +203,23 @@ export const onMouseUpAtom = atom(
     }
     set(isDraggingAtom, false)
     set(selectingAreaAtom, null)
-    set(initialElementAtom, initialElement)
+    // if we draw curved-line we don't need to set "free" type? it's need to continue to draw new curved-line
+    if (selectedElement?.type_name !== "pencil") {
+      set(initialElementAtom, initialElement)
+    }
+  }
+)
+
+export const onKeyPressAtom = atom(
+  null,
+  (_get, set, key: string) => {
+    switch (true) {
+      case key === "Delete":
+        set(deleteElementsAtom)
+        break;
+      case (key === "Escape"):
+        set(initialElementAtom, initialElement)
+        break;
+    }
   }
 )
