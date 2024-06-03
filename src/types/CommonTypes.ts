@@ -1,7 +1,7 @@
 export interface Element {
   id: string;
   type_name: ElementsTypeName;
-  type: "free" | "rect" | "ellipse" | "line" | "polygon" | "foreignObject";
+  type: "free" | "rect" | "ellipse" | "line" | "polygon" | "foreignObject" | "path";
   x: number;
   y: number;
   width: number;
@@ -16,6 +16,7 @@ export interface Element {
   y2: number;
   points: string  //"x,y x,y x,y ..."
   textvalue: string;
+  d: string;
   markerEnd: string;
   stroke: string;
   strokeWidth: number;
@@ -52,6 +53,7 @@ export const ELEMENT_TYPE_VARIANTS = {
   line: 'line',
   arrow_line: 'line',
   text: "foreignObject",
+  pencil: "path",
 };
 
 export type ElementsTypeName = keyof typeof ELEMENT_TYPE_VARIANTS;
