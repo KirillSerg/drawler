@@ -1,7 +1,7 @@
 export interface Element {
   id: string;
   type_name: ElementsTypeName;
-  type: "free" | "rect" | "ellipse" | "line" | "polygon" | "foreignObject" | "path";
+  type: "free" | "rect" | "ellipse" | "line" | "polygon" | "foreignObject" | "path" | "image";
   x: number;
   y: number;
   width: number;
@@ -44,6 +44,7 @@ export type ElemenEvent =
   | React.MouseEvent<SVGSVGElement, MouseEvent>
   | React.MouseEvent<SVGTextElement, MouseEvent>
   | React.MouseEvent<SVGForeignObjectElement, MouseEvent>
+  | React.MouseEvent<SVGPathElement, MouseEvent>
 
 export const ELEMENT_TYPE_VARIANTS = {
   free: 'free',
@@ -54,6 +55,7 @@ export const ELEMENT_TYPE_VARIANTS = {
   arrow_line: 'line',
   text: "foreignObject",
   pencil: "path",
+  image: "image",
 };
 
 export type ElementsTypeName = keyof typeof ELEMENT_TYPE_VARIANTS;
