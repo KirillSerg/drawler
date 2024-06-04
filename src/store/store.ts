@@ -9,8 +9,8 @@ const initialElement: Element = {
   id: "",
   x: 0,
   y: 0,
-  width: 100,
-  height: 50,
+  width: 150,
+  height: 150,
   cx: 0,
   cy: 0,
   rx: 0.5,
@@ -22,6 +22,7 @@ const initialElement: Element = {
   points: "",
   textvalue: "",
   d: "",
+  href: "",
   markerEnd: "",
   stroke: 'black',
   strokeWidth: 4,
@@ -95,6 +96,9 @@ export const onMouseDownAtom = atom(
       }
       set(elementsAtom, (prev) => [...prev, newEl])
       set(selectedElementAtom, newEl)
+      set(initialElementAtom, (prev) => {
+        return { ...prev, href: "" }
+      })
     }
   }
 )
@@ -190,6 +194,15 @@ export const onMouseMoveAtom = atom(
       }
       set(selectingAreaAtom, { ...selectingArea, endX: update.x, endY: update.y })
     }
+
+    // this is necessary to display the selected image and to move this image following the cursor
+    set(initialElementAtom, (prev) => {
+      return {
+        ...prev,
+        x: update.x,
+        y: update.y,
+      }
+    })
   }
 )
 

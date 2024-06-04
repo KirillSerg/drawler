@@ -17,6 +17,7 @@ export interface Element {
   points: string  //"x,y x,y x,y ..."
   textvalue: string;
   d: string;
+  href: string;
   markerEnd: string;
   stroke: string;
   strokeWidth: number;

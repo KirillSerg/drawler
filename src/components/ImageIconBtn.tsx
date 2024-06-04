@@ -1,4 +1,7 @@
+import { useRef } from 'react';
+import { useAtom } from 'jotai';
 import { ElementsTypeName } from '../types/CommonTypes';
+import { initialElementAtom } from '../store/store';
 
 interface Props {
   className: string;
@@ -6,8 +9,37 @@ interface Props {
 }
 
 const ImageIconBtn = ({ className, handlerClick }: Props) => {
+  const [, setInitialElement] = useAtom(initialElementAtom);
+
+  const fileInputRef = useRef<HTMLInputElement>(null);
+
+  const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
+    if (e.target.files && e.target.files[0]) {
+      const selectedImage = URL.createObjectURL(e.target.files[0]);
+      setInitialElement((prev) => {
+        return { ...prev, href: selectedImage };
+      });
+      // Reset the file input value, to allow selecting the same image twice in a row (which might not trigger the onChange event
+      if (fileInputRef.current) {
+        fileInputRef.current.value = '';
+      }
+    }
+  };
+
   return (
-    <button className={`${className}`} onClick={() => handlerClick('image')}>
+    <button className={className} onClick={() => handlerClick('image')}>
+      <div className="absolute">
+        <label htmlFor="image" className="relative cursor-pointer">
+          <div className="w-5 h-5"></div>
+        </label>
+        <input
+          ref={fileInputRef}
+          onChange={(e) => handleImageChange(e)}
+          id="image"
+          type="file"
+          className="hidden"
+        />
+      </div>
       <svg
         viewBox="0 0 24 24"
         height="100%"

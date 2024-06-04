@@ -10,6 +10,7 @@ import {
   isDraggingAtom,
   isDrawingAtom,
   onKeyPressAtom,
+  initialElementAtom,
 } from '../store/store';
 import { ElemenEvent } from '../types/CommonTypes';
 import { transformCoordinates } from '../assets/utilities';
@@ -22,6 +23,7 @@ const Canvas = () => {
   const [, onMouseDown] = useAtom(onMouseDownAtom);
   const [, onMouseMove] = useAtom(onMouseMoveAtom);
   const [, onKeyPress] = useAtom(onKeyPressAtom);
+  const initialElement = useAtomValue(initialElementAtom);
 
   const svgContainerRef = useRef<SVGSVGElement>(null);
 
@@ -86,6 +88,14 @@ const Canvas = () => {
       ))}
 
       {!isDragging && !isDrawing && <SelectingArea />}
+
+      {initialElement.type_name === 'image' && (
+        <SingleElement
+          key={initialElement.id}
+          element={initialElement}
+          svgContainerRef={svgContainerRef.current}
+        />
+      )}
     </svg>
   );
 };
