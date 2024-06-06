@@ -15,14 +15,18 @@ const ImageIconBtn = ({ className, handlerClick }: Props) => {
 
   const handleImageChange = (e: React.ChangeEvent<HTMLInputElement>) => {
     if (e.target.files && e.target.files[0]) {
-      const selectedImage = URL.createObjectURL(e.target.files[0]);
-      setInitialElement((prev) => {
-        return { ...prev, href: selectedImage };
-      });
-      // Reset the file input value, to allow selecting the same image twice in a row (which might not trigger the onChange event
-      if (fileInputRef.current) {
-        fileInputRef.current.value = '';
-      }
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        if (reader.result !== null)
+          setInitialElement((prev) => {
+            return { ...prev, href: reader.result };
+          });
+        // Reset the file input value
+        if (fileInputRef.current) {
+          fileInputRef.current.value = '';
+        }
+      };
+      reader.readAsDataURL(e.target.files[0]);
     }
   };
 

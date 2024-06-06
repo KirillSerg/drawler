@@ -22,7 +22,7 @@ const initialElement: Element = {
   points: "",
   textvalue: "",
   d: "",
-  href: "",
+  href: null,
   markerEnd: "",
   stroke: 'black',
   strokeWidth: 4,
