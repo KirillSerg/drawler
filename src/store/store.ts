@@ -37,6 +37,7 @@ export const isDraggingAtom = atom(false)
 export const isDrawingAtom = atom(
   (get) => get(initialElementAtom).type === "free" ? false : true
 )
+export const zoomSizeAtom = atom<{ percentage: number, width: number, height: number }>({ percentage: 100, width: 1920, height: 1080 })
 
 export const updateElementsAtom = atom(
   null,

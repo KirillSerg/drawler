@@ -10,6 +10,7 @@ import {
   isDraggingAtom,
   isDrawingAtom,
   onKeyPressAtom,
+  zoomSizeAtom,
 } from '../store/store';
 import { ElemenEvent } from '../types/CommonTypes';
 import { transformCoordinates } from '../assets/utilities';
@@ -22,6 +23,7 @@ const Canvas = () => {
   const [, onMouseDown] = useAtom(onMouseDownAtom);
   const [, onMouseMove] = useAtom(onMouseMoveAtom);
   const [, onKeyPress] = useAtom(onKeyPressAtom);
+  const zoomSize = useAtomValue(zoomSizeAtom);
 
   const svgContainerRef = useRef<SVGSVGElement>(null);
 
@@ -58,7 +60,7 @@ const Canvas = () => {
       onMouseUp={onMouseUp}
       onKeyDown={(e) => onKeyPress(e.key)}
       preserveAspectRatio="xMinYMin meet" //for the SVG container to be on the entire screen, while the elements inside kept the proportions and x=0, y=0 viewBox started from the upper left corner
-      viewBox="0 0 1920 1080"
+      viewBox={`0 0 ${zoomSize.width} ${zoomSize.height}`}
       width="100%"
       height="100%"
       xmlns="http://www.w3.org/2000/svg"
