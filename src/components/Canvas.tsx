@@ -10,11 +10,13 @@ import {
   isDraggingAtom,
   isDrawingAtom,
   keyPressedAtom,
-  onKeyPressAtom,
   canvasViewBoxAtom,
-  updateCanvasViewBoxAtom,
+  zoomCanvasAtom,
+  creationInitialElementAtom,
+  selectingAreaAtom,
+  grabCanvasAtom,
 } from '../store/store';
-import { ElemenEvent, UpdateCanvasViewBoxFn } from '../types/CommonTypes';
+import { ElemenEvent, ZoomCanvasFn } from '../types/CommonTypes';
 import { transformCoordinates } from '../assets/utilities';
 
 const Canvas = () => {
@@ -25,9 +27,11 @@ const Canvas = () => {
   const [, onMouseDown] = useAtom(onMouseDownAtom);
   const [, onMouseMove] = useAtom(onMouseMoveAtom);
   const keyPressed = useAtomValue(keyPressedAtom);
-  const [, onKeyPress] = useAtom(onKeyPressAtom);
   const canvasViewBox = useAtomValue(canvasViewBoxAtom);
-  const [, updateCanvasViewBox] = useAtom(updateCanvasViewBoxAtom);
+  const [, zoomCanvas] = useAtom(zoomCanvasAtom);
+  const creationInitialElement = useAtomValue(creationInitialElementAtom);
+  const selectingArea = useAtomValue(selectingAreaAtom);
+  const [canasViewBox, grabCanvas] = useAtom(grabCanvasAtom);
 
   const svgContainerRef = useRef<SVGSVGElement>(null);
 
@@ -55,14 +59,18 @@ const Canvas = () => {
     });
   };
 
+  // for prevent default browser zoom
   useEffect(() => {
     const handleOnWheel = (e: WheelEvent) => {
       e.preventDefault();
       if (keyPressed.ctrlKey && e.deltaY < 0) {
-        updateCanvasViewBox(UpdateCanvasViewBoxFn.ZOOMUP);
+        zoomCanvas(ZoomCanvasFn.ZOOMUP);
       }
       if (keyPressed.ctrlKey && e.deltaY > 0) {
-        updateCanvasViewBox(UpdateCanvasViewBoxFn.ZOOMDOWN);
+        zoomCanvas(ZoomCanvasFn.ZOOMDOWN);
+      }
+      if (!keyPressed.ctrlKey) {
+        grabCanvas({ ...canasViewBox, y: e.deltaY });
       }
     };
 
@@ -77,25 +85,16 @@ const Canvas = () => {
         containerElement.removeEventListener('wheel', handleOnWheel);
       };
     }
-  }, [keyPressed.ctrlKey, updateCanvasViewBox]);
+  }, [keyPressed.ctrlKey, canasViewBox, zoomCanvas, grabCanvas]);
 
   return (
     <svg
-      className="h-screen focus:outline-none"
+      className={`h-screen focus:outline-none ${selectingArea && creationInitialElement.type_name === 'grab' ? 'cursor-grabbing' : creationInitialElement.type_name === 'grab' ? 'cursor-grab' : ''}`}
       id="canvas"
       ref={svgContainerRef}
       onMouseDown={(e) => handleMouseDown(e)}
       onMouseMove={(e) => handleMouseMove(e)}
       onMouseUp={onMouseUp}
-      onKeyDown={(e) => {
-        e.preventDefault();
-        onKeyPress({ ctrlKey: e.ctrlKey || e.metaKey, key: e.key });
-      }}
-      onKeyUp={(e) => {
-        e.preventDefault();
-        onKeyPress({ ctrlKey: e.ctrlKey || e.metaKey, key: '' });
-      }}
-      // onWheel={(e) => handleOnWheel(e)}
       preserveAspectRatio="xMinYMin meet" //for the SVG container to be on the entire screen, while the elements inside kept the proportions and x=0, y=0 viewBox started from the upper left corner
       viewBox={`${canvasViewBox.x} ${canvasViewBox.y} ${canvasViewBox.width} ${canvasViewBox.height}`}
       width="100%"
@@ -124,7 +123,9 @@ const Canvas = () => {
         />
       ))}
 
-      {!isDragging && !isDrawing && <SelectingArea />}
+      {!isDragging &&
+        !isDrawing &&
+        creationInitialElement.type_name !== 'grab' && <SelectingArea />}
     </svg>
   );
 };

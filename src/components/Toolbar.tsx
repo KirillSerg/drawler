@@ -1,5 +1,8 @@
 import { useAtom } from 'jotai';
-import { initialElementAtom, selectedElementAtom } from '../store/store';
+import {
+  creationInitialElementAtom,
+  selectedElementAtom,
+} from '../store/store';
 import LineIconBtn from './LineIconBtn';
 import LineArrowIconBtn from './LineArrowIconBtn';
 import TriangleIconBtn from './TriangleIconBtn';
@@ -13,9 +16,12 @@ import {
 } from '../types/CommonTypes';
 import TextIconBtn from './TextIconBtn';
 import PencilIconBtn from './PencilIconBtn';
+import GrabIconBtn from './GrabIconBtn copy';
 
 const Toolbar = () => {
-  const [initialElement, setInitialElement] = useAtom(initialElementAtom);
+  const [initialElement, setInitialElement] = useAtom(
+    creationInitialElementAtom,
+  );
   const [, setSelectedElement] = useAtom(selectedElementAtom);
 
   const handlerSelectElement = (typeName: ElementsTypeName) => {
@@ -32,6 +38,10 @@ const Toolbar = () => {
 
   return (
     <header className="w-fit h-[6%] fixed top-3 flex justify-center items-center gap-4 border-[1px] border-black">
+      <GrabIconBtn
+        className={`${initialElement.type_name === 'grab' ? 'bg-orange-500' : 'bg-inherit'} h-[100%] w-8 p-[6px]`}
+        handlerClick={handlerSelectElement}
+      />
       <FreeIconBtn
         className={`${initialElement.type_name === 'free' ? 'bg-orange-500' : 'bg-inherit'} h-[100%] w-8 p-[6px]`}
         handlerClick={handlerSelectElement}

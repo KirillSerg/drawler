@@ -1,10 +1,10 @@
 import { useAtom, useAtomValue } from 'jotai';
-import { canvasViewBoxAtom, updateCanvasViewBoxAtom } from '../store/store';
-import { UpdateCanvasViewBoxFn } from '../types/CommonTypes';
+import { canvasViewBoxAtom, zoomCanvasAtom } from '../store/store';
+import { ZoomCanvasFn } from '../types/CommonTypes';
 
 const Zoom = () => {
   const canvasViewBox = useAtomValue(canvasViewBoxAtom);
-  const [, updateCanvasViewBox] = useAtom(updateCanvasViewBoxAtom);
+  const [, zoomCanvas] = useAtom(zoomCanvasAtom);
 
   return (
     <div className="w-full flex justify-end px-5">
@@ -12,7 +12,7 @@ const Zoom = () => {
         <button
           className="font-bold text-xl leading-none text-start"
           onClick={() => {
-            updateCanvasViewBox(UpdateCanvasViewBoxFn.ZOOMDOWN);
+            zoomCanvas(ZoomCanvasFn.ZOOMDOWN);
           }}
         >
           -
@@ -21,7 +21,7 @@ const Zoom = () => {
         <button
           className="w-10"
           onClick={() => {
-            updateCanvasViewBox(UpdateCanvasViewBoxFn.ZOOMRESET);
+            zoomCanvas(ZoomCanvasFn.ZOOMRESET);
           }}
         >
           {`${canvasViewBox.percentage}%`}
@@ -30,7 +30,7 @@ const Zoom = () => {
         <button
           className="font-bold text-lg"
           onClick={() => {
-            updateCanvasViewBox(UpdateCanvasViewBoxFn.ZOOMUP);
+            zoomCanvas(ZoomCanvasFn.ZOOMUP);
           }}
         >
           +

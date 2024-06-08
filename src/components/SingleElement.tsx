@@ -30,7 +30,7 @@ const SingleElement = ({ element, svgContainerRef }: Props) => {
 
   return (
     <>
-      {element.type !== 'free' && (
+      {element.type !== 'free' && element.type !== 'grab' && (
         <element.type //flexible&dynemic rendering svg-elements
           {...element}
           style={{ cursor: 'pointer' }}

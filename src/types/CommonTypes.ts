@@ -1,7 +1,7 @@
 export interface Element {
   id: string;
   type_name: ElementsTypeName;
-  type: "free" | "rect" | "ellipse" | "line" | "polygon" | "foreignObject" | "path";
+  type: "grab" | "free" | "rect" | "ellipse" | "line" | "polygon" | "foreignObject" | "path";
   x: number;
   y: number;
   width: number;
@@ -44,8 +44,10 @@ export type ElemenEvent =
   | React.MouseEvent<SVGSVGElement, MouseEvent>
   | React.MouseEvent<SVGTextElement, MouseEvent>
   | React.MouseEvent<SVGForeignObjectElement, MouseEvent>
+  | React.MouseEvent<SVGPathElement, MouseEvent>
 
 export const ELEMENT_TYPE_VARIANTS = {
+  grab: "grab",
   free: 'free',
   rect: 'rect',
   ellipse: 'ellipse',
@@ -66,12 +68,8 @@ export type CanvasViewBox = {
   height: number
 }
 
-export enum UpdateCanvasViewBoxFn {
+export enum ZoomCanvasFn {
   ZOOMUP,
   ZOOMDOWN,
-  DRAGUP,
-  DRAGRIGHT,
-  DRAGDOWN,
-  DRAGLEFT,
   ZOOMRESET,
 }
