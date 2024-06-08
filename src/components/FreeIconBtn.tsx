@@ -10,7 +10,7 @@ const FreeIconBtn = ({ className, handlerClick }: Props) => {
     <button className={`${className}`} onClick={() => handlerClick('free')}>
       <svg
         fill="#000000"
-        height="20.73"
+        height="100%"
         width="20.73"
         xmlns="http://www.w3.org/2000/svg"
         viewBox="0 0 203.079 203.079"

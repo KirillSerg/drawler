@@ -57,3 +57,21 @@ export const ELEMENT_TYPE_VARIANTS = {
 };
 
 export type ElementsTypeName = keyof typeof ELEMENT_TYPE_VARIANTS;
+
+export type CanvasViewBox = {
+  x: number,
+  y: number,
+  percentage: number,
+  width: number,
+  height: number
+}
+
+export enum UpdateCanvasViewBoxFn {
+  ZOOMUP,
+  ZOOMDOWN,
+  DRAGUP,
+  DRAGRIGHT,
+  DRAGDOWN,
+  DRAGLEFT,
+  ZOOMRESET,
+}

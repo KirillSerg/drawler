@@ -1,38 +1,41 @@
-import { useAtom } from 'jotai';
-import { zoomSizeAtom } from '../store/store';
+import { useAtom, useAtomValue } from 'jotai';
+import { canvasViewBoxAtom, updateCanvasViewBoxAtom } from '../store/store';
+import { UpdateCanvasViewBoxFn } from '../types/CommonTypes';
 
 const Zoom = () => {
-  const [zoomSize, setZoomSize] = useAtom(zoomSizeAtom);
+  const canvasViewBox = useAtomValue(canvasViewBoxAtom);
+  const [, updateCanvasViewBox] = useAtom(updateCanvasViewBoxAtom);
+
   return (
-    <div className="h-[6%] w-64 sticky bottom-0 flex justify-center gap-4 border-4 border-black">
-      <button
-        onClick={() => {
-          setZoomSize((prev) => {
-            if (prev.percentage === 0) return prev;
-            return {
-              percentage: prev.percentage - 10,
-              width: prev.width + 1920 * 0.1,
-              height: prev.height + 1080 * 0.1,
-            };
-          });
-        }}
-      >
-        -
-      </button>
-      <span>{`${zoomSize.percentage} %`}</span>
-      <button
-        onClick={() => {
-          setZoomSize((prev) => {
-            return {
-              percentage: prev.percentage + 10,
-              width: prev.width - 1920 * 0.1,
-              height: prev.height - 1080 * 0.1,
-            };
-          });
-        }}
-      >
-        +
-      </button>
+    <div className="w-full flex justify-end px-5">
+      <div className="h-fit w-fit px-2 fixed bottom-3 flex justify-center items-center gap-4 border-[1px] border-black">
+        <button
+          className="font-bold text-xl leading-none text-start"
+          onClick={() => {
+            updateCanvasViewBox(UpdateCanvasViewBoxFn.ZOOMDOWN);
+          }}
+        >
+          -
+        </button>
+
+        <button
+          className="w-10"
+          onClick={() => {
+            updateCanvasViewBox(UpdateCanvasViewBoxFn.ZOOMRESET);
+          }}
+        >
+          {`${canvasViewBox.percentage}%`}
+        </button>
+
+        <button
+          className="font-bold text-lg"
+          onClick={() => {
+            updateCanvasViewBox(UpdateCanvasViewBoxFn.ZOOMUP);
+          }}
+        >
+          +
+        </button>
+      </div>
     </div>
   );
 };

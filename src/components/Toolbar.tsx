@@ -31,44 +31,44 @@ const Toolbar = () => {
   };
 
   return (
-    <header className="h-[6%] sticky top-0 flex justify-center gap-4 border-4 border-black">
+    <header className="w-fit h-[6%] fixed top-3 flex justify-center items-center gap-4 border-[1px] border-black">
       <FreeIconBtn
-        className={`${initialElement.type_name === 'free' ? 'bg-orange-500' : 'bg-inherit'} h-8 w-8 p-[6px]`}
+        className={`${initialElement.type_name === 'free' ? 'bg-orange-500' : 'bg-inherit'} h-[100%] w-8 p-[6px]`}
         handlerClick={handlerSelectElement}
       />
 
       <RectIconBtn
-        className={`${initialElement.type_name === 'rect' ? 'bg-orange-500' : 'bg-inherit'} h-8 w-8 p-[6px]`}
+        className={`${initialElement.type_name === 'rect' ? 'bg-orange-500' : 'bg-inherit'} h-[100%] w-8 p-[6px]`}
         handlerClick={handlerSelectElement}
       />
 
       <EllipseIconBtn
-        className={`${initialElement.type_name === 'ellipse' ? 'bg-orange-500' : 'bg-inherit'} h-8 w-8 p-[6px]`}
+        className={`${initialElement.type_name === 'ellipse' ? 'bg-orange-500' : 'bg-inherit'} h-[100%] w-8 p-[6px]`}
         handlerClick={handlerSelectElement}
       />
 
       <TriangleIconBtn
-        className={`${initialElement.type_name === 'polygon' ? 'bg-orange-500' : 'bg-inherit'} h-8 w-8 p-[6px]`}
+        className={`${initialElement.type_name === 'polygon' ? 'bg-orange-500' : 'bg-inherit'} h-[100%] w-8 p-[6px]`}
         handlerClick={handlerSelectElement}
       />
 
       <LineIconBtn
-        className={`${initialElement.type_name === 'line' ? 'bg-orange-500' : 'bg-inherit'} h-8 w-8 p-[6px]`}
+        className={`${initialElement.type_name === 'line' ? 'bg-orange-500' : 'bg-inherit'} h-[100%] w-8 p-[6px]`}
         handlerClick={handlerSelectElement}
       />
 
       <LineArrowIconBtn
-        className={`${initialElement.type_name === 'arrow_line' ? 'bg-orange-500' : 'bg-inherit'} h-8 w-8 p-[6px]`}
+        className={`${initialElement.type_name === 'arrow_line' ? 'bg-orange-500' : 'bg-inherit'} h-[100%] w-8 p-[6px]`}
         handlerClick={handlerSelectElement}
       />
 
       <TextIconBtn
-        className={`${initialElement.type_name === 'text' ? 'bg-orange-500' : 'bg-inherit'} h-8 w-8 p-[6px]`}
+        className={`${initialElement.type_name === 'text' ? 'bg-orange-500' : 'bg-inherit'} h-[100%] w-8 p-[6px]`}
         handlerClick={handlerSelectElement}
       />
 
       <PencilIconBtn
-        className={`${initialElement.type_name === 'pencil' ? 'bg-orange-500' : 'bg-inherit'} h-8 w-8 p-[6px]`}
+        className={`${initialElement.type_name === 'pencil' ? 'bg-orange-500' : 'bg-inherit'} h-[100%] w-8 p-[6px]`}
         handlerClick={handlerSelectElement}
       />
     </header>

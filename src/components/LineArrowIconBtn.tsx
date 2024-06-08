@@ -11,7 +11,12 @@ const LineArrowIconBtn = ({ className, handlerClick }: Props) => {
       className={`${className}`}
       onClick={() => handlerClick('arrow_line')}
     >
-      <svg viewBox="0 0 24 24" height="100%" xmlns="http://www.w3.org/2000/svg">
+      <svg
+        viewBox="0 0 24 24"
+        height="100%"
+        width="100%"
+        xmlns="http://www.w3.org/2000/svg"
+      >
         <defs>
           <marker
             id="arrow"

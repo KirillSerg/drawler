@@ -1,5 +1,5 @@
 import { atom } from "jotai";
-import { Area, Coordinates, Element } from "../types/CommonTypes";
+import { Area, CanvasViewBox, Coordinates, Element, UpdateCanvasViewBoxFn } from "../types/CommonTypes";
 import { atomWithStorage } from 'jotai/utils'
 import { getPencilPointsArrFromString, getTrianglePointsArrFromString, useUpdateXYAndDistance } from "../assets/utilities";
 
@@ -25,8 +25,15 @@ const initialElement: Element = {
   markerEnd: "",
   stroke: 'black',
   strokeWidth: 4,
-  fill: 'transparent',
+  fill: 'none',
   fontSize: "28px",
+}
+const initialCanvasViewBox = {
+  x: 0,
+  y: 0,
+  percentage: 100,
+  width: 1920,
+  height: 1080,
 }
 
 export const initialElementAtom = atom<Element>(initialElement)
@@ -37,7 +44,40 @@ export const isDraggingAtom = atom(false)
 export const isDrawingAtom = atom(
   (get) => get(initialElementAtom).type === "free" ? false : true
 )
-export const zoomSizeAtom = atom<{ percentage: number, width: number, height: number }>({ percentage: 100, width: 1920, height: 1080 })
+export const canvasViewBoxAtom = atomWithStorage<CanvasViewBox>("canvasViewBox", initialCanvasViewBox)
+
+export const updateCanvasViewBoxAtom = atom(
+  null,
+  (get, set, updateFn: UpdateCanvasViewBoxFn) => {
+    const canvasViewBox = get(canvasViewBoxAtom)
+
+    switch (updateFn) {
+      case UpdateCanvasViewBoxFn.ZOOMDOWN:
+        if (canvasViewBox.percentage === 0) return;
+        set(canvasViewBoxAtom, {
+          ...canvasViewBox,
+          percentage: canvasViewBox.percentage - 10,
+          width: canvasViewBox.width + 1920 * 0.1,
+          height: canvasViewBox.height + 1080 * 0.1,
+        })
+        break;
+
+      case UpdateCanvasViewBoxFn.ZOOMUP:
+        if (canvasViewBox.percentage === 200) return;
+        set(canvasViewBoxAtom, {
+          ...canvasViewBox,
+          percentage: canvasViewBox.percentage + 10,
+          width: canvasViewBox.width - 1920 * 0.1,
+          height: canvasViewBox.height - 1080 * 0.1,
+        })
+        break;
+
+      case UpdateCanvasViewBoxFn.ZOOMRESET:
+        set(canvasViewBoxAtom, initialCanvasViewBox)
+        break;
+    }
+  }
+)
 
 export const updateElementsAtom = atom(
   null,

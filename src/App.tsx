@@ -6,7 +6,7 @@ import Zoom from './components/Zoom';
 
 const App = () => {
   return (
-    <div className="flex flex-col h-screen relative">
+    <div className="h-screen flex flex-col items-center relative">
       <Toolbar />
       <Canvas />
       <Inspector />
