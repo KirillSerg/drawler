@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { useAtom, useAtomValue } from 'jotai';
 import SingleElement from './SingleElement';
 import SelectingArea from './SelectingArea';
@@ -9,10 +9,12 @@ import {
   onMouseMoveAtom,
   isDraggingAtom,
   isDrawingAtom,
+  keyPressedAtom,
   onKeyPressAtom,
   canvasViewBoxAtom,
+  updateCanvasViewBoxAtom,
 } from '../store/store';
-import { ElemenEvent } from '../types/CommonTypes';
+import { ElemenEvent, UpdateCanvasViewBoxFn } from '../types/CommonTypes';
 import { transformCoordinates } from '../assets/utilities';
 
 const Canvas = () => {
@@ -22,8 +24,10 @@ const Canvas = () => {
   const [, onMouseUp] = useAtom(onMouseUpAtom);
   const [, onMouseDown] = useAtom(onMouseDownAtom);
   const [, onMouseMove] = useAtom(onMouseMoveAtom);
+  const keyPressed = useAtomValue(keyPressedAtom);
   const [, onKeyPress] = useAtom(onKeyPressAtom);
-  const zoomSize = useAtomValue(canvasViewBoxAtom);
+  const canvasViewBox = useAtomValue(canvasViewBoxAtom);
+  const [, updateCanvasViewBox] = useAtom(updateCanvasViewBoxAtom);
 
   const svgContainerRef = useRef<SVGSVGElement>(null);
 
@@ -51,6 +55,30 @@ const Canvas = () => {
     });
   };
 
+  useEffect(() => {
+    const handleOnWheel = (e: WheelEvent) => {
+      e.preventDefault();
+      if (keyPressed.ctrlKey && e.deltaY < 0) {
+        updateCanvasViewBox(UpdateCanvasViewBoxFn.ZOOMUP);
+      }
+      if (keyPressed.ctrlKey && e.deltaY > 0) {
+        updateCanvasViewBox(UpdateCanvasViewBoxFn.ZOOMDOWN);
+      }
+    };
+
+    const containerElement = svgContainerRef.current;
+
+    if (containerElement) {
+      containerElement.addEventListener('wheel', handleOnWheel, {
+        passive: false,
+      });
+
+      return () => {
+        containerElement.removeEventListener('wheel', handleOnWheel);
+      };
+    }
+  }, [keyPressed.ctrlKey, updateCanvasViewBox]);
+
   return (
     <svg
       className="h-screen focus:outline-none"
@@ -59,9 +87,17 @@ const Canvas = () => {
       onMouseDown={(e) => handleMouseDown(e)}
       onMouseMove={(e) => handleMouseMove(e)}
       onMouseUp={onMouseUp}
-      onKeyDown={(e) => onKeyPress(e.key)}
+      onKeyDown={(e) => {
+        e.preventDefault();
+        onKeyPress({ ctrlKey: e.ctrlKey || e.metaKey, key: e.key });
+      }}
+      onKeyUp={(e) => {
+        e.preventDefault();
+        onKeyPress({ ctrlKey: e.ctrlKey || e.metaKey, key: '' });
+      }}
+      // onWheel={(e) => handleOnWheel(e)}
       preserveAspectRatio="xMinYMin meet" //for the SVG container to be on the entire screen, while the elements inside kept the proportions and x=0, y=0 viewBox started from the upper left corner
-      viewBox={`${zoomSize.x} ${zoomSize.y} ${zoomSize.width} ${zoomSize.height}`}
+      viewBox={`${canvasViewBox.x} ${canvasViewBox.y} ${canvasViewBox.width} ${canvasViewBox.height}`}
       width="100%"
       height="100%"
       xmlns="http://www.w3.org/2000/svg"

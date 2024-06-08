@@ -45,6 +45,7 @@ export const isDrawingAtom = atom(
   (get) => get(initialElementAtom).type === "free" ? false : true
 )
 export const canvasViewBoxAtom = atomWithStorage<CanvasViewBox>("canvasViewBox", initialCanvasViewBox)
+export const keyPressedAtom = atom<{ ctrlKey: boolean; key: string }>({ ctrlKey: false, key: "" })
 
 export const updateCanvasViewBoxAtom = atom(
   null,
@@ -253,13 +254,22 @@ export const onMouseUpAtom = atom(
 
 export const onKeyPressAtom = atom(
   null,
-  (_get, set, key: string) => {
+  (_get, set, key: { ctrlKey: boolean; key: string }) => {
+    console.info(key)
+    set(keyPressedAtom, key)
+
     switch (true) {
-      case key === "Delete":
+      case key.key === "Delete":
         set(deleteElementsAtom)
         break;
-      case (key === "Escape"):
+      case (key.key === "Escape"):
         set(initialElementAtom, initialElement)
+        break;
+      case (key.key === "+" && key.ctrlKey):
+        set(updateCanvasViewBoxAtom, UpdateCanvasViewBoxFn.ZOOMUP)
+        break;
+      case (key.key === "-" && key.ctrlKey):
+        set(updateCanvasViewBoxAtom, UpdateCanvasViewBoxFn.ZOOMDOWN)
         break;
     }
   }
