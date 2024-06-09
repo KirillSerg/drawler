@@ -190,6 +190,8 @@ export const onMouseDownAtom = atom(
         type: "grab",
         type_name: "grab",
       })
+    } else {
+      set(creationInitialElementAtom, initialElement)
     }
   }
 )
