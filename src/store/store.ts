@@ -183,6 +183,14 @@ export const onMouseDownAtom = atom(
       set(elementsAtom, (prev) => [...prev, newEl])
       set(selectedElementAtom, newEl)
     }
+
+    if (get(keyPressedAtom).ctrlKey) {
+      set(creationInitialElementAtom, {
+        ...get(creationInitialElementAtom),
+        type: "grab",
+        type_name: "grab",
+      })
+    }
   }
 )
 
