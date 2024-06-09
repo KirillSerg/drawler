@@ -13,11 +13,15 @@ const App = () => {
     <div
       className="h-screen flex flex-col items-center relative"
       onKeyDown={(e) => {
-        e.preventDefault();
+        if (e.key === '+' || e.key === '-') {
+          e.preventDefault();
+        }
         onKeyPress({ ctrlKey: e.ctrlKey || e.metaKey, key: e.key });
       }}
       onKeyUp={(e) => {
-        e.preventDefault();
+        if (e.key === '+' || e.key === '-') {
+          e.preventDefault();
+        }
         onKeyPress({ ctrlKey: e.ctrlKey || e.metaKey, key: '' });
       }}
     >

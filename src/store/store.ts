@@ -57,9 +57,10 @@ export const keyPressedAtom = atom<{ ctrlKey: boolean; key: string }>({ ctrlKey:
 
 export const onKeyPressAtom = atom(
   null,
-  (_get, set, key: { ctrlKey: boolean; key: string }) => {
+  (get, set, key: { ctrlKey: boolean; key: string }) => {
     // console.info(key)
     set(keyPressedAtom, key)
+    const creationInitialElement = get(creationInitialElementAtom)
 
     switch (true) {
       case key.key === "Delete":
@@ -73,6 +74,9 @@ export const onKeyPressAtom = atom(
         break;
       case (key.key === "-" && key.ctrlKey):
         set(zoomCanvasAtom, ZoomCanvasFn.ZOOMDOWN)
+        break;
+      case (!key.ctrlKey && creationInitialElement.type_name === "grab"):
+        set(creationInitialElementAtom, initialElement)
         break;
     }
   }
@@ -183,15 +187,13 @@ export const onMouseDownAtom = atom(
       set(elementsAtom, (prev) => [...prev, newEl])
       set(selectedElementAtom, newEl)
     }
-
+    console.log(get(keyPressedAtom).ctrlKey)
     if (get(keyPressedAtom).ctrlKey) {
       set(creationInitialElementAtom, {
         ...get(creationInitialElementAtom),
         type: "grab",
         type_name: "grab",
       })
-    } else {
-      set(creationInitialElementAtom, initialElement)
     }
   }
 )

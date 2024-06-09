@@ -10,6 +10,7 @@ const Zoom = () => {
     <div className="w-full flex justify-end px-5">
       <div className="h-fit w-fit px-2 fixed bottom-3 flex justify-center items-center gap-4 border-[1px] border-black">
         <button
+          id="zoomdown"
           className="font-bold text-xl leading-none text-start"
           onClick={() => {
             zoomCanvas(ZoomCanvasFn.ZOOMDOWN);
@@ -19,6 +20,7 @@ const Zoom = () => {
         </button>
 
         <button
+          id="zoompercent"
           className="w-10"
           onClick={() => {
             zoomCanvas(ZoomCanvasFn.ZOOMRESET);
@@ -28,6 +30,7 @@ const Zoom = () => {
         </button>
 
         <button
+          id="zoomup"
           className="font-bold text-lg"
           onClick={() => {
             zoomCanvas(ZoomCanvasFn.ZOOMUP);

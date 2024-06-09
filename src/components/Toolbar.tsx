@@ -31,6 +31,7 @@ const Toolbar = () => {
         type: ELEMENT_TYPE_VARIANTS[typeName] as Element['type'],
         type_name: typeName,
         markerEnd: typeName === 'arrow_line' ? 'url(#arrow)' : '',
+        fill: typeName === 'text' ? 'transparent' : 'none',
       };
     });
     setSelectedElement(null);

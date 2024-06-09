@@ -127,6 +127,27 @@ test("Create curved line", async ({ page }) => {
   await checkNumberOfElementsInLocalStorage(page, 0)
 })
 
+// test("Zoom", async ({ page }) => {
+//   await page.goto('http://localhost:5173/');
+//   const zoomDownBtn = page.locator('[id=zoomdown]')
+//   const zoomUpBtn = page.locator('[id=zoomup]')
+//   const zoom = page.locator('[id=zoompercent]')
+//   await zoomDownBtn.click()
+
+//   await checkElementInLocalStorage(page, "path")
+//   // escape from pensil mode
+//   await page.press("id=canvas", "Escape")
+//   // drag&drop variant 1
+//   // moove to one pixel back to fix bug in firefox test
+//   await page.mouse.move(319, 309);
+//   await page.mouse.down();
+//   await page.mouse.move(700, 400);
+//   await page.mouse.up();
+//   // delete element
+//   await page.press("id=canvas", "Delete")
+//   await checkNumberOfElementsInLocalStorage(page, 0)
+// })
+
 async function checkElementInLocalStorage(page: Page, elementType: string) {
   return await page.waitForFunction(type => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -140,6 +161,13 @@ async function checkNumberOfElementsInLocalStorage(page: Page, expected: number)
     return JSON.parse(localStorage['elements']).length === e;
   }, expected);
 }
+
+// async function checkCanvasViewBoxParametersInLocalStorage(page: Page, param: string, value: number) {
+//   return await page.waitForFunction(param => {
+//     // eslint-disable-next-line @typescript-eslint/no-explicit-any
+//     return JSON.parse(localStorage['canvasViewBox']).find((p: any) => p === param);
+//   }, param, value);
+// }
 
 
 
