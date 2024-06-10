@@ -153,13 +153,44 @@ test("Zoom", async ({ page }) => {
   await page.mouse.wheel(0, 500);
   await page.keyboard.up("Control")
   await checkCanvasViewBoxParametersInLocalStorage(page, { key: "percentage", value: 90 })
-  // reset zoom
+  // reset zoom (centered)
   await zoomReset.click()
   await checkCanvasViewBoxParametersInLocalStorage(page, { key: "percentage", value: 100 })
   await checkCanvasViewBoxParametersInLocalStorage(page, { key: "width", value: 1920 })
   await checkCanvasViewBoxParametersInLocalStorage(page, { key: "height", value: 1080 })
   await checkCanvasViewBoxParametersInLocalStorage(page, { key: "x", value: 0 })
   await checkCanvasViewBoxParametersInLocalStorage(page, { key: "y", value: 0 })
+})
+
+test("Grab canvas", async ({ page }) => {
+  await page.goto('http://localhost:5173/');
+  const zoomReset = page.locator('[id=zoomreset]')
+  const toolbarGrab = page.locator('header > [id=canvasGrabBtn]')
+  await toolbarGrab.click()
+  // await page.locator('#canvas').click() // it's need if testing in --headed mode
+  await page.mouse.move(600, 600);
+  await page.mouse.down();
+  await page.mouse.move(700, 700);
+  await page.mouse.up();
+  await checkCanvasViewBoxParametersInLocalStorage(page, { key: "x", value: -1 })
+  await checkCanvasViewBoxParametersInLocalStorage(page, { key: "y", value: -1 })
+  // reset grab (centered)
+  await zoomReset.click()
+  // await page.locator('#canvas').click()  // it's need if testing in --headed mode
+  await checkCanvasViewBoxParametersInLocalStorage(page, { key: "percentage", value: 100 })
+  await checkCanvasViewBoxParametersInLocalStorage(page, { key: "width", value: 1920 })
+  await checkCanvasViewBoxParametersInLocalStorage(page, { key: "height", value: 1080 })
+  await checkCanvasViewBoxParametersInLocalStorage(page, { key: "x", value: 0 })
+  await checkCanvasViewBoxParametersInLocalStorage(page, { key: "y", value: 0 })
+  // grab by keyPress + mouse move
+  await page.mouse.move(600, 600);
+  await page.keyboard.down('Control')
+  await page.mouse.down();
+  await page.mouse.move(400, 400);
+  await page.mouse.up();
+  await page.keyboard.up("Control")
+  await checkCanvasViewBoxParametersInLocalStorage(page, { key: "x", value: 1 })
+  await checkCanvasViewBoxParametersInLocalStorage(page, { key: "y", value: 1 })
 })
 
 async function checkElementInLocalStorage(page: Page, elementType: string) {
@@ -179,8 +210,16 @@ async function checkNumberOfElementsInLocalStorage(page: Page, expected: number)
 async function checkCanvasViewBoxParametersInLocalStorage(page: Page, param: { key: string; value: number }) {
   return await page.waitForFunction(param => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-    console.log(JSON.parse(localStorage['canvasViewBox'])[param.key])
-    return JSON.parse(localStorage['canvasViewBox'])[param.key] === param.value;
+    if (param.key === "x" || param.key === "y") {
+      if (param.value <= 0) {
+        return JSON.parse(localStorage['canvasViewBox'])[param.key] <= param.value;
+      }
+      if (param.value >= 0) {
+        return JSON.parse(localStorage['canvasViewBox'])[param.key] >= param.value;
+      }
+    } else {
+      return JSON.parse(localStorage['canvasViewBox'])[param.key] === param.value;
+    }
   }, param);
 }
 

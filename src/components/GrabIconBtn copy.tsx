@@ -7,7 +7,11 @@ interface Props {
 
 const GrabIconBtn = ({ className, handlerClick }: Props) => {
   return (
-    <button className={`${className}`} onClick={() => handlerClick('grab')}>
+    <button
+      id="canvasGrabBtn"
+      className={`${className}`}
+      onClick={() => handlerClick('grab')}
+    >
       <svg
         fill="#000000"
         width="20.73"
