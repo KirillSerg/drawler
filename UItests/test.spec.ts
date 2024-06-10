@@ -127,26 +127,40 @@ test("Create curved line", async ({ page }) => {
   await checkNumberOfElementsInLocalStorage(page, 0)
 })
 
-// test("Zoom", async ({ page }) => {
-//   await page.goto('http://localhost:5173/');
-//   const zoomDownBtn = page.locator('[id=zoomdown]')
-//   const zoomUpBtn = page.locator('[id=zoomup]')
-//   const zoom = page.locator('[id=zoompercent]')
-//   await zoomDownBtn.click()
-
-//   await checkElementInLocalStorage(page, "path")
-//   // escape from pensil mode
-//   await page.press("id=canvas", "Escape")
-//   // drag&drop variant 1
-//   // moove to one pixel back to fix bug in firefox test
-//   await page.mouse.move(319, 309);
-//   await page.mouse.down();
-//   await page.mouse.move(700, 400);
-//   await page.mouse.up();
-//   // delete element
-//   await page.press("id=canvas", "Delete")
-//   await checkNumberOfElementsInLocalStorage(page, 0)
-// })
+test("Zoom", async ({ page }) => {
+  await page.goto('http://localhost:5173/');
+  // zoom by clicking zoomBar
+  const zoomDownBtn = page.locator('[id=zoomdown]')
+  const zoomUpBtn = page.locator('[id=zoomup]')
+  const zoomReset = page.locator('[id=zoomreset]')
+  await zoomDownBtn.click()
+  await checkCanvasViewBoxParametersInLocalStorage(page, { key: "width", value: 2112 }) //1920px+192px(10%)
+  await zoomUpBtn.click()
+  await checkCanvasViewBoxParametersInLocalStorage(page, { key: "percentage", value: 100 })
+  await page.pause()
+  // zoom by keyPress ctrl/meta + "+"/"-"
+  await page.locator('#canvas').press('Control++')
+  await page.keyboard.up("+")
+  await page.keyboard.up("Control")
+  await checkCanvasViewBoxParametersInLocalStorage(page, { key: "height", value: 972 }) //1080px - 108px(10%)
+  await page.locator('#canvas').press('Meta+-')
+  await page.keyboard.up("-")
+  await page.keyboard.up("Meta")
+  await checkCanvasViewBoxParametersInLocalStorage(page, { key: "percentage", value: 100 })
+  // zoom by keyPress + wheel scroll
+  await page.mouse.move(700, 400);
+  await page.keyboard.down('Control')
+  await page.mouse.wheel(0, 500);
+  await page.keyboard.up("Control")
+  await checkCanvasViewBoxParametersInLocalStorage(page, { key: "percentage", value: 90 })
+  // reset zoom
+  await zoomReset.click()
+  await checkCanvasViewBoxParametersInLocalStorage(page, { key: "percentage", value: 100 })
+  await checkCanvasViewBoxParametersInLocalStorage(page, { key: "width", value: 1920 })
+  await checkCanvasViewBoxParametersInLocalStorage(page, { key: "height", value: 1080 })
+  await checkCanvasViewBoxParametersInLocalStorage(page, { key: "x", value: 0 })
+  await checkCanvasViewBoxParametersInLocalStorage(page, { key: "y", value: 0 })
+})
 
 async function checkElementInLocalStorage(page: Page, elementType: string) {
   return await page.waitForFunction(type => {
@@ -162,12 +176,13 @@ async function checkNumberOfElementsInLocalStorage(page: Page, expected: number)
   }, expected);
 }
 
-// async function checkCanvasViewBoxParametersInLocalStorage(page: Page, param: string, value: number) {
-//   return await page.waitForFunction(param => {
-//     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-//     return JSON.parse(localStorage['canvasViewBox']).find((p: any) => p === param);
-//   }, param, value);
-// }
+async function checkCanvasViewBoxParametersInLocalStorage(page: Page, param: { key: string; value: number }) {
+  return await page.waitForFunction(param => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    console.log(JSON.parse(localStorage['canvasViewBox'])[param.key])
+    return JSON.parse(localStorage['canvasViewBox'])[param.key] === param.value;
+  }, param);
+}
 
 
 

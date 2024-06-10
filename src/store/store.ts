@@ -187,7 +187,7 @@ export const onMouseDownAtom = atom(
       set(elementsAtom, (prev) => [...prev, newEl])
       set(selectedElementAtom, newEl)
     }
-    console.log(get(keyPressedAtom).ctrlKey)
+
     if (get(keyPressedAtom).ctrlKey) {
       set(creationInitialElementAtom, {
         ...get(creationInitialElementAtom),

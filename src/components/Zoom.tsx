@@ -20,7 +20,7 @@ const Zoom = () => {
         </button>
 
         <button
-          id="zoompercent"
+          id="zoomreset"
           className="w-10"
           onClick={() => {
             zoomCanvas(ZoomCanvasFn.ZOOMRESET);
