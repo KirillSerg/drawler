@@ -1,5 +1,5 @@
 import { atom } from "jotai";
-import { Area, Coordinates, Element } from "../types/CommonTypes";
+import { Area, CanvasViewBox, Coordinates, Element, ZoomCanvasFn } from "../types/CommonTypes";
 import { atomWithStorage } from 'jotai/utils'
 import { getPencilPointsArrFromString, getTrianglePointsArrFromString, useUpdateXYAndDistance } from "../assets/utilities";
 
@@ -26,17 +26,108 @@ const initialElement: Element = {
   markerEnd: "",
   stroke: 'black',
   strokeWidth: 4,
-  fill: 'transparent',
+  fill: 'none',
   fontSize: "28px",
 }
+const initialCanvasViewBox = {
+  x: 0,
+  y: 0,
+  percentage: 100,
+  width: 1920,
+  height: 1080,
+}
 
-export const initialElementAtom = atom<Element>(initialElement)
+export const creationInitialElementAtom = atom<Element>(initialElement)
+
 export const elementsAtom = atomWithStorage<Element[]>("elements", [])
+
 export const selectedElementAtom = atom<Element | null>(null)
+
 export const selectingAreaAtom = atom<Area | null>(null)
+
 export const isDraggingAtom = atom(false)
+
 export const isDrawingAtom = atom(
-  (get) => get(initialElementAtom).type === "free" ? false : true
+  (get) => get(creationInitialElementAtom).type_name === "free" ||
+    get(creationInitialElementAtom).type_name === "grab" ?
+    false :
+    true
+)
+
+export const keyPressedAtom = atom<{ ctrlKey: boolean; key: string }>({ ctrlKey: false, key: "" })
+
+export const onKeyPressAtom = atom(
+  null,
+  (get, set, key: { ctrlKey: boolean; key: string }) => {
+    // console.info(key)
+    set(keyPressedAtom, key)
+    const creationInitialElement = get(creationInitialElementAtom)
+
+    switch (true) {
+      case key.key === "Delete":
+        set(deleteElementsAtom)
+        break;
+      case (key.key === "Escape"):
+        set(creationInitialElementAtom, initialElement)
+        break;
+      case (key.key === "+" && key.ctrlKey):
+        set(zoomCanvasAtom, ZoomCanvasFn.ZOOMUP)
+        break;
+      case (key.key === "-" && key.ctrlKey):
+        set(zoomCanvasAtom, ZoomCanvasFn.ZOOMDOWN)
+        break;
+      case (!key.ctrlKey && creationInitialElement.type_name === "grab"):
+        set(creationInitialElementAtom, initialElement)
+        break;
+    }
+  }
+)
+
+export const canvasViewBoxAtom = atomWithStorage<CanvasViewBox>("canvasViewBox", initialCanvasViewBox)
+
+export const zoomCanvasAtom = atom(
+  null,
+  (get, set, updateFn: ZoomCanvasFn) => {
+    const canvasViewBox = get(canvasViewBoxAtom)
+
+    switch (updateFn) {
+      case ZoomCanvasFn.ZOOMDOWN:
+        if (canvasViewBox.percentage === 0) return;
+        set(canvasViewBoxAtom, {
+          ...canvasViewBox,
+          percentage: canvasViewBox.percentage - 10,
+          width: canvasViewBox.width + 1920 * 0.1,
+          height: canvasViewBox.height + 1080 * 0.1,
+        })
+        break;
+
+      case ZoomCanvasFn.ZOOMUP:
+        if (canvasViewBox.percentage === 200) return;
+        set(canvasViewBoxAtom, {
+          ...canvasViewBox,
+          percentage: canvasViewBox.percentage + 10,
+          width: canvasViewBox.width - 1920 * 0.1,
+          height: canvasViewBox.height - 1080 * 0.1,
+        })
+        break;
+
+      case ZoomCanvasFn.ZOOMRESET:
+        set(canvasViewBoxAtom, initialCanvasViewBox)
+        break;
+    }
+  }
+)
+
+export const grabCanvasAtom = atom(
+  null,
+  (get, set, update: Coordinates) => {
+    const canvasViewBox = get(canvasViewBoxAtom)
+    set(canvasViewBoxAtom, {
+      ...canvasViewBox,
+      x: canvasViewBox.x - update.x,
+      y: canvasViewBox.y - update.y
+    })
+  }
 )
 
 export const updateElementsAtom = atom(
@@ -80,7 +171,7 @@ export const onMouseDownAtom = atom(
     })
     if (get(isDrawingAtom)) {
       const newEl = {
-        ...get(initialElementAtom),
+        ...get(creationInitialElementAtom),
         id: crypto.randomUUID(),
         x: update.x,
         y: update.y,
@@ -96,8 +187,16 @@ export const onMouseDownAtom = atom(
       }
       set(elementsAtom, (prev) => [...prev, newEl])
       set(selectedElementAtom, newEl)
-      set(initialElementAtom, (prev) => {
+      set(creationInitialElementAtom, (prev) => {
         return { ...prev, href: "" }
+      })
+    }
+
+    if (get(keyPressedAtom).ctrlKey) {
+      set(creationInitialElementAtom, {
+        ...get(creationInitialElementAtom),
+        type: "grab",
+        type_name: "grab",
       })
     }
   }
@@ -192,11 +291,17 @@ export const onMouseMoveAtom = atom(
           d: selectedElement.d + ` L ${update.x} ${update.y}`
         })
       }
+
+      // on move entire canvas
+      if (get(creationInitialElementAtom).type_name === "grab") {
+        set(grabCanvasAtom, { x: update.x - selectingArea.startX, y: update.y - selectingArea.startY })
+      }
+
       set(selectingAreaAtom, { ...selectingArea, endX: update.x, endY: update.y })
     }
 
     // this is necessary to display the selected image and to move this image following the cursor
-    set(initialElementAtom, (prev) => {
+    set(creationInitialElementAtom, (prev) => {
       return {
         ...prev,
         x: update.x,
@@ -210,29 +315,18 @@ export const onMouseUpAtom = atom(
   null,
   (get, set) => {
     // console.log("onMouseUpAtom")
+    const creationInitialElement = get(creationInitialElementAtom)
     const selectedElement = get(selectedElementAtom)
     if (selectedElement) {
       set(selectedElementAtom, get(elementsAtom).find(el => el.id === selectedElement.id) || selectedElement)
     }
     set(isDraggingAtom, false)
     set(selectingAreaAtom, null)
-    // if we draw curved-line we don't need to set "free" type? it's need to continue to draw new curved-line
-    if (selectedElement?.type_name !== "pencil") {
-      set(initialElementAtom, initialElement)
+
+    const isNeedtoResetCreatinType = creationInitialElement.type_name === "pencil" || creationInitialElement.type_name === "grab"
+    if (!isNeedtoResetCreatinType) {
+      set(creationInitialElementAtom, initialElement)
     }
   }
 )
 
-export const onKeyPressAtom = atom(
-  null,
-  (_get, set, key: string) => {
-    switch (true) {
-      case key === "Delete":
-        set(deleteElementsAtom)
-        break;
-      case (key === "Escape"):
-        set(initialElementAtom, initialElement)
-        break;
-    }
-  }
-)

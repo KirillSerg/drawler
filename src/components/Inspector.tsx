@@ -3,7 +3,7 @@ import { useAtom } from 'jotai';
 import deleteIcon from '../assets/icons/trash.svg';
 import {
   deleteElementsAtom,
-  initialElementAtom,
+  creationInitialElementAtom,
   selectedElementAtom,
   updateElementsAtom,
 } from '../store/store';
@@ -19,7 +19,9 @@ const Inspector = () => {
   const [, deleteElements] = useAtom(deleteElementsAtom);
   const [, updateElements] = useAtom(updateElementsAtom);
   const [selectedElement] = useAtom(selectedElementAtom);
-  const [initialElement, setInitialElement] = useAtom(initialElementAtom);
+  const [initialElement, setInitialElement] = useAtom(
+    creationInitialElementAtom,
+  );
 
   const element = useMemo(() => {
     if (selectedElement !== null) {

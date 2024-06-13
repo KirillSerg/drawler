@@ -127,6 +127,72 @@ test("Create curved line", async ({ page }) => {
   await checkNumberOfElementsInLocalStorage(page, 0)
 })
 
+test("Zoom", async ({ page }) => {
+  await page.goto('http://localhost:5173/');
+  // zoom by clicking zoomBar
+  const zoomDownBtn = page.locator('[id=zoomdown]')
+  const zoomUpBtn = page.locator('[id=zoomup]')
+  const zoomReset = page.locator('[id=zoomreset]')
+  await zoomDownBtn.click()
+  await checkCanvasViewBoxParametersInLocalStorage(page, { key: "width", value: 2112 }) //1920px+192px(10%)
+  await zoomUpBtn.click()
+  await checkCanvasViewBoxParametersInLocalStorage(page, { key: "percentage", value: 100 })
+  await page.pause()
+  // zoom by keyPress ctrl/meta + "+"/"-"
+  await page.locator('#canvas').press('Control++')
+  await page.keyboard.up("+")
+  await page.keyboard.up("Control")
+  await checkCanvasViewBoxParametersInLocalStorage(page, { key: "height", value: 972 }) //1080px - 108px(10%)
+  await page.locator('#canvas').press('Meta+-')
+  await page.keyboard.up("-")
+  await page.keyboard.up("Meta")
+  await checkCanvasViewBoxParametersInLocalStorage(page, { key: "percentage", value: 100 })
+  // zoom by keyPress + wheel scroll
+  await page.mouse.move(700, 400);
+  await page.keyboard.down('Control')
+  await page.mouse.wheel(0, 500);
+  await page.keyboard.up("Control")
+  await checkCanvasViewBoxParametersInLocalStorage(page, { key: "percentage", value: 90 })
+  // reset zoom (centered)
+  await zoomReset.click()
+  await checkCanvasViewBoxParametersInLocalStorage(page, { key: "percentage", value: 100 })
+  await checkCanvasViewBoxParametersInLocalStorage(page, { key: "width", value: 1920 })
+  await checkCanvasViewBoxParametersInLocalStorage(page, { key: "height", value: 1080 })
+  await checkCanvasViewBoxParametersInLocalStorage(page, { key: "x", value: 0 })
+  await checkCanvasViewBoxParametersInLocalStorage(page, { key: "y", value: 0 })
+})
+
+test("Grab canvas", async ({ page }) => {
+  await page.goto('http://localhost:5173/');
+  const zoomReset = page.locator('[id=zoomreset]')
+  const toolbarGrab = page.locator('header > [id=canvasGrabBtn]')
+  await toolbarGrab.click()
+  // await page.locator('#canvas').click() // it's need if testing in --headed mode
+  await page.mouse.move(600, 600);
+  await page.mouse.down();
+  await page.mouse.move(700, 700);
+  await page.mouse.up();
+  await checkCanvasViewBoxParametersInLocalStorage(page, { key: "x", value: -1 })
+  await checkCanvasViewBoxParametersInLocalStorage(page, { key: "y", value: -1 })
+  // reset grab (centered)
+  await zoomReset.click()
+  // await page.locator('#canvas').click()  // it's need if testing in --headed mode
+  await checkCanvasViewBoxParametersInLocalStorage(page, { key: "percentage", value: 100 })
+  await checkCanvasViewBoxParametersInLocalStorage(page, { key: "width", value: 1920 })
+  await checkCanvasViewBoxParametersInLocalStorage(page, { key: "height", value: 1080 })
+  await checkCanvasViewBoxParametersInLocalStorage(page, { key: "x", value: 0 })
+  await checkCanvasViewBoxParametersInLocalStorage(page, { key: "y", value: 0 })
+  // grab by keyPress + mouse move
+  await page.mouse.move(600, 600);
+  await page.keyboard.down('Control')
+  await page.mouse.down();
+  await page.mouse.move(400, 400);
+  await page.mouse.up();
+  await page.keyboard.up("Control")
+  await checkCanvasViewBoxParametersInLocalStorage(page, { key: "x", value: 1 })
+  await checkCanvasViewBoxParametersInLocalStorage(page, { key: "y", value: 1 })
+})
+
 async function checkElementInLocalStorage(page: Page, elementType: string) {
   return await page.waitForFunction(type => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
@@ -139,6 +205,22 @@ async function checkNumberOfElementsInLocalStorage(page: Page, expected: number)
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
     return JSON.parse(localStorage['elements']).length === e;
   }, expected);
+}
+
+async function checkCanvasViewBoxParametersInLocalStorage(page: Page, param: { key: string; value: number }) {
+  return await page.waitForFunction(param => {
+    // eslint-disable-next-line @typescript-eslint/no-explicit-any
+    if (param.key === "x" || param.key === "y") {
+      if (param.value <= 0) {
+        return JSON.parse(localStorage['canvasViewBox'])[param.key] <= param.value;
+      }
+      if (param.value >= 0) {
+        return JSON.parse(localStorage['canvasViewBox'])[param.key] >= param.value;
+      }
+    } else {
+      return JSON.parse(localStorage['canvasViewBox'])[param.key] === param.value;
+    }
+  }, param);
 }
 
 

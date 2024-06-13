@@ -1,88 +1,91 @@
 import { useAtom } from 'jotai';
-import {
-  initialElementAtom,
-  onKeyPressAtom,
-  selectedElementAtom,
-} from '../store/store';
 import LineIconBtn from './LineIconBtn';
 import LineArrowIconBtn from './LineArrowIconBtn';
 import TriangleIconBtn from './TriangleIconBtn';
 import EllipseIconBtn from './EllipseIconBtn';
 import RectIconBtn from './RectIconBtn';
 import FreeIconBtn from './FreeIconBtn';
+import TextIconBtn from './TextIconBtn';
+import PencilIconBtn from './PencilIconBtn';
+import GrabIconBtn from './GrabIconBtn copy';
+import ImageIconBtn from './ImageIconBtn';
+import {
+  creationInitialElementAtom,
+  selectedElementAtom,
+} from '../store/store';
 import {
   ELEMENT_TYPE_VARIANTS,
   Element,
   ElementsTypeName,
 } from '../types/CommonTypes';
-import TextIconBtn from './TextIconBtn';
-import PencilIconBtn from './PencilIconBtn';
-import ImageIconBtn from './ImageIconBtn';
 
 const Toolbar = () => {
-  const [initialElement, setInitialElement] = useAtom(initialElementAtom);
+  const [creationInitialElement, setCreationInitialElement] = useAtom(
+    creationInitialElementAtom,
+  );
   const [, setSelectedElement] = useAtom(selectedElementAtom);
-  const [, onKeyPress] = useAtom(onKeyPressAtom);
 
   const handlerSelectElement = (typeName: ElementsTypeName) => {
-    setInitialElement((prev) => {
+    setCreationInitialElement((prev) => {
       return {
         ...prev,
         type: ELEMENT_TYPE_VARIANTS[typeName] as Element['type'],
         type_name: typeName,
         markerEnd: typeName === 'arrow_line' ? 'url(#arrow)' : '',
+        fill: typeName === 'text' ? 'transparent' : 'none',
       };
     });
     setSelectedElement(null);
   };
 
   return (
-    <header
-      onKeyDown={(e) => onKeyPress(e.key)}
-      className="h-[6%] sticky top-0 flex justify-center gap-4 border-4 border-black"
-    >
+    <header className="w-fit h-[6%] fixed top-3 flex justify-center items-center gap-4 border-[1px] border-black">
+      <GrabIconBtn
+        className={`${creationInitialElement.type_name === 'grab' ? 'bg-orange-500' : 'bg-inherit'} h-[100%] w-8 p-[6px] focus-visible:outline-none`}
+        handlerClick={handlerSelectElement}
+      />
       <FreeIconBtn
-        className={`${initialElement.type_name === 'free' ? 'bg-orange-500' : 'bg-inherit'} h-8 w-8 p-[6px] focus-visible:outline-none`}
+        className={`${creationInitialElement.type_name === 'free' ? 'bg-orange-500' : 'bg-inherit'} h-[100%] w-8 p-[6px] focus-visible:outline-none`}
         handlerClick={handlerSelectElement}
       />
 
       <RectIconBtn
-        className={`${initialElement.type_name === 'rect' ? 'bg-orange-500' : 'bg-inherit'} h-8 w-8 p-[6px] focus-visible:outline-none`}
+        className={`${creationInitialElement.type_name === 'rect' ? 'bg-orange-500' : 'bg-inherit'} h-[100%] w-8 p-[6px] focus-visible:outline-none`}
         handlerClick={handlerSelectElement}
       />
 
       <EllipseIconBtn
-        className={`${initialElement.type_name === 'ellipse' ? 'bg-orange-500' : 'bg-inherit'} h-8 w-8 p-[6px] focus-visible:outline-none`}
+        className={`${creationInitialElement.type_name === 'ellipse' ? 'bg-orange-500' : 'bg-inherit'} h-[100%] w-8 p-[6px] focus-visible:outline-none`}
         handlerClick={handlerSelectElement}
       />
 
       <TriangleIconBtn
-        className={`${initialElement.type_name === 'polygon' ? 'bg-orange-500' : 'bg-inherit'} h-8 w-8 p-[6px] focus-visible:outline-none`}
+        className={`${creationInitialElement.type_name === 'polygon' ? 'bg-orange-500' : 'bg-inherit'} h-[100%] w-8 p-[6px] focus-visible:outline-none`}
         handlerClick={handlerSelectElement}
       />
 
       <LineIconBtn
-        className={`${initialElement.type_name === 'line' ? 'bg-orange-500' : 'bg-inherit'} h-8 w-8 p-[6px] focus-visible:outline-none`}
+        className={`${creationInitialElement.type_name === 'line' ? 'bg-orange-500' : 'bg-inherit'} h-[100%] w-8 p-[6px] focus-visible:outline-none`}
         handlerClick={handlerSelectElement}
       />
 
       <LineArrowIconBtn
-        className={`${initialElement.type_name === 'arrow_line' ? 'bg-orange-500' : 'bg-inherit'} h-8 w-8 p-[6px] focus-visible:outline-none`}
+        className={`${creationInitialElement.type_name === 'arrow_line' ? 'bg-orange-500' : 'bg-inherit'} h-[100%] w-8 p-[6px] focus-visible:outline-none`}
         handlerClick={handlerSelectElement}
       />
 
       <TextIconBtn
-        className={`${initialElement.type_name === 'text' ? 'bg-orange-500' : 'bg-inherit'} h-8 w-8 p-[6px] focus-visible:outline-none`}
+        className={`${creationInitialElement.type_name === 'text' ? 'bg-orange-500' : 'bg-inherit'} h-[100%] w-8 p-[6px] focus-visible:outline-none`}
         handlerClick={handlerSelectElement}
       />
 
       <PencilIconBtn
-        className={`${initialElement.type_name === 'pencil' ? 'bg-orange-500' : 'bg-inherit'} h-8 w-8 p-[6px] focus-visible:outline-none`}
+        className={`${creationInitialElement.type_name === 'pencil' ? 'bg-orange-500' : 'bg-inherit'} h-[100%] w-8 p-[6px] focus-visible:outline-none`}
         handlerClick={handlerSelectElement}
       />
 
       <ImageIconBtn
-        className={`${initialElement.type_name === 'image' ? 'bg-orange-500' : 'bg-inherit'} h-8 w-8 p-[6px] focus-visible:outline-none`}
+        className={`${creationInitialElement.type_name === 'image' ? 'bg-orange-500' : 'bg-inherit'} h-[100%] w-8 p-[6px] focus-visible:outline-none relative`}
         handlerClick={handlerSelectElement}
       />
     </header>

@@ -1,7 +1,7 @@
 import { useRef } from 'react';
 import { useAtom } from 'jotai';
 import { ElementsTypeName } from '../types/CommonTypes';
-import { initialElementAtom } from '../store/store';
+import { creationInitialElementAtom } from '../store/store';
 
 interface Props {
   className: string;
@@ -9,7 +9,7 @@ interface Props {
 }
 
 const ImageIconBtn = ({ className, handlerClick }: Props) => {
-  const [, setInitialElement] = useAtom(initialElementAtom);
+  const [, setCreationInitialElement] = useAtom(creationInitialElementAtom);
 
   const fileInputRef = useRef<HTMLInputElement>(null);
 
@@ -17,10 +17,10 @@ const ImageIconBtn = ({ className, handlerClick }: Props) => {
     if (e.target.files && e.target.files[0]) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        if (reader.result !== null)
-          setInitialElement((prev) => {
-            return { ...prev, href: reader.result };
-          });
+        // if (reader.result !== null)
+        setCreationInitialElement((prev) => {
+          return { ...prev, href: reader.result };
+        });
         // Reset the file input value
         if (fileInputRef.current) {
           fileInputRef.current.value = '';
@@ -32,21 +32,21 @@ const ImageIconBtn = ({ className, handlerClick }: Props) => {
 
   return (
     <button className={className} onClick={() => handlerClick('image')}>
-      <div className="absolute">
-        <label htmlFor="image" className="relative cursor-pointer">
-          <div className="w-5 h-5"></div>
-        </label>
-        <input
-          ref={fileInputRef}
-          onChange={(e) => handleImageChange(e)}
-          id="image"
-          type="file"
-          className="hidden"
-        />
-      </div>
+      <label
+        htmlFor="image"
+        className="absolute top-0 left-0 w-full h-full cursor-pointer"
+      ></label>
+      <input
+        ref={fileInputRef}
+        onChange={(e) => handleImageChange(e)}
+        id="image"
+        type="file"
+        className="hidden"
+      />
       <svg
         viewBox="0 0 24 24"
         height="100%"
+        width="100%"
         xmlns="http://www.w3.org/2000/svg"
         fillRule="evenodd"
         clipRule="evenodd"

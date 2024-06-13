@@ -30,9 +30,11 @@ const SingleElement = ({ element, svgContainerRef }: Props) => {
 
   return (
     <>
-      {element.type !== 'free' && (
+      {element.type !== 'free' && element.type !== 'grab' && (
         <element.type //flexible&dynemic rendering svg-elements
           {...element}
+          // in order for the image to be stored and displayed between renderers, its type is an arrayBuffer, but the type of href of image element of svg is a string. That is why this transformation is necessary
+          href={element.type === 'image' ? element.href?.toString() : ''}
           style={{ cursor: 'pointer' }}
           onMouseDown={(e) => handleMouseDown(e)}
           onMouseUp={onMouseUp}

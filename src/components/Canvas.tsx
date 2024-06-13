@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { useAtom, useAtomValue } from 'jotai';
 import SingleElement from './SingleElement';
 import SelectingArea from './SelectingArea';
@@ -9,10 +9,14 @@ import {
   onMouseMoveAtom,
   isDraggingAtom,
   isDrawingAtom,
-  onKeyPressAtom,
-  initialElementAtom,
+  keyPressedAtom,
+  canvasViewBoxAtom,
+  zoomCanvasAtom,
+  creationInitialElementAtom,
+  selectingAreaAtom,
+  grabCanvasAtom,
 } from '../store/store';
-import { ElemenEvent } from '../types/CommonTypes';
+import { ElemenEvent, ZoomCanvasFn } from '../types/CommonTypes';
 import { transformCoordinates } from '../assets/utilities';
 
 const Canvas = () => {
@@ -22,8 +26,12 @@ const Canvas = () => {
   const [, onMouseUp] = useAtom(onMouseUpAtom);
   const [, onMouseDown] = useAtom(onMouseDownAtom);
   const [, onMouseMove] = useAtom(onMouseMoveAtom);
-  const [, onKeyPress] = useAtom(onKeyPressAtom);
-  const initialElement = useAtomValue(initialElementAtom);
+  const keyPressed = useAtomValue(keyPressedAtom);
+  const canvasViewBox = useAtomValue(canvasViewBoxAtom);
+  const [, zoomCanvas] = useAtom(zoomCanvasAtom);
+  const [, grabCanvas] = useAtom(grabCanvasAtom);
+  const creationInitialElement = useAtomValue(creationInitialElementAtom);
+  const selectingArea = useAtomValue(selectingAreaAtom);
 
   const svgContainerRef = useRef<SVGSVGElement>(null);
 
@@ -51,16 +59,44 @@ const Canvas = () => {
     });
   };
 
+  // for prevent default browser zoom
+  useEffect(() => {
+    const handleOnWheel = (e: WheelEvent) => {
+      e.preventDefault();
+      if (keyPressed.ctrlKey && e.deltaY < 0) {
+        zoomCanvas(ZoomCanvasFn.ZOOMUP);
+      }
+      if (keyPressed.ctrlKey && e.deltaY > 0) {
+        zoomCanvas(ZoomCanvasFn.ZOOMDOWN);
+      }
+      if (!keyPressed.ctrlKey) {
+        grabCanvas({ x: 0, y: e.deltaY });
+      }
+    };
+
+    const containerElement = svgContainerRef.current;
+
+    if (containerElement) {
+      containerElement.addEventListener('wheel', handleOnWheel, {
+        passive: false,
+      });
+
+      return () => {
+        containerElement.removeEventListener('wheel', handleOnWheel);
+      };
+    }
+  }, [keyPressed.ctrlKey, zoomCanvas, grabCanvas]);
+
   return (
     <svg
+      className={`h-screen focus:outline-none ${selectingArea && creationInitialElement.type_name === 'grab' ? 'cursor-grabbing' : creationInitialElement.type_name === 'grab' ? 'cursor-grab' : ''}`}
       id="canvas"
       ref={svgContainerRef}
       onMouseDown={(e) => handleMouseDown(e)}
       onMouseMove={(e) => handleMouseMove(e)}
       onMouseUp={onMouseUp}
-      onKeyDown={(e) => onKeyPress(e.key)}
       preserveAspectRatio="xMinYMin meet" //for the SVG container to be on the entire screen, while the elements inside kept the proportions and x=0, y=0 viewBox started from the upper left corner
-      viewBox="0 0 1920 1080"
+      viewBox={`${canvasViewBox.x} ${canvasViewBox.y} ${canvasViewBox.width} ${canvasViewBox.height}`}
       width="100%"
       height="100%"
       xmlns="http://www.w3.org/2000/svg"
@@ -87,12 +123,14 @@ const Canvas = () => {
         />
       ))}
 
-      {!isDragging && !isDrawing && <SelectingArea />}
+      {!isDragging &&
+        !isDrawing &&
+        creationInitialElement.type_name !== 'grab' && <SelectingArea />}
 
-      {initialElement.type_name === 'image' && (
+      {creationInitialElement.type_name === 'image' && (
         <SingleElement
-          key={initialElement.id}
-          element={initialElement}
+          key={creationInitialElement.id}
+          element={creationInitialElement}
           svgContainerRef={svgContainerRef.current}
         />
       )}
