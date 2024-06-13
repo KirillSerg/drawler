@@ -29,9 +29,9 @@ const Canvas = () => {
   const keyPressed = useAtomValue(keyPressedAtom);
   const canvasViewBox = useAtomValue(canvasViewBoxAtom);
   const [, zoomCanvas] = useAtom(zoomCanvasAtom);
+  const [, grabCanvas] = useAtom(grabCanvasAtom);
   const creationInitialElement = useAtomValue(creationInitialElementAtom);
   const selectingArea = useAtomValue(selectingAreaAtom);
-  const [canasViewBox, grabCanvas] = useAtom(grabCanvasAtom);
 
   const svgContainerRef = useRef<SVGSVGElement>(null);
 
@@ -70,7 +70,7 @@ const Canvas = () => {
         zoomCanvas(ZoomCanvasFn.ZOOMDOWN);
       }
       if (!keyPressed.ctrlKey) {
-        grabCanvas({ ...canasViewBox, y: e.deltaY });
+        grabCanvas({ x: 0, y: e.deltaY });
       }
     };
 
@@ -85,7 +85,7 @@ const Canvas = () => {
         containerElement.removeEventListener('wheel', handleOnWheel);
       };
     }
-  }, [keyPressed.ctrlKey, canasViewBox, zoomCanvas, grabCanvas]);
+  }, [keyPressed.ctrlKey, zoomCanvas, grabCanvas]);
 
   return (
     <svg
@@ -126,6 +126,14 @@ const Canvas = () => {
       {!isDragging &&
         !isDrawing &&
         creationInitialElement.type_name !== 'grab' && <SelectingArea />}
+
+      {creationInitialElement.type_name === 'image' && (
+        <SingleElement
+          key={creationInitialElement.id}
+          element={creationInitialElement}
+          svgContainerRef={svgContainerRef.current}
+        />
+      )}
     </svg>
   );
 };

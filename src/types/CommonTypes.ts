@@ -1,7 +1,7 @@
 export interface Element {
   id: string;
   type_name: ElementsTypeName;
-  type: "grab" | "free" | "rect" | "ellipse" | "line" | "polygon" | "foreignObject" | "path";
+  type: "grab" | "free" | "rect" | "ellipse" | "line" | "polygon" | "foreignObject" | "path" | "image";
   x: number;
   y: number;
   width: number;
@@ -17,6 +17,7 @@ export interface Element {
   points: string  //"x,y x,y x,y ..."
   textvalue: string;
   d: string;
+  href: string | ArrayBuffer | null;
   markerEnd: string;
   stroke: string;
   strokeWidth: number;
@@ -45,6 +46,7 @@ export type ElemenEvent =
   | React.MouseEvent<SVGTextElement, MouseEvent>
   | React.MouseEvent<SVGForeignObjectElement, MouseEvent>
   | React.MouseEvent<SVGPathElement, MouseEvent>
+  | React.MouseEvent<SVGImageElement, MouseEvent>
 
 export const ELEMENT_TYPE_VARIANTS = {
   grab: "grab",
@@ -56,6 +58,7 @@ export const ELEMENT_TYPE_VARIANTS = {
   arrow_line: 'line',
   text: "foreignObject",
   pencil: "path",
+  image: "image",
 };
 
 export type ElementsTypeName = keyof typeof ELEMENT_TYPE_VARIANTS;
