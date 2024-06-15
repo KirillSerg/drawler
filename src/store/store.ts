@@ -102,7 +102,7 @@ export const zoomCanvasAtom = atom(
         break;
 
       case ZoomCanvasFn.ZOOMUP:
-        if (canvasViewBox.percentage === 200) return;
+        if (canvasViewBox.percentage === 190) return;
         set(canvasViewBoxAtom, {
           ...canvasViewBox,
           percentage: canvasViewBox.percentage + 10,

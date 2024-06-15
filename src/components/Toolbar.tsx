@@ -27,13 +27,6 @@ const Toolbar = () => {
 
   const handlerSelectElement = (props: ElementProps) => {
     setCreationInitialElement((prev) => {
-      // return {
-      //   ...prev,
-      //   type: ELEMENT_TYPE_VARIANTS[typeName] as Element['type'],
-      //   type_name: typeName,
-      //   markerEnd: typeName === 'arrow_line' ? 'url(#arrow)' : '',
-      //   fill: typeName === 'text' ? 'transparent' : 'none',
-      // };
       return {
         ...prev,
         ...props,

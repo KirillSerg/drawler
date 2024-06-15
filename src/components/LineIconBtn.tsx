@@ -9,7 +9,7 @@ const LineIconBtn = ({ className, handlerClick }: Props) => {
   return (
     <button
       className={`${className}`}
-      onClick={() => handlerClick({ type_name: 'line' })}
+      onClick={() => handlerClick({ type_name: 'line', markerEnd: '' })}
     >
       <svg
         id="line"

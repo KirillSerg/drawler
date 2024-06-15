@@ -70,7 +70,7 @@ const Canvas = () => {
         zoomCanvas(ZoomCanvasFn.ZOOMDOWN);
       }
       if (!keyPressed.ctrlKey) {
-        grabCanvas({ x: 0, y: e.deltaY });
+        grabCanvas({ x: 0, y: -e.deltaY });
       }
     };
 
