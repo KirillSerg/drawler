@@ -25,6 +25,34 @@ export interface Element {
   fontSize: string;
 }
 
+export interface ElementProps {
+  id?: string;
+  type_name?: ElementsTypeName;
+  // type will be determined automatically
+  x?: number;
+  y?: number;
+  width?: number;
+  height?: number;
+  cx?: number;
+  cy?: number;
+  rx?: number;
+  ry?: number;
+  x1?: number;
+  y1?: number;
+  x2?: number;
+  y2?: number;
+  points?: string; //"x,y x,y x,y ..."
+  textvalue?: string;
+  d?: string;
+  href?: string | ArrayBuffer | null;
+  markerEnd?: string;
+  isSelected?: boolean;
+  stroke?: string;
+  strokeWidth?: number;
+  fill?: string;
+  fontSize?: string;
+}
+
 export interface Area {
   startX: number;
   startY: number;

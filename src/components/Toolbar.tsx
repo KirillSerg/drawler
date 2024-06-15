@@ -16,7 +16,7 @@ import {
 import {
   ELEMENT_TYPE_VARIANTS,
   Element,
-  ElementsTypeName,
+  ElementProps,
 } from '../types/CommonTypes';
 
 const Toolbar = () => {
@@ -25,17 +25,25 @@ const Toolbar = () => {
   );
   const [, setSelectedElement] = useAtom(selectedElementAtom);
 
-  const handlerSelectElement = (typeName: ElementsTypeName) => {
+  const handlerSelectElement = (props: ElementProps) => {
     setCreationInitialElement((prev) => {
+      // return {
+      //   ...prev,
+      //   type: ELEMENT_TYPE_VARIANTS[typeName] as Element['type'],
+      //   type_name: typeName,
+      //   markerEnd: typeName === 'arrow_line' ? 'url(#arrow)' : '',
+      //   fill: typeName === 'text' ? 'transparent' : 'none',
+      // };
       return {
         ...prev,
-        type: ELEMENT_TYPE_VARIANTS[typeName] as Element['type'],
-        type_name: typeName,
-        markerEnd: typeName === 'arrow_line' ? 'url(#arrow)' : '',
-        fill: typeName === 'text' ? 'transparent' : 'none',
+        ...props,
+        type:
+          (props.type_name &&
+            (ELEMENT_TYPE_VARIANTS[props.type_name] as Element['type'])) ||
+          prev.type,
       };
     });
-    setSelectedElement(null);
+    setSelectedElement([]);
   };
 
   return (

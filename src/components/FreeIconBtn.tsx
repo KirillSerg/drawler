@@ -1,13 +1,16 @@
-import { ElementsTypeName } from '../types/CommonTypes';
+import { ElementProps } from '../types/CommonTypes';
 
 interface Props {
   className: string;
-  handlerClick: (typeName: ElementsTypeName) => void;
+  handlerClick: (props: ElementProps) => void;
 }
 
 const FreeIconBtn = ({ className, handlerClick }: Props) => {
   return (
-    <button className={`${className}`} onClick={() => handlerClick('free')}>
+    <button
+      className={`${className}`}
+      onClick={() => handlerClick({ type_name: 'free' })}
+    >
       <svg
         fill="#000000"
         height="100%"

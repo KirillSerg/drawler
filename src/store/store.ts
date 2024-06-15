@@ -41,7 +41,7 @@ export const creationInitialElementAtom = atom<Element>(initialElement)
 
 export const elementsAtom = atomWithStorage<Element[]>("elements", [])
 
-export const selectedElementAtom = atom<Element | null>(null)
+export const selectedElementAtom = atom<Element[] | []>([])
 
 export const selectingAreaAtom = atom<Area | null>(null)
 
@@ -136,14 +136,20 @@ export const updateElementsAtom = atom(
     set(elementsAtom, (prev) => prev.map((el) =>
       el.id === updatedElement.id ? updatedElement : el,
     ))
-    const isSelected = get(selectedElementAtom)?.id === updatedElement.id
+    const isSelected = !!get(selectedElementAtom).find((el) => el.id === updatedElement.id)
     // if changes from inspector
     if (isSelected
       && !get(isDraggingAtom)
       && !get(isDrawingAtom)
-    ) set(selectedElementAtom, updatedElement)
+    ) set(selectedElementAtom, (prev) => {
+      return prev?.map(el => el.id === updatedElement.id ? updatedElement : el) || null
+    })
     // if drawing with pencil we need to put fresh d
-    if (updatedElement.type_name === "pencil" && get(isDrawingAtom)) set(selectedElementAtom, updatedElement)
+    if (updatedElement.type_name === "pencil" && get(isDrawingAtom)) {
+      set(selectedElementAtom, (prev) => {
+        return prev?.map(el => el.id === updatedElement.id ? updatedElement : el) || null
+      })
+    }
   }
 )
 
@@ -151,8 +157,8 @@ export const deleteElementsAtom = atom(
   null,
   (get, set) => {
     const selectedElement = get(selectedElementAtom)
-    set(elementsAtom, (prev) => prev.filter((el) => el.id !== selectedElement?.id))
-    set(selectedElementAtom, null)
+    set(elementsAtom, (prev) => prev.filter((el) => !selectedElement.find((selectedEl) => selectedEl.id === el.id)))
+    set(selectedElementAtom, [])
   }
 )
 
@@ -160,8 +166,8 @@ export const onMouseDownAtom = atom(
   null,
   (get, set, update: Coordinates) => {
     // console.log("onMouseDownAtom")
-    if (!get(isDraggingAtom) && !get(isDrawingAtom)) {
-      set(selectedElementAtom, null)
+    if (!get(isDraggingAtom) && !get(isDrawingAtom) && !get(keyPressedAtom).ctrlKey) {
+      set(selectedElementAtom, [])
     }
     set(selectingAreaAtom, {
       startX: update.x,
@@ -186,13 +192,13 @@ export const onMouseDownAtom = atom(
         // fontSize: ,
       }
       set(elementsAtom, (prev) => [...prev, newEl])
-      set(selectedElementAtom, newEl)
+      set(selectedElementAtom, (prev) => [...prev, newEl])
       set(creationInitialElementAtom, (prev) => {
         return { ...prev, href: "" }
       })
     }
 
-    if (get(keyPressedAtom).ctrlKey) {
+    if (get(keyPressedAtom).ctrlKey && !get(isDraggingAtom)) {
       set(creationInitialElementAtom, {
         ...get(creationInitialElementAtom),
         type: "grab",
@@ -207,7 +213,11 @@ export const onDragStartAtom = atom(
   (get, set, update: { element: Element, position: Coordinates }) => {
     // console.log("onDragStartAtom")
     if (!get(isDrawingAtom)) {
-      set(selectedElementAtom, update.element)
+      if (get(keyPressedAtom).ctrlKey) {
+        set(selectedElementAtom, (prev) => [...prev, update.element])
+      } else {
+        set(selectedElementAtom, [update.element])
+      }
       set(isDraggingAtom, true)
     }
   }
@@ -220,77 +230,79 @@ export const onMouseMoveAtom = atom(
     const selectingArea = get(selectingAreaAtom)
     const selectedElement = get(selectedElementAtom)
     if (selectingArea) {
-      // if Drag&drop
-      if (get(isDraggingAtom) && selectedElement) {
-        // rect
-        const newX = selectedElement.x + (update.x - selectingArea.startX)
-        const newY = selectedElement.y + (update.y - selectingArea.startY)
-        // ellipse
-        const newCX = selectedElement.cx + (update.x - selectingArea.startX)
-        const newCY = selectedElement.cy + (update.y - selectingArea.startY)
-        // line
-        const newX1 = selectedElement.x1 + (update.x - selectingArea.startX)
-        const newY1 = selectedElement.y1 + (update.y - selectingArea.startY)
-        const newX2 = selectedElement.x2 + (update.x - selectingArea.startX)
-        const newY2 = selectedElement.y2 + (update.y - selectingArea.startY)
-        // triangle(polygon)
-        const newTrianglePointsArr = getTrianglePointsArrFromString(selectedElement.points).map((point) =>
-          [
-            +point[0] + (update.x - selectingArea.startX),
-            +point[1] + (update.y - selectingArea.startY)
-          ]
-        )
-        const newPoints = newTrianglePointsArr.map(points => points.join()).join(" ")
-        // pencil
-        const newPencilPointsArr = getPencilPointsArrFromString(selectedElement.d).map((point) =>
-          [
-            +point[0] + (update.x - selectingArea.startX),
-            +point[1] + (update.y - selectingArea.startY)
-          ]
-        )
-        const newPathData = "M " + newPencilPointsArr.map(points => points.join(" ")).join(" L ")
+      selectedElement.forEach((selectedEl) => {
+        // if Drag&drop
+        if (get(isDraggingAtom) && selectedElement.length > 0) {
+          // rect
+          const newX = selectedEl.x + (update.x - selectingArea.startX)
+          const newY = selectedEl.y + (update.y - selectingArea.startY)
+          // ellipse
+          const newCX = selectedEl.cx + (update.x - selectingArea.startX)
+          const newCY = selectedEl.cy + (update.y - selectingArea.startY)
+          // line
+          const newX1 = selectedEl.x1 + (update.x - selectingArea.startX)
+          const newY1 = selectedEl.y1 + (update.y - selectingArea.startY)
+          const newX2 = selectedEl.x2 + (update.x - selectingArea.startX)
+          const newY2 = selectedEl.y2 + (update.y - selectingArea.startY)
+          // triangle(polygon)
+          const newTrianglePointsArr = getTrianglePointsArrFromString(selectedEl.points).map((point) =>
+            [
+              +point[0] + (update.x - selectingArea.startX),
+              +point[1] + (update.y - selectingArea.startY)
+            ]
+          )
+          const newPoints = newTrianglePointsArr.map(points => points.join()).join(" ")
+          // pencil
+          const newPencilPointsArr = getPencilPointsArrFromString(selectedEl.d).map((point) =>
+            [
+              +point[0] + (update.x - selectingArea.startX),
+              +point[1] + (update.y - selectingArea.startY)
+            ]
+          )
+          const newPathData = "M " + newPencilPointsArr.map(points => points.join(" ")).join(" L ")
 
-        set(updateElementsAtom, {
-          ...selectedElement,
-          x: newX,
-          y: newY,
-          cx: newCX,
-          cy: newCY,
-          y1: newY1,
-          x1: newX1,
-          y2: newY2,
-          x2: newX2,
-          points: newPoints,
-          d: newPathData,
-        })
-      }
+          set(updateElementsAtom, {
+            ...selectedEl,
+            x: newX,
+            y: newY,
+            cx: newCX,
+            cy: newCY,
+            y1: newY1,
+            x1: newX1,
+            y2: newY2,
+            x2: newX2,
+            points: newPoints,
+            d: newPathData,
+          })
+        }
 
-      // if drawwing
-      if (get(isDrawingAtom) && selectedElement) {
-        const { newX, newY, newWidth, newHeight, newRX, newRY } = useUpdateXYAndDistance(
-          selectedElement.x,
-          selectedElement.y,
-          update.x,
-          update.y
-        )
-        set(updateElementsAtom, {
-          ...selectedElement,
-          x: newX,
-          y: newY,
-          width: newWidth,
-          height: newHeight,
-          cx: selectedElement.cx + (update.x - selectedElement.x) / 2,
-          cy: selectedElement.cy + (update.y - selectedElement.y) / 2,
-          rx: selectedElement.type === "ellipse" ? newRX : selectedElement.rx,
-          ry: selectedElement.type === "ellipse" ? newRY : selectedElement.ry,
-          x2: update.x,
-          y2: update.y,
-          // left-bottom, top, right-bottom
-          points: `${selectedElement.x},${update.y} ${selectedElement.x + ((update.x - selectedElement.x) / 2)},${selectedElement.y} ${update.x},${update.y}`,
-          fontSize: (newHeight / 1.5).toString(), // i don't know why but 1.5 is working good
-          d: selectedElement.d + ` L ${update.x} ${update.y}`
-        })
-      }
+        // if drawwing
+        if (get(isDrawingAtom) && selectedElement.length > 0) {
+          const { newX, newY, newWidth, newHeight, newRX, newRY } = useUpdateXYAndDistance(
+            selectedEl.x,
+            selectedEl.y,
+            update.x,
+            update.y
+          )
+          set(updateElementsAtom, {
+            ...selectedEl,
+            x: newX,
+            y: newY,
+            width: newWidth,
+            height: newHeight,
+            cx: selectedEl.cx + (update.x - selectedEl.x) / 2,
+            cy: selectedEl.cy + (update.y - selectedEl.y) / 2,
+            rx: selectedEl.type === "ellipse" ? newRX : selectedEl.rx,
+            ry: selectedEl.type === "ellipse" ? newRY : selectedEl.ry,
+            x2: update.x,
+            y2: update.y,
+            // left-bottom, top, right-bottom
+            points: `${selectedEl.x},${update.y} ${selectedEl.x + ((update.x - selectedEl.x) / 2)},${selectedEl.y} ${update.x},${update.y}`,
+            fontSize: (newHeight / 1.5).toString(), // i don't know why but 1.5 is working good
+            d: selectedEl.d + ` L ${update.x} ${update.y}`
+          })
+        }
+      })
 
       // on move entire canvas
       if (get(creationInitialElementAtom).type_name === "grab") {
@@ -317,8 +329,10 @@ export const onMouseUpAtom = atom(
     // console.log("onMouseUpAtom")
     const creationInitialElement = get(creationInitialElementAtom)
     const selectedElement = get(selectedElementAtom)
-    if (selectedElement) {
-      set(selectedElementAtom, get(elementsAtom).find(el => el.id === selectedElement.id) || selectedElement)
+    if (selectedElement.length > 0) {
+      const newSelectedEl = selectedElement.map((selectedElel) =>
+        get(elementsAtom).find(el => el.id === selectedElel.id) || selectedElel)
+      set(selectedElementAtom, newSelectedEl)
     }
     set(isDraggingAtom, false)
     set(selectingAreaAtom, null)

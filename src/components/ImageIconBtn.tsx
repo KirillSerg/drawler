@@ -1,11 +1,11 @@
 import { useRef } from 'react';
 import { useAtom } from 'jotai';
-import { ElementsTypeName } from '../types/CommonTypes';
+import { ElementProps } from '../types/CommonTypes';
 import { creationInitialElementAtom } from '../store/store';
 
 interface Props {
   className: string;
-  handlerClick: (typeName: ElementsTypeName) => void;
+  handlerClick: (props: ElementProps) => void;
 }
 
 const ImageIconBtn = ({ className, handlerClick }: Props) => {
@@ -31,7 +31,10 @@ const ImageIconBtn = ({ className, handlerClick }: Props) => {
   };
 
   return (
-    <button className={className} onClick={() => handlerClick('image')}>
+    <button
+      className={className}
+      onClick={() => handlerClick({ type_name: 'image' })}
+    >
       <label
         htmlFor="image"
         className="absolute top-0 left-0 w-full h-full cursor-pointer"
