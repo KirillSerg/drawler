@@ -210,13 +210,17 @@ export const onMouseDownAtom = atom(
 
 export const onDragStartAtom = atom(
   null,
-  (get, set, update: { element: Element, position: Coordinates }) => {
+  (get, set, element: Element) => {
     // console.log("onDragStartAtom")
     if (!get(isDrawingAtom)) {
-      if (get(keyPressedAtom).ctrlKey) {
-        set(selectedElementAtom, (prev) => [...prev, update.element])
-      } else {
-        set(selectedElementAtom, [update.element])
+      // if not selected yet this element
+      if (!get(selectedElementAtom).find(el => el.id === element.id)) {
+        //if multyselect
+        if (get(keyPressedAtom).ctrlKey) {
+          set(selectedElementAtom, (prev) => [...prev, element])
+        } else {
+          set(selectedElementAtom, [element])
+        }
       }
       set(isDraggingAtom, true)
     }
@@ -329,11 +333,34 @@ export const onMouseUpAtom = atom(
     // console.log("onMouseUpAtom")
     const creationInitialElement = get(creationInitialElementAtom)
     const selectedElement = get(selectedElementAtom)
+    const selectingArea = get(selectingAreaAtom)
+
+    // update selected el from original element
     if (selectedElement.length > 0) {
       const newSelectedEl = selectedElement.map((selectedElel) =>
         get(elementsAtom).find(el => el.id === selectedElel.id) || selectedElel)
       set(selectedElementAtom, newSelectedEl)
     }
+
+    // multy select by selectingArea
+    if (!get(isDraggingAtom) && !get(isDrawingAtom)) {
+      if (selectingArea) {
+        const areaStartX = selectingArea.startX < selectingArea.endX ? selectingArea.startX : selectingArea.endX
+        const areaStartY = selectingArea.startY < selectingArea.endY ? selectingArea.startY : selectingArea.endY
+        get(elementsAtom).map((element) => {
+          // if element in area
+          if (
+            element.x > areaStartX &&
+            element.y > areaStartY &&
+            element.x + element.width < areaStartX + Math.abs(selectingArea.endX - selectingArea.startX) &&
+            element.y + element.height < areaStartY + Math.abs(selectingArea.endY - selectingArea.startY)
+          ) {
+            set(selectedElementAtom, (prev) => [...prev, element]);
+          }
+        })
+      }
+    }
+
     set(isDraggingAtom, false)
     set(selectingAreaAtom, null)
 

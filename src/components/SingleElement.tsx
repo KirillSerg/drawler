@@ -6,36 +6,19 @@ import {
   onMouseUpAtom,
   selectedElementAtom,
 } from '../store/store';
-import { ElemenEvent, Element } from '../types/CommonTypes';
-import { transformCoordinates } from '../assets/utilities';
+import { Element } from '../types/CommonTypes';
 
 interface Props {
   element: Element;
-  svgContainerRef: SVGSVGElement | null;
 }
 
-const SingleElement = ({ element, svgContainerRef }: Props) => {
+const SingleElement = ({ element }: Props) => {
   const [, onDragStart] = useAtom(onDragStartAtom);
   const [, onMouseUp] = useAtom(onMouseUpAtom);
   const selectedElement = useAtomValue(selectedElementAtom);
   const isDrawing = useAtomValue(isDrawingAtom);
 
   const isSelected = !!selectedElement.find((el) => el.id === element.id);
-
-  const handleMouseDown = (e: ElemenEvent) => {
-    const { transX, transY } = transformCoordinates(
-      svgContainerRef,
-      e.clientX,
-      e.clientY,
-    );
-    onDragStart({
-      element,
-      position: {
-        x: transX,
-        y: transY,
-      },
-    });
-  };
 
   return (
     <>
@@ -46,7 +29,7 @@ const SingleElement = ({ element, svgContainerRef }: Props) => {
             className={`${isDrawing ? 'hover:cursor-crosshair' : 'hover:cursor-move'}`}
             // in order for the image to be stored and displayed between renderers, its type is an arrayBuffer, but the type of href of image element of svg is a string. That is why this transformation is necessary
             href={element.type === 'image' ? element.href?.toString() : ''}
-            onMouseDown={(e) => handleMouseDown(e)}
+            onMouseDown={() => onDragStart(element)}
             onMouseUp={onMouseUp}
           >
             {element.type === 'foreignObject' && <Textarea element={element} />}
@@ -54,7 +37,7 @@ const SingleElement = ({ element, svgContainerRef }: Props) => {
           {isSelected && !isDrawing && (
             <rect
               className="hover:cursor-move"
-              onMouseDown={(e) => handleMouseDown(e)}
+              onMouseDown={() => onDragStart(element)}
               x={element.x - element.strokeWidth / 2 - 2}
               y={element.y - element.strokeWidth / 2 - 2}
               width={element.width + element.strokeWidth + 4}

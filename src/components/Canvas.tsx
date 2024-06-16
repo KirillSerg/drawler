@@ -119,7 +119,6 @@ const Canvas = () => {
         <SingleElement
           key={element.id}
           element={element}
-          svgContainerRef={svgContainerRef.current}
         />
       ))}
 
@@ -131,7 +130,6 @@ const Canvas = () => {
         <SingleElement
           key={creationInitialElement.id}
           element={creationInitialElement}
-          svgContainerRef={svgContainerRef.current}
         />
       )}
     </svg>
