@@ -7,6 +7,7 @@ import {
   selectedElementAtom,
 } from '../store/store';
 import { Element } from '../types/CommonTypes';
+import SelectingFrame from './SelectingFrame';
 
 interface Props {
   element: Element;
@@ -34,19 +35,8 @@ const SingleElement = ({ element }: Props) => {
           >
             {element.type === 'foreignObject' && <Textarea element={element} />}
           </element.type>
-          {isSelected && !isDrawing && (
-            <rect
-              className="hover:cursor-move"
-              onMouseDown={() => onDragStart(element)}
-              x={element.x - element.strokeWidth / 2 - 2}
-              y={element.y - element.strokeWidth / 2 - 2}
-              width={element.width + element.strokeWidth + 4}
-              height={element.height + element.strokeWidth + 4}
-              stroke="blue"
-              strokeWidth={2}
-              fill="none"
-            ></rect>
-          )}
+
+          {isSelected && !isDrawing && <SelectingFrame element={element} />}
         </>
       )}
     </>

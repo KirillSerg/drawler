@@ -47,6 +47,8 @@ export const selectingAreaAtom = atom<Area | null>(null)
 
 export const isDraggingAtom = atom(false)
 
+export const resizeAtom = atom({ isResize: false, resizeVector: "" })
+
 export const isDrawingAtom = atom(
   (get) => get(creationInitialElementAtom).type_name === "free" ||
     get(creationInitialElementAtom).type_name === "grab" ?
@@ -141,6 +143,7 @@ export const updateElementsAtom = atom(
     if (isSelected
       && !get(isDraggingAtom)
       && !get(isDrawingAtom)
+      && !get(resizeAtom).isResize
     ) set(selectedElementAtom, (prev) => {
       return prev?.map(el => el.id === updatedElement.id ? updatedElement : el) || null
     })
@@ -166,7 +169,7 @@ export const onMouseDownAtom = atom(
   null,
   (get, set, update: Coordinates) => {
     // console.log("onMouseDownAtom")
-    if (!get(isDraggingAtom) && !get(isDrawingAtom) && !get(keyPressedAtom).ctrlKey) {
+    if (!get(isDraggingAtom) && !get(isDrawingAtom) && !get(resizeAtom).isResize && !get(keyPressedAtom).ctrlKey) {
       set(selectedElementAtom, [])
     }
     set(selectingAreaAtom, {
@@ -306,6 +309,64 @@ export const onMouseMoveAtom = atom(
             d: selectedEl.d + ` L ${update.x} ${update.y}`
           })
         }
+
+        // if resizing
+        const resize = get(resizeAtom)
+        if (resize.isResize && selectingArea) {
+          // rect
+          let updatedX = selectedEl.x
+          let updatedY = selectedEl.y
+          let updatedWidth = selectedEl.width
+          let updatedHeight = selectedEl.height
+
+          switch (resize.resizeVector) {
+            case "nord":
+              updatedY = (selectedEl.y + (update.y - selectingArea.startY)) >=
+                selectedEl.y + selectedEl.height ?
+                selectedEl.y + selectedEl.height :
+                selectedEl.y + (update.y - selectingArea.startY)
+              updatedHeight = Math.abs(selectedEl.height - (update.y - selectingArea.startY))
+              break;
+            case "south":
+              updatedY = selectedEl.y >=
+                (selectedEl.y + selectedEl.height + (update.y - selectingArea.startY)) ?
+                (selectedEl.y + selectedEl.height + (update.y - selectingArea.startY)) :
+                selectedEl.y
+              updatedHeight = Math.abs(selectedEl.height + (update.y - selectingArea.startY))
+              break;
+            case "east":
+              updatedX = selectedEl.x >=
+                (selectedEl.x + selectedEl.width + (update.x - selectingArea.startX)) ?
+                (selectedEl.x + selectedEl.width + (update.x - selectingArea.startX)) :
+                selectedEl.x
+              updatedWidth = Math.abs(selectedEl.width + (update.x - selectingArea.startX))
+              break;
+            case "west":
+              updatedX = (selectedEl.x + (update.x - selectingArea.startX)) >=
+                selectedEl.x + selectedEl.width ?
+                selectedEl.x + selectedEl.width :
+                selectedEl.x + (update.x - selectingArea.startX)
+              updatedWidth = Math.abs(selectedEl.width - (update.x - selectingArea.startX))
+              break;
+          }
+          set(updateElementsAtom, {
+            ...selectedEl,
+            x: updatedX,
+            y: updatedY,
+            width: updatedWidth,
+            height: updatedHeight,
+            // cx: selectedEl.cx + (updateCoordinates.x - selectedEl.x) / 2,
+            // cy: selectedEl.cy + (updateCoordinates.y - selectedEl.y) / 2,
+            // rx: selectedEl.type === "ellipse" ? newRX : selectedEl.rx,
+            // ry: selectedEl.type === "ellipse" ? newRY : selectedEl.ry,
+            // x2: updateCoordinates.x,
+            // y2: updateCoordinates.y,
+            // // left-bottom, top, right-bottom
+            // points: `${selectedEl.x},${updateCoordinates.y} ${selectedEl.x + ((updateCoordinates.x - selectedEl.x) / 2)},${selectedEl.y} ${updateCoordinates.x},${updateCoordinates.y}`,
+            // fontSize: (newHeight / 1.5).toString(), // i don't know why but 1.5 is working good
+            // d: selectedEl.d + ` L ${updateCoordinates.x} ${updateCoordinates.y}`
+          })
+        }
       })
 
       // on move entire canvas
@@ -361,6 +422,7 @@ export const onMouseUpAtom = atom(
       }
     }
 
+    set(resizeAtom, { resizeVector: "", isResize: false })
     set(isDraggingAtom, false)
     set(selectingAreaAtom, null)
 

@@ -15,6 +15,7 @@ import {
   creationInitialElementAtom,
   selectingAreaAtom,
   grabCanvasAtom,
+  resizeAtom,
 } from '../store/store';
 import { ElemenEvent, ZoomCanvasFn } from '../types/CommonTypes';
 import { transformCoordinates } from '../assets/utilities';
@@ -23,6 +24,7 @@ const Canvas = () => {
   const elements = useAtomValue(elementsAtom);
   const isDragging = useAtomValue(isDraggingAtom);
   const isDrawing = useAtomValue(isDrawingAtom);
+  const isResize = useAtomValue(resizeAtom);
   const [, onMouseUp] = useAtom(onMouseUpAtom);
   const [, onMouseDown] = useAtom(onMouseDownAtom);
   const [, onMouseMove] = useAtom(onMouseMoveAtom);
@@ -116,14 +118,12 @@ const Canvas = () => {
       </defs>
 
       {elements.map((element) => (
-        <SingleElement
-          key={element.id}
-          element={element}
-        />
+        <SingleElement key={element.id} element={element} />
       ))}
 
       {!isDragging &&
         !isDrawing &&
+        !isResize.isResize &&
         creationInitialElement.type_name !== 'grab' && <SelectingArea />}
 
       {creationInitialElement.type_name === 'image' && (
