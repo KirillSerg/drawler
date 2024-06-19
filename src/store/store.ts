@@ -1,7 +1,7 @@
 import { atom } from "jotai";
 import { Area, CanvasViewBox, Coordinates, Element, ZoomCanvasFn } from "../types/CommonTypes";
 import { atomWithStorage } from 'jotai/utils'
-import { getPencilPointsArrFromString, getTrianglePointsArrFromString, useUpdateXYAndDistance } from "../assets/utilities";
+import { getPencilPointsArrFromString, getResizedCoordinates, getTrianglePointsArrFromString, useUpdateXYAndDistance } from "../assets/utilities";
 
 const initialElement: Element = {
   type: "free",
@@ -313,48 +313,14 @@ export const onMouseMoveAtom = atom(
         // if resizing
         const resize = get(resizeAtom)
         if (resize.isResize && selectingArea) {
-          // rect
-          let updatedX = selectedEl.x
-          let updatedY = selectedEl.y
-          let updatedWidth = selectedEl.width
-          let updatedHeight = selectedEl.height
-
-          switch (resize.resizeVector) {
-            case "nord":
-              updatedY = (selectedEl.y + (update.y - selectingArea.startY)) >=
-                selectedEl.y + selectedEl.height ?
-                selectedEl.y + selectedEl.height :
-                selectedEl.y + (update.y - selectingArea.startY)
-              updatedHeight = Math.abs(selectedEl.height - (update.y - selectingArea.startY))
-              break;
-            case "south":
-              updatedY = selectedEl.y >=
-                (selectedEl.y + selectedEl.height + (update.y - selectingArea.startY)) ?
-                (selectedEl.y + selectedEl.height + (update.y - selectingArea.startY)) :
-                selectedEl.y
-              updatedHeight = Math.abs(selectedEl.height + (update.y - selectingArea.startY))
-              break;
-            case "east":
-              updatedX = selectedEl.x >=
-                (selectedEl.x + selectedEl.width + (update.x - selectingArea.startX)) ?
-                (selectedEl.x + selectedEl.width + (update.x - selectingArea.startX)) :
-                selectedEl.x
-              updatedWidth = Math.abs(selectedEl.width + (update.x - selectingArea.startX))
-              break;
-            case "west":
-              updatedX = (selectedEl.x + (update.x - selectingArea.startX)) >=
-                selectedEl.x + selectedEl.width ?
-                selectedEl.x + selectedEl.width :
-                selectedEl.x + (update.x - selectingArea.startX)
-              updatedWidth = Math.abs(selectedEl.width - (update.x - selectingArea.startX))
-              break;
-          }
+          const resizedCoordinates = getResizedCoordinates(selectedEl, update, selectingArea, resize.resizeVector)
           set(updateElementsAtom, {
             ...selectedEl,
-            x: updatedX,
-            y: updatedY,
-            width: updatedWidth,
-            height: updatedHeight,
+            // x: updatedX,
+            // y: updatedY,
+            // width: updatedWidth,
+            // height: updatedHeight,
+            ...resizedCoordinates,
             // cx: selectedEl.cx + (updateCoordinates.x - selectedEl.x) / 2,
             // cy: selectedEl.cy + (updateCoordinates.y - selectedEl.y) / 2,
             // rx: selectedEl.type === "ellipse" ? newRX : selectedEl.rx,

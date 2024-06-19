@@ -1,3 +1,5 @@
+import { Area, Coordinates, Element } from "../types/CommonTypes";
+
 export const transformCoordinates = (canvas: SVGSVGElement | null, x: number, y: number) => {
   let transX = 0, transY = 0
   if (canvas) {
@@ -45,4 +47,50 @@ export const getPencilPointsArrFromString = (stringPoints: string) => {
   const firstArrLevel = trimmedStart.split(" L ")
   const ArrOfXYPairArr = firstArrLevel.map(xy => xy.split(" "))
   return ArrOfXYPairArr
+}
+
+export const getResizedCoordinates = (
+  selectedEl: Element,
+  update: Coordinates,
+  selectingArea: Area,
+  resizeVector: string
+) => {
+  // rect
+  let updatedX = selectedEl.x
+  let updatedY = selectedEl.y
+  let updatedWidth = selectedEl.width
+  let updatedHeight = selectedEl.height
+
+  switch (resizeVector) {
+    case "nord":
+      updatedY = (selectedEl.y + (update.y - selectingArea.startY)) >=
+        selectedEl.y + selectedEl.height ?
+        selectedEl.y + selectedEl.height :
+        selectedEl.y + (update.y - selectingArea.startY)
+      updatedHeight = Math.abs(selectedEl.height - (update.y - selectingArea.startY))
+      break;
+    case "south":
+      updatedY = selectedEl.y >=
+        (selectedEl.y + selectedEl.height + (update.y - selectingArea.startY)) ?
+        (selectedEl.y + selectedEl.height + (update.y - selectingArea.startY)) :
+        selectedEl.y
+      updatedHeight = Math.abs(selectedEl.height + (update.y - selectingArea.startY))
+      break;
+    case "east":
+      updatedX = selectedEl.x >=
+        (selectedEl.x + selectedEl.width + (update.x - selectingArea.startX)) ?
+        (selectedEl.x + selectedEl.width + (update.x - selectingArea.startX)) :
+        selectedEl.x
+      updatedWidth = Math.abs(selectedEl.width + (update.x - selectingArea.startX))
+      break;
+    case "west":
+      updatedX = (selectedEl.x + (update.x - selectingArea.startX)) >=
+        selectedEl.x + selectedEl.width ?
+        selectedEl.x + selectedEl.width :
+        selectedEl.x + (update.x - selectingArea.startX)
+      updatedWidth = Math.abs(selectedEl.width - (update.x - selectingArea.startX))
+      break;
+  }
+
+  return ({ x: updatedX, y: updatedY, width: updatedWidth, height: updatedHeight })
 }
