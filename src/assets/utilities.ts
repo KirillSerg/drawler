@@ -49,7 +49,7 @@ export const getPencilPointsArrFromString = (stringPoints: string) => {
   return ArrOfXYPairArr
 }
 
-export const getResizedCoordinates = (
+export const useResizedCoordinates = (
   selectedEl: Element,
   update: Coordinates,
   selectingArea: Area,
@@ -61,34 +61,63 @@ export const getResizedCoordinates = (
   let updatedWidth = selectedEl.width
   let updatedHeight = selectedEl.height
 
+  const nordResize = () => {
+    updatedY = (selectedEl.y + (update.y - selectingArea.startY)) >=
+      selectedEl.y + selectedEl.height ?
+      selectedEl.y + selectedEl.height :
+      selectedEl.y + (update.y - selectingArea.startY)
+    updatedHeight = Math.abs(selectedEl.height - (update.y - selectingArea.startY))
+  }
+  const southResize = () => {
+    updatedY = selectedEl.y >=
+      (selectedEl.y + selectedEl.height + (update.y - selectingArea.startY)) ?
+      (selectedEl.y + selectedEl.height + (update.y - selectingArea.startY)) :
+      selectedEl.y
+    updatedHeight = Math.abs(selectedEl.height + (update.y - selectingArea.startY))
+  }
+  const eastResize = () => {
+    updatedX = selectedEl.x >=
+      (selectedEl.x + selectedEl.width + (update.x - selectingArea.startX)) ?
+      (selectedEl.x + selectedEl.width + (update.x - selectingArea.startX)) :
+      selectedEl.x
+    updatedWidth = Math.abs(selectedEl.width + (update.x - selectingArea.startX))
+  }
+  const westResize = () => {
+    updatedX = (selectedEl.x + (update.x - selectingArea.startX)) >=
+      selectedEl.x + selectedEl.width ?
+      selectedEl.x + selectedEl.width :
+      selectedEl.x + (update.x - selectingArea.startX)
+    updatedWidth = Math.abs(selectedEl.width - (update.x - selectingArea.startX))
+  }
+
   switch (resizeVector) {
     case "nord":
-      updatedY = (selectedEl.y + (update.y - selectingArea.startY)) >=
-        selectedEl.y + selectedEl.height ?
-        selectedEl.y + selectedEl.height :
-        selectedEl.y + (update.y - selectingArea.startY)
-      updatedHeight = Math.abs(selectedEl.height - (update.y - selectingArea.startY))
+      nordResize()
       break;
     case "south":
-      updatedY = selectedEl.y >=
-        (selectedEl.y + selectedEl.height + (update.y - selectingArea.startY)) ?
-        (selectedEl.y + selectedEl.height + (update.y - selectingArea.startY)) :
-        selectedEl.y
-      updatedHeight = Math.abs(selectedEl.height + (update.y - selectingArea.startY))
+      southResize()
       break;
     case "east":
-      updatedX = selectedEl.x >=
-        (selectedEl.x + selectedEl.width + (update.x - selectingArea.startX)) ?
-        (selectedEl.x + selectedEl.width + (update.x - selectingArea.startX)) :
-        selectedEl.x
-      updatedWidth = Math.abs(selectedEl.width + (update.x - selectingArea.startX))
+      eastResize()
       break;
     case "west":
-      updatedX = (selectedEl.x + (update.x - selectingArea.startX)) >=
-        selectedEl.x + selectedEl.width ?
-        selectedEl.x + selectedEl.width :
-        selectedEl.x + (update.x - selectingArea.startX)
-      updatedWidth = Math.abs(selectedEl.width - (update.x - selectingArea.startX))
+      westResize()
+      break;
+    case "nordwest":
+      nordResize()
+      westResize()
+      break;
+    case "nordeast":
+      nordResize()
+      eastResize()
+      break;
+    case "southeast":
+      southResize()
+      eastResize()
+      break;
+    case "southwest":
+      southResize()
+      westResize()
       break;
   }
 

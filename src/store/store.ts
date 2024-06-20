@@ -1,7 +1,12 @@
 import { atom } from "jotai";
 import { Area, CanvasViewBox, Coordinates, Element, ZoomCanvasFn } from "../types/CommonTypes";
 import { atomWithStorage } from 'jotai/utils'
-import { getPencilPointsArrFromString, getResizedCoordinates, getTrianglePointsArrFromString, useUpdateXYAndDistance } from "../assets/utilities";
+import {
+  getPencilPointsArrFromString,
+  useResizedCoordinates,
+  getTrianglePointsArrFromString,
+  useUpdateXYAndDistance
+} from "../assets/utilities";
 
 const initialElement: Element = {
   type: "free",
@@ -313,7 +318,7 @@ export const onMouseMoveAtom = atom(
         // if resizing
         const resize = get(resizeAtom)
         if (resize.isResize && selectingArea) {
-          const resizedCoordinates = getResizedCoordinates(selectedEl, update, selectingArea, resize.resizeVector)
+          const resizedCoordinates = useResizedCoordinates(selectedEl, update, selectingArea, resize.resizeVector)
           set(updateElementsAtom, {
             ...selectedEl,
             // x: updatedX,

@@ -12,9 +12,9 @@ const SelectingFrame = ({ element }: Props) => {
 
   return (
     <g>
-      {/* top */}
+      {/* top side */}
       <line
-        className="hover:cursor-ns-resize"
+        className="hover:cursor-n-resize"
         onMouseDown={() =>
           setIsResize(() => ({
             resizeVector: 'nord',
@@ -29,9 +29,9 @@ const SelectingFrame = ({ element }: Props) => {
         stroke="red"
         strokeWidth={2}
       />
-      {/* right */}
+      {/* right side */}
       <line
-        className="hover:cursor-ew-resize"
+        className="hover:cursor-e-resize"
         onMouseDown={() =>
           setIsResize(() => ({
             resizeVector: 'east',
@@ -46,9 +46,9 @@ const SelectingFrame = ({ element }: Props) => {
         stroke="red"
         strokeWidth={2}
       />
-      {/* bottom */}
+      {/* bottom side */}
       <line
-        className="hover:cursor-ns-resize"
+        className="hover:cursor-s-resize"
         onMouseDown={() =>
           setIsResize(() => ({
             resizeVector: 'south',
@@ -63,9 +63,9 @@ const SelectingFrame = ({ element }: Props) => {
         stroke="red"
         strokeWidth={2}
       />
-      {/* left */}
+      {/* left side */}
       <line
-        className="hover:cursor-ew-resize"
+        className="hover:cursor-w-resize"
         onMouseDown={() =>
           setIsResize(() => ({
             resizeVector: 'west',
@@ -79,6 +79,74 @@ const SelectingFrame = ({ element }: Props) => {
         y2={element.y + element.height + element.strokeWidth / 2 + 2}
         stroke="red"
         strokeWidth={2}
+      />
+
+      {/* top-left */}
+      <rect
+        className="hover:cursor-nwse-resize"
+        onMouseDown={() =>
+          setIsResize(() => ({
+            resizeVector: 'nordwest',
+            isResize: true,
+          }))
+        }
+        onMouseUp={onMouseUp}
+        x={element.x - element.strokeWidth / 2 - 4}
+        y={element.y - element.strokeWidth / 2 - 4}
+        width="4"
+        height="4"
+        fill="lightgray"
+      />
+
+      {/* top-right */}
+      <rect
+        className="hover:cursor-nesw-resize"
+        onMouseDown={() =>
+          setIsResize(() => ({
+            resizeVector: 'nordeast',
+            isResize: true,
+          }))
+        }
+        onMouseUp={onMouseUp}
+        x={element.x + element.width - element.strokeWidth / 2 + 4}
+        y={element.y - element.strokeWidth / 2 - 4}
+        width="4"
+        height="4"
+        fill="lightgray"
+      />
+
+      {/* bottom-right */}
+      <rect
+        className="hover:cursor-nwse-resize"
+        onMouseDown={() =>
+          setIsResize(() => ({
+            resizeVector: 'southeast',
+            isResize: true,
+          }))
+        }
+        onMouseUp={onMouseUp}
+        x={element.x + element.width - element.strokeWidth / 2 + 4}
+        y={element.y + element.height - element.strokeWidth / 2 + 4}
+        width="4"
+        height="4"
+        fill="lightgray"
+      />
+
+      {/* bottom-left */}
+      <rect
+        className="hover:cursor-nesw-resize"
+        onMouseDown={() =>
+          setIsResize(() => ({
+            resizeVector: 'southwest',
+            isResize: true,
+          }))
+        }
+        onMouseUp={onMouseUp}
+        x={element.x - element.strokeWidth / 2 - 4}
+        y={element.y + element.height - element.strokeWidth / 2 + 4}
+        width="4"
+        height="4"
+        fill="lightgray"
       />
     </g>
   );
