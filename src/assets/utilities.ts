@@ -60,6 +60,11 @@ export const useResizedCoordinates = (
   let updatedY = selectedEl.y
   let updatedWidth = selectedEl.width
   let updatedHeight = selectedEl.height
+  // ellipse
+  let updatedCX = selectedEl.cx
+  let updatedRX = selectedEl.rx
+  let updatedCY = selectedEl.cy
+  let updatedRY = selectedEl.ry
 
   const nordResize = () => {
     updatedY = (selectedEl.y + (update.y - selectingArea.startY)) >=
@@ -67,6 +72,8 @@ export const useResizedCoordinates = (
       selectedEl.y + selectedEl.height :
       selectedEl.y + (update.y - selectingArea.startY)
     updatedHeight = Math.abs(selectedEl.height - (update.y - selectingArea.startY))
+    updatedCY = selectedEl.cy + (update.y - selectingArea.startY) / 2
+    updatedRY = Math.abs(selectedEl.ry - (update.y - selectingArea.startY) / 2)
   }
   const southResize = () => {
     updatedY = selectedEl.y >=
@@ -74,6 +81,8 @@ export const useResizedCoordinates = (
       (selectedEl.y + selectedEl.height + (update.y - selectingArea.startY)) :
       selectedEl.y
     updatedHeight = Math.abs(selectedEl.height + (update.y - selectingArea.startY))
+    updatedCY = selectedEl.cy + (update.y - selectingArea.startY) / 2
+    updatedRY = Math.abs(selectedEl.ry + (update.y - selectingArea.startY) / 2)
   }
   const eastResize = () => {
     updatedX = selectedEl.x >=
@@ -81,6 +90,8 @@ export const useResizedCoordinates = (
       (selectedEl.x + selectedEl.width + (update.x - selectingArea.startX)) :
       selectedEl.x
     updatedWidth = Math.abs(selectedEl.width + (update.x - selectingArea.startX))
+    updatedCX = selectedEl.cx + (update.x - selectingArea.startX) / 2
+    updatedRX = Math.abs(selectedEl.rx + (update.x - selectingArea.startX) / 2)
   }
   const westResize = () => {
     updatedX = (selectedEl.x + (update.x - selectingArea.startX)) >=
@@ -88,6 +99,8 @@ export const useResizedCoordinates = (
       selectedEl.x + selectedEl.width :
       selectedEl.x + (update.x - selectingArea.startX)
     updatedWidth = Math.abs(selectedEl.width - (update.x - selectingArea.startX))
+    updatedCX = selectedEl.cx + (update.x - selectingArea.startX) / 2
+    updatedRX = Math.abs(selectedEl.rx - (update.x - selectingArea.startX) / 2)
   }
 
   switch (resizeVector) {
@@ -121,5 +134,14 @@ export const useResizedCoordinates = (
       break;
   }
 
-  return ({ x: updatedX, y: updatedY, width: updatedWidth, height: updatedHeight })
+  return ({
+    x: updatedX,
+    y: updatedY,
+    width: updatedWidth,
+    height: updatedHeight,
+    cx: updatedCX,
+    rx: updatedRX,
+    cy: updatedCY,
+    ry: updatedRY,
+  })
 }
