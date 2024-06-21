@@ -327,15 +327,17 @@ export const onMouseMoveAtom = atom(
             // height: updatedHeight,
             // cx: selectedEl.cx + (updateCoordinates.x - selectedEl.x) / 2,
             // cy: selectedEl.cy + (updateCoordinates.y - selectedEl.y) / 2,
-            ...resizedCoordinates,
-            rx: selectedEl.type === "ellipse" ? resizedCoordinates.rx : 0,
-            ry: selectedEl.type === "ellipse" ? resizedCoordinates.ry : 0,
+            // rx: selectedEl.type === "ellipse" ? resizedCoordinates.rx : 0,
+            // ry: selectedEl.type === "ellipse" ? resizedCoordinates.ry : 0,
             // x2: updateCoordinates.x,
-            // y2: updateCoordinates.y,
+            ...resizedCoordinates,
             // // left-bottom, top, right-bottom
             // points: `${selectedEl.x},${updateCoordinates.y} ${selectedEl.x + ((updateCoordinates.x - selectedEl.x) / 2)},${selectedEl.y} ${updateCoordinates.x},${updateCoordinates.y}`,
             // fontSize: (newHeight / 1.5).toString(), // i don't know why but 1.5 is working good
             // d: selectedEl.d + ` L ${updateCoordinates.x} ${updateCoordinates.y}`
+
+            // txt
+            // y2: updateCoordinates.y,
           })
         }
       })

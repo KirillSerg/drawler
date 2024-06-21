@@ -65,24 +65,62 @@ export const useResizedCoordinates = (
   let updatedRX = selectedEl.rx
   let updatedCY = selectedEl.cy
   let updatedRY = selectedEl.ry
+  // line
+  let updatedX1 = selectedEl.x1
+  let updatedX2 = selectedEl.x2
+  // poligon(triangle)
+  let updatedTrianglePointsArr = getTrianglePointsArrFromString(selectedEl.points)
+  // let updatedPoints = selectedEl.points
 
   const nordResize = () => {
-    updatedY = (selectedEl.y + (update.y - selectingArea.startY)) >=
-      selectedEl.y + selectedEl.height ?
-      selectedEl.y + selectedEl.height :
-      selectedEl.y + (update.y - selectingArea.startY)
-    updatedHeight = Math.abs(selectedEl.height - (update.y - selectingArea.startY))
-    updatedCY = selectedEl.cy + (update.y - selectingArea.startY) / 2
-    updatedRY = Math.abs(selectedEl.ry - (update.y - selectingArea.startY) / 2)
+    if (selectedEl.type !== "line") {
+      updatedY = (selectedEl.y + (update.y - selectingArea.startY)) >=
+        selectedEl.y + selectedEl.height ?
+        selectedEl.y + selectedEl.height :
+        selectedEl.y + (update.y - selectingArea.startY)
+      updatedHeight = Math.abs(selectedEl.height - (update.y - selectingArea.startY))
+      updatedCY = selectedEl.cy + (update.y - selectingArea.startY) / 2
+      updatedRY = Math.abs(selectedEl.ry - (update.y - selectingArea.startY) / 2)
+      if (+updatedTrianglePointsArr[1][1] < +updatedTrianglePointsArr[0][1]) {
+        // left-bottom, top, right-bottom
+        updatedTrianglePointsArr = [
+          [updatedTrianglePointsArr[0][0], updatedTrianglePointsArr[0][1]],
+          [updatedTrianglePointsArr[1][0], `${+updatedTrianglePointsArr[1][1] + (update.y - selectingArea.startY)}`],
+          [updatedTrianglePointsArr[2][0], updatedTrianglePointsArr[2][1]]
+        ]
+      } else {
+        updatedTrianglePointsArr = [
+          [updatedTrianglePointsArr[0][0], `${+ updatedTrianglePointsArr[0][1] + (update.y - selectingArea.startY)}`],
+          [updatedTrianglePointsArr[1][0], updatedTrianglePointsArr[1][1]],
+          [updatedTrianglePointsArr[2][0], `${+ updatedTrianglePointsArr[2][1] + (update.y - selectingArea.startY)}`]
+        ]
+      }
+    }
   }
   const southResize = () => {
-    updatedY = selectedEl.y >=
-      (selectedEl.y + selectedEl.height + (update.y - selectingArea.startY)) ?
-      (selectedEl.y + selectedEl.height + (update.y - selectingArea.startY)) :
-      selectedEl.y
-    updatedHeight = Math.abs(selectedEl.height + (update.y - selectingArea.startY))
-    updatedCY = selectedEl.cy + (update.y - selectingArea.startY) / 2
-    updatedRY = Math.abs(selectedEl.ry + (update.y - selectingArea.startY) / 2)
+    if (selectedEl.type !== "line") {
+      updatedY = selectedEl.y >=
+        (selectedEl.y + selectedEl.height + (update.y - selectingArea.startY)) ?
+        (selectedEl.y + selectedEl.height + (update.y - selectingArea.startY)) :
+        selectedEl.y
+      updatedHeight = Math.abs(selectedEl.height + (update.y - selectingArea.startY))
+      updatedCY = selectedEl.cy + (update.y - selectingArea.startY) / 2
+      updatedRY = Math.abs(selectedEl.ry + (update.y - selectingArea.startY) / 2)
+      if (+updatedTrianglePointsArr[1][1] > +updatedTrianglePointsArr[0][1]) {
+        // left-bottom, top, right-bottom
+        updatedTrianglePointsArr = [
+          [updatedTrianglePointsArr[0][0], updatedTrianglePointsArr[0][1]],
+          [updatedTrianglePointsArr[1][0], `${+updatedTrianglePointsArr[1][1] + (update.y - selectingArea.startY)}`],
+          [updatedTrianglePointsArr[2][0], updatedTrianglePointsArr[2][1]]
+        ]
+      } else {
+        updatedTrianglePointsArr = [
+          [updatedTrianglePointsArr[0][0], `${+ updatedTrianglePointsArr[0][1] + (update.y - selectingArea.startY)}`],
+          [updatedTrianglePointsArr[1][0], updatedTrianglePointsArr[1][1]],
+          [updatedTrianglePointsArr[2][0], `${+ updatedTrianglePointsArr[2][1] + (update.y - selectingArea.startY)}`]
+        ]
+      }
+    }
   }
   const eastResize = () => {
     updatedX = selectedEl.x >=
@@ -92,6 +130,21 @@ export const useResizedCoordinates = (
     updatedWidth = Math.abs(selectedEl.width + (update.x - selectingArea.startX))
     updatedCX = selectedEl.cx + (update.x - selectingArea.startX) / 2
     updatedRX = Math.abs(selectedEl.rx + (update.x - selectingArea.startX) / 2)
+    updatedX2 = selectedEl.x2 + (update.x - selectingArea.startX)
+    if (+updatedTrianglePointsArr[0][0] < +updatedTrianglePointsArr[2][0]) {
+      // left-bottom, top, right-bottom
+      updatedTrianglePointsArr = [
+        [updatedTrianglePointsArr[0][0], updatedTrianglePointsArr[0][1]],
+        [`${+updatedTrianglePointsArr[1][0] + (update.x - selectingArea.startX) / 2}`, updatedTrianglePointsArr[1][1]],
+        [`${+ updatedTrianglePointsArr[2][0] + (update.x - selectingArea.startX)}`, updatedTrianglePointsArr[2][1]]
+      ]
+    } else {
+      updatedTrianglePointsArr = [
+        [`${+updatedTrianglePointsArr[0][0] + (update.x - selectingArea.startX)}`, updatedTrianglePointsArr[0][1]],
+        [`${+updatedTrianglePointsArr[1][0] + (update.x - selectingArea.startX) / 2}`, updatedTrianglePointsArr[1][1]],
+        [updatedTrianglePointsArr[2][0], updatedTrianglePointsArr[2][1]]
+      ]
+    }
   }
   const westResize = () => {
     updatedX = (selectedEl.x + (update.x - selectingArea.startX)) >=
@@ -101,6 +154,21 @@ export const useResizedCoordinates = (
     updatedWidth = Math.abs(selectedEl.width - (update.x - selectingArea.startX))
     updatedCX = selectedEl.cx + (update.x - selectingArea.startX) / 2
     updatedRX = Math.abs(selectedEl.rx - (update.x - selectingArea.startX) / 2)
+    updatedX1 = selectedEl.x1 + (update.x - selectingArea.startX)
+    if (+updatedTrianglePointsArr[0][0] > +updatedTrianglePointsArr[2][0]) {
+      // left-bottom, top, right-bottom
+      updatedTrianglePointsArr = [
+        [updatedTrianglePointsArr[0][0], updatedTrianglePointsArr[0][1]],
+        [`${+updatedTrianglePointsArr[1][0] + (update.x - selectingArea.startX) / 2}`, updatedTrianglePointsArr[1][1]],
+        [`${+ updatedTrianglePointsArr[2][0] + (update.x - selectingArea.startX)}`, updatedTrianglePointsArr[2][1]]
+      ]
+    } else {
+      updatedTrianglePointsArr = [
+        [`${+updatedTrianglePointsArr[0][0] + (update.x - selectingArea.startX)}`, updatedTrianglePointsArr[0][1]],
+        [`${+updatedTrianglePointsArr[1][0] + (update.x - selectingArea.startX) / 2}`, updatedTrianglePointsArr[1][1]],
+        [updatedTrianglePointsArr[2][0], updatedTrianglePointsArr[2][1]]
+      ]
+    }
   }
 
   switch (resizeVector) {
@@ -140,8 +208,11 @@ export const useResizedCoordinates = (
     width: updatedWidth,
     height: updatedHeight,
     cx: updatedCX,
-    rx: updatedRX,
+    rx: selectedEl.type === "ellipse" ? updatedRX : 0,
     cy: updatedCY,
-    ry: updatedRY,
+    ry: selectedEl.type === "ellipse" ? updatedRY : 0,
+    x1: updatedX1,
+    x2: updatedX2,
+    points: updatedTrianglePointsArr.map(points => points.join()).join(" "),
   })
 }
