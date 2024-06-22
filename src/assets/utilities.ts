@@ -45,8 +45,21 @@ export const getTrianglePointsArrFromString = (stringPoints: string) => {
 export const getPencilPointsArrFromString = (stringPoints: string) => {
   const trimmedStart = stringPoints.slice(2)
   const firstArrLevel = trimmedStart.split(" L ")
-  const ArrOfXYPairArr = firstArrLevel.map(xy => xy.split(" "))
+  const ArrOfXYPairArr = firstArrLevel.map(xy => xy.split(" ").map(coord => Number(coord)))
   return ArrOfXYPairArr
+}
+
+export const getPencilSize = (element: Element) => {
+  const pointsArr = getPencilPointsArrFromString(element.d)
+  let maxX = 0, minX = Infinity, maxY = 0, minY = Infinity
+  pointsArr.forEach((point) => {
+    if (point[0] > maxX) maxX = +point[0]
+    if (point[0] < minX) minX = +point[0]
+    if (point[1] > maxY) maxY = +point[1]
+    if (point[1] < minY) minY = +point[1]
+  })
+  return { width: maxX - minX, height: maxY - minY }
+
 }
 
 export const useResizedCoordinates = (
@@ -70,7 +83,8 @@ export const useResizedCoordinates = (
   let updatedX2 = selectedEl.x2
   // poligon(triangle)
   let updatedTrianglePointsArr = getTrianglePointsArrFromString(selectedEl.points)
-  // let updatedPoints = selectedEl.points
+  // pencil
+  // let pencilPointsArr = getPencilPointsArrFromString(selectedEl.d)
 
   const nordResize = () => {
     if (selectedEl.type !== "line") {
@@ -81,6 +95,7 @@ export const useResizedCoordinates = (
       updatedHeight = Math.abs(selectedEl.height - (update.y - selectingArea.startY))
       updatedCY = selectedEl.cy + (update.y - selectingArea.startY) / 2
       updatedRY = Math.abs(selectedEl.ry - (update.y - selectingArea.startY) / 2)
+
       if (+updatedTrianglePointsArr[1][1] < +updatedTrianglePointsArr[0][1]) {
         // left-bottom, top, right-bottom
         updatedTrianglePointsArr = [
@@ -95,6 +110,8 @@ export const useResizedCoordinates = (
           [updatedTrianglePointsArr[2][0], `${+ updatedTrianglePointsArr[2][1] + (update.y - selectingArea.startY)}`]
         ]
       }
+
+      // pencilPointsArr = pencilPointsArr.map((point) => [point[0], +point[1] + (update.y - selectingArea.startY)])
     }
   }
   const southResize = () => {
@@ -214,5 +231,6 @@ export const useResizedCoordinates = (
     x1: updatedX1,
     x2: updatedX2,
     points: updatedTrianglePointsArr.map(points => points.join()).join(" "),
+    // d: "M " + pencilPointsArr.map(points => points.join(" ")).join(" L ")
   })
 }

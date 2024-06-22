@@ -5,7 +5,8 @@ import {
   getPencilPointsArrFromString,
   useResizedCoordinates,
   getTrianglePointsArrFromString,
-  useUpdateXYAndDistance
+  useUpdateXYAndDistance,
+  getPencilSize
 } from "../assets/utilities";
 
 const initialElement: Element = {
@@ -267,8 +268,8 @@ export const onMouseMoveAtom = atom(
           // pencil
           const newPencilPointsArr = getPencilPointsArrFromString(selectedEl.d).map((point) =>
             [
-              +point[0] + (update.x - selectingArea.startX),
-              +point[1] + (update.y - selectingArea.startY)
+              point[0] + (update.x - selectingArea.startX),
+              point[1] + (update.y - selectingArea.startY)
             ]
           )
           const newPathData = "M " + newPencilPointsArr.map(points => points.join(" ")).join(" L ")
@@ -300,8 +301,8 @@ export const onMouseMoveAtom = atom(
             ...selectedEl,
             x: newX,
             y: newY,
-            width: newWidth,
-            height: newHeight,
+            width: selectedEl.type_name === "pencil" ? getPencilSize(selectedEl)?.width : newWidth,
+            height: selectedEl.type_name === "pencil" ? getPencilSize(selectedEl)?.height : newHeight,
             cx: selectedEl.cx + (update.x - selectedEl.x) / 2,
             cy: selectedEl.cy + (update.y - selectedEl.y) / 2,
             rx: selectedEl.type === "ellipse" ? newRX : 0,
