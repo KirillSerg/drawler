@@ -33,7 +33,9 @@ const ImageIconBtn = ({ className, handlerClick }: Props) => {
   return (
     <button
       className={className}
-      onClick={() => handlerClick({ type_name: 'image' })}
+      onClick={() =>
+        handlerClick({ type_name: 'image', width: 100, height: 100 })
+      }
     >
       <label
         htmlFor="image"

@@ -14,8 +14,8 @@ const initialElement: Element = {
   id: "",
   x: 0,
   y: 0,
-  width: 150,
-  height: 150,
+  width: 1,
+  height: 1,
   cx: 0,
   cy: 0,
   rx: 0.5,
@@ -200,7 +200,7 @@ export const onMouseDownAtom = atom(
         // fontSize: ,
       }
       set(elementsAtom, (prev) => [...prev, newEl])
-      set(selectedElementAtom, (prev) => [...prev, newEl])
+      set(selectedElementAtom, [newEl])
       set(creationInitialElementAtom, (prev) => {
         return { ...prev, href: "" }
       })
