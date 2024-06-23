@@ -11,7 +11,7 @@ const SelectingFrame = ({ element }: Props) => {
   const [, onMouseUp] = useAtom(onMouseUpAtom);
 
   return (
-    <g>
+    <g id="frame">
       {/* top side */}
       <line
         className="hover:cursor-n-resize"

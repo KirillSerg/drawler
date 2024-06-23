@@ -193,6 +193,63 @@ test("Grab canvas", async ({ page }) => {
   await checkCanvasViewBoxParametersInLocalStorage(page, { key: "y", value: 1 })
 })
 
+test("Selecting frame", async ({ page }) => {
+  await page.goto('http://localhost:5173/');
+
+  const toolbarRect = page.locator('header > button > svg > rect')
+  await toolbarRect.click()
+  await page.mouse.move(300, 300);
+  await page.mouse.down();
+  await page.mouse.move(500, 500);
+  await page.mouse.up();
+  // check the frame and what it is visible
+  await expect(page.locator('id=frame')).toBeVisible()
+  // disable selecting of element
+  await page.locator('#canvas').click()
+  await expect(page.locator('id=frame')).toBeHidden()
+
+  // resize
+  // select element for the frame enable
+  await page.mouse.move(300, 300);
+  await page.mouse.down();
+  await page.mouse.up();
+  //get current haight
+  const prevHaight = await page.evaluate(() => {
+    const local = localStorage.getItem('elements');
+    if (local) {
+      return JSON.parse(local)[0].height
+    }
+  });
+  await page.mouse.move(300, 297);
+  await page.mouse.down();
+  await page.mouse.move(300, 197);
+  await page.mouse.up();
+  //get haight after resizing
+  const nextHaight = await page.evaluate(() => {
+    const local = localStorage.getItem('elements');
+    if (local) {
+      return JSON.parse(local)[0].height
+    }
+  });
+  expect(nextHaight).toBeGreaterThan(prevHaight)
+
+  //multyselect
+  // added one more element
+  await toolbarRect.click()
+  await page.mouse.move(100, 300);
+  await page.mouse.down();
+  await page.mouse.move(200, 400);
+  await page.mouse.up();
+  // select all two element by select area
+  await page.mouse.move(1, 1);
+  await page.mouse.down();
+  await page.mouse.move(600, 600);
+  await page.mouse.up();
+  // check the numbers of frame and what it is visible
+  const framesNumber = await page.locator('id=frame').count()
+  expect(framesNumber).toBe(2)
+})
+
 async function checkElementInLocalStorage(page: Page, elementType: string) {
   return await page.waitForFunction(type => {
     // eslint-disable-next-line @typescript-eslint/no-explicit-any
