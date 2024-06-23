@@ -1,4 +1,4 @@
-import { useRef } from 'react';
+import { useEffect, useRef } from 'react';
 import { useAtom } from 'jotai';
 import { ElementProps } from '../types/CommonTypes';
 import { creationInitialElementAtom } from '../store/store';
@@ -29,6 +29,15 @@ const ImageIconBtn = ({ className, handlerClick }: Props) => {
       reader.readAsDataURL(e.target.files[0]);
     }
   };
+
+  // to handle a file selection abort
+  useEffect(() => {
+    if (fileInputRef.current) {
+      fileInputRef.current.addEventListener('cancel', () => {
+        handlerClick({ type_name: 'free', width: 1, height: 1 });
+      });
+    }
+  }, [handlerClick]);
 
   return (
     <button
