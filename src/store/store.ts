@@ -322,23 +322,7 @@ export const onMouseMoveAtom = atom(
           const resizedCoordinates = useResizedCoordinates(selectedEl, update, selectingArea, resizeVector)
           set(updateElementsAtom, {
             ...selectedEl,
-            // x: updatedX,
-            // y: updatedY,
-            // width: updatedWidth,
-            // height: updatedHeight,
-            // cx: selectedEl.cx + (updateCoordinates.x - selectedEl.x) / 2,
-            // cy: selectedEl.cy + (updateCoordinates.y - selectedEl.y) / 2,
-            // rx: selectedEl.type === "ellipse" ? resizedCoordinates.rx : 0,
-            // ry: selectedEl.type === "ellipse" ? resizedCoordinates.ry : 0,
-            // x2: updateCoordinates.x,
-            // // left-bottom, top, right-bottom
-            // points: `${selectedEl.x},${updateCoordinates.y} ${selectedEl.x + ((updateCoordinates.x - selectedEl.x) / 2)},${selectedEl.y} ${updateCoordinates.x},${updateCoordinates.y}`,
-            // d: selectedEl.d + ` L ${updateCoordinates.x} ${updateCoordinates.y}`
             ...resizedCoordinates,
-            // fontSize: (newHeight / 1.5).toString(), // i don't know why but 1.5 is working good
-
-            // txt
-            // y2: updateCoordinates.y,
           })
         }
       })

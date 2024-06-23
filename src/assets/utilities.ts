@@ -252,6 +252,7 @@ export const useResizedCoordinates = (
     x1: updatedX1,
     x2: updatedX2,
     points: updatedTrianglePointsArr.map(points => points.join()).join(" "),
-    d: "M " + pencilPointsArr.map(points => points.join(" ")).join(" L ")
+    d: "M " + pencilPointsArr.map(points => points.join(" ")).join(" L "),
+    fontSize: (updatedHeight / 1.5).toString(),
   })
 }
