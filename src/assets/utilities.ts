@@ -84,7 +84,7 @@ export const useResizedCoordinates = (
   // poligon(triangle)
   let updatedTrianglePointsArr = getTrianglePointsArrFromString(selectedEl.points)
   // pencil
-  // let pencilPointsArr = getPencilPointsArrFromString(selectedEl.d)
+  let pencilPointsArr = getPencilPointsArrFromString(selectedEl.d)
 
   const nordResize = () => {
     if (selectedEl.type !== "line") {
@@ -111,7 +111,10 @@ export const useResizedCoordinates = (
         ]
       }
 
-      // pencilPointsArr = pencilPointsArr.map((point) => [point[0], +point[1] + (update.y - selectingArea.startY)])
+      // get the percentage of each pencil point from the height of the element respectively
+      pencilPointsArr = pencilPointsArr.map((point) =>
+        [point[0], point[1] + ((update.y - selectingArea.startY) * (1 - ((point[1] - selectedEl.y) / selectedEl.height)))]    //* (selectedEl.y+selectedEl.height)]
+      )
     }
   }
   const southResize = () => {
@@ -123,6 +126,7 @@ export const useResizedCoordinates = (
       updatedHeight = Math.abs(selectedEl.height + (update.y - selectingArea.startY))
       updatedCY = selectedEl.cy + (update.y - selectingArea.startY) / 2
       updatedRY = Math.abs(selectedEl.ry + (update.y - selectingArea.startY) / 2)
+
       if (+updatedTrianglePointsArr[1][1] > +updatedTrianglePointsArr[0][1]) {
         // left-bottom, top, right-bottom
         updatedTrianglePointsArr = [
@@ -137,6 +141,11 @@ export const useResizedCoordinates = (
           [updatedTrianglePointsArr[2][0], `${+ updatedTrianglePointsArr[2][1] + (update.y - selectingArea.startY)}`]
         ]
       }
+
+      // get the percentage of each pencil point from the and height of the element respectively
+      pencilPointsArr = pencilPointsArr.map((point) =>
+        [point[0], point[1] + ((update.y - selectingArea.startY) * ((point[1] - selectedEl.y) / selectedEl.height))]    //* (selectedEl.y+selectedEl.height)]
+      )
     }
   }
   const eastResize = () => {
@@ -148,6 +157,7 @@ export const useResizedCoordinates = (
     updatedCX = selectedEl.cx + (update.x - selectingArea.startX) / 2
     updatedRX = Math.abs(selectedEl.rx + (update.x - selectingArea.startX) / 2)
     updatedX2 = selectedEl.x2 + (update.x - selectingArea.startX)
+
     if (+updatedTrianglePointsArr[0][0] < +updatedTrianglePointsArr[2][0]) {
       // left-bottom, top, right-bottom
       updatedTrianglePointsArr = [
@@ -162,6 +172,11 @@ export const useResizedCoordinates = (
         [updatedTrianglePointsArr[2][0], updatedTrianglePointsArr[2][1]]
       ]
     }
+
+    // get the percentage of each point from the width and height of the element respectively
+    pencilPointsArr = pencilPointsArr.map((point) =>
+      [point[0] + ((update.x - selectingArea.startX) * ((point[0] - selectedEl.x) / selectedEl.width)), point[1]]
+    )
   }
   const westResize = () => {
     updatedX = (selectedEl.x + (update.x - selectingArea.startX)) >=
@@ -172,6 +187,7 @@ export const useResizedCoordinates = (
     updatedCX = selectedEl.cx + (update.x - selectingArea.startX) / 2
     updatedRX = Math.abs(selectedEl.rx - (update.x - selectingArea.startX) / 2)
     updatedX1 = selectedEl.x1 + (update.x - selectingArea.startX)
+
     if (+updatedTrianglePointsArr[0][0] > +updatedTrianglePointsArr[2][0]) {
       // left-bottom, top, right-bottom
       updatedTrianglePointsArr = [
@@ -186,6 +202,11 @@ export const useResizedCoordinates = (
         [updatedTrianglePointsArr[2][0], updatedTrianglePointsArr[2][1]]
       ]
     }
+
+    // get the percentage of each point from the width and height of the element respectively
+    pencilPointsArr = pencilPointsArr.map((point) =>
+      [point[0] + ((update.x - selectingArea.startX) * (1 - ((point[0] - selectedEl.x) / selectedEl.width))), point[1]]
+    )
   }
 
   switch (resizeVector) {
@@ -231,6 +252,6 @@ export const useResizedCoordinates = (
     x1: updatedX1,
     x2: updatedX2,
     points: updatedTrianglePointsArr.map(points => points.join()).join(" "),
-    // d: "M " + pencilPointsArr.map(points => points.join(" ")).join(" L ")
+    d: "M " + pencilPointsArr.map(points => points.join(" ")).join(" L ")
   })
 }
