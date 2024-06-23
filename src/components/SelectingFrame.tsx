@@ -1,5 +1,5 @@
 import { useAtom } from 'jotai';
-import { onMouseUpAtom, resizeAtom } from '../store/store';
+import { onMouseUpAtom, resizeVectorAtom } from '../store/store';
 import { Element } from '../types/CommonTypes';
 
 interface Props {
@@ -7,7 +7,7 @@ interface Props {
 }
 
 const SelectingFrame = ({ element }: Props) => {
-  const [, setIsResize] = useAtom(resizeAtom);
+  const [, setResizeVector] = useAtom(resizeVectorAtom);
   const [, onMouseUp] = useAtom(onMouseUpAtom);
 
   return (
@@ -15,12 +15,7 @@ const SelectingFrame = ({ element }: Props) => {
       {/* top side */}
       <line
         className="hover:cursor-n-resize"
-        onMouseDown={() =>
-          setIsResize(() => ({
-            resizeVector: 'nord',
-            isResize: true,
-          }))
-        }
+        onMouseDown={() => setResizeVector('nord')}
         onMouseUp={onMouseUp}
         x1={element.x - element.strokeWidth / 2 - 2}
         y1={element.y - element.strokeWidth / 2 - 2}
@@ -32,12 +27,7 @@ const SelectingFrame = ({ element }: Props) => {
       {/* right side */}
       <line
         className="hover:cursor-e-resize"
-        onMouseDown={() =>
-          setIsResize(() => ({
-            resizeVector: 'east',
-            isResize: true,
-          }))
-        }
+        onMouseDown={() => setResizeVector('east')}
         onMouseUp={onMouseUp}
         x1={element.x + element.width + element.strokeWidth / 2 + 2}
         y1={element.y - element.strokeWidth / 2 - 2}
@@ -49,12 +39,7 @@ const SelectingFrame = ({ element }: Props) => {
       {/* bottom side */}
       <line
         className="hover:cursor-s-resize"
-        onMouseDown={() =>
-          setIsResize(() => ({
-            resizeVector: 'south',
-            isResize: true,
-          }))
-        }
+        onMouseDown={() => setResizeVector('south')}
         onMouseUp={onMouseUp}
         x1={element.x - element.strokeWidth / 2 - 2}
         y1={element.y + element.height + element.strokeWidth / 2 + 2}
@@ -66,12 +51,7 @@ const SelectingFrame = ({ element }: Props) => {
       {/* left side */}
       <line
         className="hover:cursor-w-resize"
-        onMouseDown={() =>
-          setIsResize(() => ({
-            resizeVector: 'west',
-            isResize: true,
-          }))
-        }
+        onMouseDown={() => setResizeVector('west')}
         onMouseUp={onMouseUp}
         x1={element.x - element.strokeWidth / 2 - 2}
         y1={element.y - element.strokeWidth / 2 - 2}
@@ -84,12 +64,7 @@ const SelectingFrame = ({ element }: Props) => {
         {/* top-left */}
         <rect
           className="hover:cursor-nwse-resize"
-          onMouseDown={() =>
-            setIsResize(() => ({
-              resizeVector: 'nordwest',
-              isResize: true,
-            }))
-          }
+          onMouseDown={() => setResizeVector('nordwest')}
           onMouseUp={onMouseUp}
           x={element.x - element.strokeWidth / 2 - 6}
           y={element.y - element.strokeWidth / 2 - 6}
@@ -102,12 +77,7 @@ const SelectingFrame = ({ element }: Props) => {
         {/* top-right */}
         <rect
           className="hover:cursor-nesw-resize"
-          onMouseDown={() =>
-            setIsResize(() => ({
-              resizeVector: 'nordeast',
-              isResize: true,
-            }))
-          }
+          onMouseDown={() => setResizeVector('nordeast')}
           onMouseUp={onMouseUp}
           x={element.x + element.width - element.strokeWidth / 2 + 4}
           y={element.y - element.strokeWidth / 2 - 6}
@@ -120,12 +90,7 @@ const SelectingFrame = ({ element }: Props) => {
         {/* bottom-right */}
         <rect
           className="hover:cursor-nwse-resize"
-          onMouseDown={() =>
-            setIsResize(() => ({
-              resizeVector: 'southeast',
-              isResize: true,
-            }))
-          }
+          onMouseDown={() => setResizeVector('southeast')}
           onMouseUp={onMouseUp}
           x={element.x + element.width - element.strokeWidth / 2 + 4}
           y={element.y + element.height - element.strokeWidth / 2 + 4}
@@ -138,12 +103,7 @@ const SelectingFrame = ({ element }: Props) => {
         {/* bottom-left */}
         <rect
           className="hover:cursor-nesw-resize"
-          onMouseDown={() =>
-            setIsResize(() => ({
-              resizeVector: 'southwest',
-              isResize: true,
-            }))
-          }
+          onMouseDown={() => setResizeVector('southwest')}
           onMouseUp={onMouseUp}
           x={element.x - element.strokeWidth / 2 - 6}
           y={element.y + element.height - element.strokeWidth / 2 + 4}

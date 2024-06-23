@@ -53,7 +53,7 @@ export const selectingAreaAtom = atom<Area | null>(null)
 
 export const isDraggingAtom = atom(false)
 
-export const resizeAtom = atom({ isResize: false, resizeVector: "" })
+export const resizeVectorAtom = atom("")
 
 export const isDrawingAtom = atom(
   (get) => get(creationInitialElementAtom).type_name === "free" ||
@@ -149,7 +149,7 @@ export const updateElementsAtom = atom(
     if (isSelected
       && !get(isDraggingAtom)
       && !get(isDrawingAtom)
-      && !get(resizeAtom).isResize
+      && !get(resizeVectorAtom)
     ) set(selectedElementAtom, (prev) => {
       return prev?.map(el => el.id === updatedElement.id ? updatedElement : el) || null
     })
@@ -175,7 +175,7 @@ export const onMouseDownAtom = atom(
   null,
   (get, set, update: Coordinates) => {
     // console.log("onMouseDownAtom")
-    if (!get(isDraggingAtom) && !get(isDrawingAtom) && !get(resizeAtom).isResize && !get(keyPressedAtom).ctrlKey) {
+    if (!get(isDraggingAtom) && !get(isDrawingAtom) && !get(resizeVectorAtom) && !get(keyPressedAtom).ctrlKey) {
       set(selectedElementAtom, [])
     }
     set(selectingAreaAtom, {
@@ -317,9 +317,9 @@ export const onMouseMoveAtom = atom(
         }
 
         // if resizing
-        const resize = get(resizeAtom)
-        if (resize.isResize && selectingArea) {
-          const resizedCoordinates = useResizedCoordinates(selectedEl, update, selectingArea, resize.resizeVector)
+        const resizeVector = get(resizeVectorAtom)
+        if (resizeVector && selectingArea) {
+          const resizedCoordinates = useResizedCoordinates(selectedEl, update, selectingArea, resizeVector)
           set(updateElementsAtom, {
             ...selectedEl,
             // x: updatedX,
@@ -331,11 +331,11 @@ export const onMouseMoveAtom = atom(
             // rx: selectedEl.type === "ellipse" ? resizedCoordinates.rx : 0,
             // ry: selectedEl.type === "ellipse" ? resizedCoordinates.ry : 0,
             // x2: updateCoordinates.x,
-            ...resizedCoordinates,
             // // left-bottom, top, right-bottom
             // points: `${selectedEl.x},${updateCoordinates.y} ${selectedEl.x + ((updateCoordinates.x - selectedEl.x) / 2)},${selectedEl.y} ${updateCoordinates.x},${updateCoordinates.y}`,
-            // fontSize: (newHeight / 1.5).toString(), // i don't know why but 1.5 is working good
             // d: selectedEl.d + ` L ${updateCoordinates.x} ${updateCoordinates.y}`
+            ...resizedCoordinates,
+            // fontSize: (newHeight / 1.5).toString(), // i don't know why but 1.5 is working good
 
             // txt
             // y2: updateCoordinates.y,
@@ -396,7 +396,7 @@ export const onMouseUpAtom = atom(
       }
     }
 
-    set(resizeAtom, { resizeVector: "", isResize: false })
+    set(resizeVectorAtom, "")
     set(isDraggingAtom, false)
     set(selectingAreaAtom, null)
 
