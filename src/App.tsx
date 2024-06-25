@@ -1,17 +1,18 @@
-import { useAtom } from 'jotai';
+import { useAtom, useAtomValue } from 'jotai';
 import Canvas from './components/Canvas';
 import Inspector from './components/Inspector';
 import Layers from './components/Layers';
 import Toolbar from './components/Toolbar';
 import Zoom from './components/Zoom';
-import { onKeyPressAtom } from './store/store';
+import { isDrawingAtom, onKeyPressAtom } from './store/store';
 
 const App = () => {
   const [, onKeyPress] = useAtom(onKeyPressAtom);
+  const isDrawing = useAtomValue(isDrawingAtom);
 
   return (
     <div
-      className="h-screen flex flex-col items-center relative"
+      className={`h-screen flex flex-col items-center relative ${isDrawing ? 'cursor-crosshair' : ''}`}
       onKeyDown={(e) => {
         if (e.key === '+' || e.key === '-') {
           e.preventDefault();

@@ -1,46 +1,43 @@
 import Textarea from './Textarea';
-import { useAtom } from 'jotai';
-import { onDragStartAtom, onMouseUpAtom } from '../store/store';
-import { ElemenEvent, Element } from '../types/CommonTypes';
-import { transformCoordinates } from '../assets/utilities';
+import { useAtom, useAtomValue } from 'jotai';
+import {
+  isDrawingAtom,
+  onDragStartAtom,
+  onMouseUpAtom,
+  selectedElementAtom,
+} from '../store/store';
+import { Element } from '../types/CommonTypes';
+import SelectingFrame from './SelectingFrame';
 
 interface Props {
   element: Element;
-  svgContainerRef: SVGSVGElement | null;
 }
 
-const SingleElement = ({ element, svgContainerRef }: Props) => {
+const SingleElement = ({ element }: Props) => {
   const [, onDragStart] = useAtom(onDragStartAtom);
   const [, onMouseUp] = useAtom(onMouseUpAtom);
+  const selectedElement = useAtomValue(selectedElementAtom);
+  const isDrawing = useAtomValue(isDrawingAtom);
 
-  const handleMouseDown = (e: ElemenEvent) => {
-    const { transX, transY } = transformCoordinates(
-      svgContainerRef,
-      e.clientX,
-      e.clientY,
-    );
-    onDragStart({
-      element,
-      position: {
-        x: transX,
-        y: transY,
-      },
-    });
-  };
+  const isSelected = !!selectedElement.find((el) => el.id === element.id);
 
   return (
     <>
       {element.type !== 'free' && element.type !== 'grab' && (
-        <element.type //flexible&dynemic rendering svg-elements
-          {...element}
-          // in order for the image to be stored and displayed between renderers, its type is an arrayBuffer, but the type of href of image element of svg is a string. That is why this transformation is necessary
-          href={element.type === 'image' ? element.href?.toString() : ''}
-          style={{ cursor: 'pointer' }}
-          onMouseDown={(e) => handleMouseDown(e)}
-          onMouseUp={onMouseUp}
-        >
-          {element.type === 'foreignObject' && <Textarea element={element} />}
-        </element.type>
+        <>
+          <element.type //flexible&dynemic rendering svg-elements
+            {...element}
+            className={`${isDrawing ? 'hover:cursor-crosshair' : 'hover:cursor-move'}`}
+            // in order for the image to be stored and displayed between renderers, its type is an arrayBuffer, but the type of href of image element of svg is a string. That is why this transformation is necessary
+            href={element.type === 'image' ? element.href?.toString() : ''}
+            onMouseDown={() => onDragStart(element)}
+            onMouseUp={onMouseUp}
+          >
+            {element.type === 'foreignObject' && <Textarea element={element} />}
+          </element.type>
+
+          {isSelected && !isDrawing && <SelectingFrame element={element} />}
+        </>
       )}
     </>
   );

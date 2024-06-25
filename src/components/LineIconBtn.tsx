@@ -1,13 +1,16 @@
-import { ElementsTypeName } from '../types/CommonTypes';
+import { ElementProps } from '../types/CommonTypes';
 
 interface Props {
   className: string;
-  handlerClick: (typeName: ElementsTypeName) => void;
+  handlerClick: (props: ElementProps) => void;
 }
 
 const LineIconBtn = ({ className, handlerClick }: Props) => {
   return (
-    <button className={`${className}`} onClick={() => handlerClick('line')}>
+    <button
+      className={`${className}`}
+      onClick={() => handlerClick({ type_name: 'line', markerEnd: '' })}
+    >
       <svg
         id="line"
         viewBox="0 0 24 24"

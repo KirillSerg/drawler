@@ -1,7 +1,13 @@
 import { atom } from "jotai";
 import { Area, CanvasViewBox, Coordinates, Element, ZoomCanvasFn } from "../types/CommonTypes";
 import { atomWithStorage } from 'jotai/utils'
-import { getPencilPointsArrFromString, getTrianglePointsArrFromString, useUpdateXYAndDistance } from "../assets/utilities";
+import {
+  getPencilPointsArrFromString,
+  useResizedCoordinates,
+  getTrianglePointsArrFromString,
+  useUpdateXYAndDistance,
+  getPencilSize
+} from "../assets/utilities";
 
 const initialElement: Element = {
   type: "free",
@@ -9,8 +15,8 @@ const initialElement: Element = {
   id: "",
   x: 0,
   y: 0,
-  width: 150,
-  height: 150,
+  width: 1,
+  height: 1,
   cx: 0,
   cy: 0,
   rx: 0.5,
@@ -41,11 +47,13 @@ export const creationInitialElementAtom = atom<Element>(initialElement)
 
 export const elementsAtom = atomWithStorage<Element[]>("elements", [])
 
-export const selectedElementAtom = atom<Element | null>(null)
+export const selectedElementAtom = atom<Element[] | []>([])
 
 export const selectingAreaAtom = atom<Area | null>(null)
 
 export const isDraggingAtom = atom(false)
+
+export const resizeVectorAtom = atom("")
 
 export const isDrawingAtom = atom(
   (get) => get(creationInitialElementAtom).type_name === "free" ||
@@ -102,7 +110,7 @@ export const zoomCanvasAtom = atom(
         break;
 
       case ZoomCanvasFn.ZOOMUP:
-        if (canvasViewBox.percentage === 200) return;
+        if (canvasViewBox.percentage === 190) return;
         set(canvasViewBoxAtom, {
           ...canvasViewBox,
           percentage: canvasViewBox.percentage + 10,
@@ -136,14 +144,21 @@ export const updateElementsAtom = atom(
     set(elementsAtom, (prev) => prev.map((el) =>
       el.id === updatedElement.id ? updatedElement : el,
     ))
-    const isSelected = get(selectedElementAtom)?.id === updatedElement.id
+    const isSelected = !!get(selectedElementAtom).find((el) => el.id === updatedElement.id)
     // if changes from inspector
     if (isSelected
       && !get(isDraggingAtom)
       && !get(isDrawingAtom)
-    ) set(selectedElementAtom, updatedElement)
+      && !get(resizeVectorAtom)
+    ) set(selectedElementAtom, (prev) => {
+      return prev?.map(el => el.id === updatedElement.id ? updatedElement : el) || null
+    })
     // if drawing with pencil we need to put fresh d
-    if (updatedElement.type_name === "pencil" && get(isDrawingAtom)) set(selectedElementAtom, updatedElement)
+    if (updatedElement.type_name === "pencil" && get(isDrawingAtom)) {
+      set(selectedElementAtom, (prev) => {
+        return prev?.map(el => el.id === updatedElement.id ? updatedElement : el) || null
+      })
+    }
   }
 )
 
@@ -151,8 +166,8 @@ export const deleteElementsAtom = atom(
   null,
   (get, set) => {
     const selectedElement = get(selectedElementAtom)
-    set(elementsAtom, (prev) => prev.filter((el) => el.id !== selectedElement?.id))
-    set(selectedElementAtom, null)
+    set(elementsAtom, (prev) => prev.filter((el) => !selectedElement.find((selectedEl) => selectedEl.id === el.id)))
+    set(selectedElementAtom, [])
   }
 )
 
@@ -160,8 +175,8 @@ export const onMouseDownAtom = atom(
   null,
   (get, set, update: Coordinates) => {
     // console.log("onMouseDownAtom")
-    if (!get(isDraggingAtom) && !get(isDrawingAtom)) {
-      set(selectedElementAtom, null)
+    if (!get(isDraggingAtom) && !get(isDrawingAtom) && !get(resizeVectorAtom) && !get(keyPressedAtom).ctrlKey) {
+      set(selectedElementAtom, [])
     }
     set(selectingAreaAtom, {
       startX: update.x,
@@ -186,13 +201,13 @@ export const onMouseDownAtom = atom(
         // fontSize: ,
       }
       set(elementsAtom, (prev) => [...prev, newEl])
-      set(selectedElementAtom, newEl)
+      set(selectedElementAtom, [newEl])
       set(creationInitialElementAtom, (prev) => {
         return { ...prev, href: "" }
       })
     }
 
-    if (get(keyPressedAtom).ctrlKey) {
+    if (get(keyPressedAtom).ctrlKey && !get(isDraggingAtom)) {
       set(creationInitialElementAtom, {
         ...get(creationInitialElementAtom),
         type: "grab",
@@ -204,10 +219,18 @@ export const onMouseDownAtom = atom(
 
 export const onDragStartAtom = atom(
   null,
-  (get, set, update: { element: Element, position: Coordinates }) => {
+  (get, set, element: Element) => {
     // console.log("onDragStartAtom")
     if (!get(isDrawingAtom)) {
-      set(selectedElementAtom, update.element)
+      // if not selected yet this element
+      if (!get(selectedElementAtom).find(el => el.id === element.id)) {
+        //if multyselect
+        if (get(keyPressedAtom).ctrlKey) {
+          set(selectedElementAtom, (prev) => [...prev, element])
+        } else {
+          set(selectedElementAtom, [element])
+        }
+      }
       set(isDraggingAtom, true)
     }
   }
@@ -220,77 +243,89 @@ export const onMouseMoveAtom = atom(
     const selectingArea = get(selectingAreaAtom)
     const selectedElement = get(selectedElementAtom)
     if (selectingArea) {
-      // if Drag&drop
-      if (get(isDraggingAtom) && selectedElement) {
-        // rect
-        const newX = selectedElement.x + (update.x - selectingArea.startX)
-        const newY = selectedElement.y + (update.y - selectingArea.startY)
-        // ellipse
-        const newCX = selectedElement.cx + (update.x - selectingArea.startX)
-        const newCY = selectedElement.cy + (update.y - selectingArea.startY)
-        // line
-        const newX1 = selectedElement.x1 + (update.x - selectingArea.startX)
-        const newY1 = selectedElement.y1 + (update.y - selectingArea.startY)
-        const newX2 = selectedElement.x2 + (update.x - selectingArea.startX)
-        const newY2 = selectedElement.y2 + (update.y - selectingArea.startY)
-        // triangle(polygon)
-        const newTrianglePointsArr = getTrianglePointsArrFromString(selectedElement.points).map((point) =>
-          [
-            +point[0] + (update.x - selectingArea.startX),
-            +point[1] + (update.y - selectingArea.startY)
-          ]
-        )
-        const newPoints = newTrianglePointsArr.map(points => points.join()).join(" ")
-        // pencil
-        const newPencilPointsArr = getPencilPointsArrFromString(selectedElement.d).map((point) =>
-          [
-            +point[0] + (update.x - selectingArea.startX),
-            +point[1] + (update.y - selectingArea.startY)
-          ]
-        )
-        const newPathData = "M " + newPencilPointsArr.map(points => points.join(" ")).join(" L ")
+      selectedElement.forEach((selectedEl) => {
+        // if Drag&drop
+        if (get(isDraggingAtom) && selectedElement.length > 0) {
+          // rect
+          const newX = selectedEl.x + (update.x - selectingArea.startX)
+          const newY = selectedEl.y + (update.y - selectingArea.startY)
+          // ellipse
+          const newCX = selectedEl.cx + (update.x - selectingArea.startX)
+          const newCY = selectedEl.cy + (update.y - selectingArea.startY)
+          // line
+          const newX1 = selectedEl.x1 + (update.x - selectingArea.startX)
+          const newY1 = selectedEl.y1 + (update.y - selectingArea.startY)
+          const newX2 = selectedEl.x2 + (update.x - selectingArea.startX)
+          const newY2 = selectedEl.y2 + (update.y - selectingArea.startY)
+          // triangle(polygon)
+          const newTrianglePointsArr = getTrianglePointsArrFromString(selectedEl.points).map((point) =>
+            [
+              +point[0] + (update.x - selectingArea.startX),
+              +point[1] + (update.y - selectingArea.startY)
+            ]
+          )
+          const newPoints = newTrianglePointsArr.map(points => points.join()).join(" ")
+          // pencil
+          const newPencilPointsArr = getPencilPointsArrFromString(selectedEl.d).map((point) =>
+            [
+              point[0] + (update.x - selectingArea.startX),
+              point[1] + (update.y - selectingArea.startY)
+            ]
+          )
+          const newPathData = "M " + newPencilPointsArr.map(points => points.join(" ")).join(" L ")
 
-        set(updateElementsAtom, {
-          ...selectedElement,
-          x: newX,
-          y: newY,
-          cx: newCX,
-          cy: newCY,
-          y1: newY1,
-          x1: newX1,
-          y2: newY2,
-          x2: newX2,
-          points: newPoints,
-          d: newPathData,
-        })
-      }
+          set(updateElementsAtom, {
+            ...selectedEl,
+            x: newX,
+            y: newY,
+            cx: newCX,
+            cy: newCY,
+            y1: newY1,
+            x1: newX1,
+            y2: newY2,
+            x2: newX2,
+            points: newPoints,
+            d: newPathData,
+          })
+        }
 
-      // if drawwing
-      if (get(isDrawingAtom) && selectedElement) {
-        const { newX, newY, newWidth, newHeight, newRX, newRY } = useUpdateXYAndDistance(
-          selectedElement.x,
-          selectedElement.y,
-          update.x,
-          update.y
-        )
-        set(updateElementsAtom, {
-          ...selectedElement,
-          x: newX,
-          y: newY,
-          width: newWidth,
-          height: newHeight,
-          cx: selectedElement.cx + (update.x - selectedElement.x) / 2,
-          cy: selectedElement.cy + (update.y - selectedElement.y) / 2,
-          rx: selectedElement.type === "ellipse" ? newRX : selectedElement.rx,
-          ry: selectedElement.type === "ellipse" ? newRY : selectedElement.ry,
-          x2: update.x,
-          y2: update.y,
-          // left-bottom, top, right-bottom
-          points: `${selectedElement.x},${update.y} ${selectedElement.x + ((update.x - selectedElement.x) / 2)},${selectedElement.y} ${update.x},${update.y}`,
-          fontSize: (newHeight / 1.5).toString(), // i don't know why but 1.5 is working good
-          d: selectedElement.d + ` L ${update.x} ${update.y}`
-        })
-      }
+        // if drawwing
+        if (get(isDrawingAtom) && selectedElement.length > 0) {
+          const { newX, newY, newWidth, newHeight, newRX, newRY } = useUpdateXYAndDistance(
+            selectedEl.x,
+            selectedEl.y,
+            update.x,
+            update.y
+          )
+          set(updateElementsAtom, {
+            ...selectedEl,
+            x: newX,
+            y: newY,
+            width: selectedEl.type_name === "pencil" ? getPencilSize(selectedEl)?.width : newWidth,
+            height: selectedEl.type_name === "pencil" ? getPencilSize(selectedEl)?.height : newHeight,
+            cx: selectedEl.cx + (update.x - selectedEl.x) / 2,
+            cy: selectedEl.cy + (update.y - selectedEl.y) / 2,
+            rx: selectedEl.type === "ellipse" ? newRX : 0,
+            ry: selectedEl.type === "ellipse" ? newRY : 0,
+            x2: update.x,
+            y2: update.y,
+            // left-bottom, top, right-bottom
+            points: `${selectedEl.x},${update.y} ${selectedEl.x + ((update.x - selectedEl.x) / 2)},${selectedEl.y} ${update.x},${update.y}`,
+            fontSize: (newHeight / 1.5).toString(), // i don't know why but 1.5 is working good
+            d: selectedEl.d + ` L ${update.x} ${update.y}`
+          })
+        }
+
+        // if resizing
+        const resizeVector = get(resizeVectorAtom)
+        if (resizeVector && selectingArea) {
+          const resizedCoordinates = useResizedCoordinates(selectedEl, update, selectingArea, resizeVector)
+          set(updateElementsAtom, {
+            ...selectedEl,
+            ...resizedCoordinates,
+          })
+        }
+      })
 
       // on move entire canvas
       if (get(creationInitialElementAtom).type_name === "grab") {
@@ -317,9 +352,35 @@ export const onMouseUpAtom = atom(
     // console.log("onMouseUpAtom")
     const creationInitialElement = get(creationInitialElementAtom)
     const selectedElement = get(selectedElementAtom)
-    if (selectedElement) {
-      set(selectedElementAtom, get(elementsAtom).find(el => el.id === selectedElement.id) || selectedElement)
+    const selectingArea = get(selectingAreaAtom)
+
+    // update selected el from original element
+    if (selectedElement.length > 0) {
+      const newSelectedEl = selectedElement.map((selectedElel) =>
+        get(elementsAtom).find(el => el.id === selectedElel.id) || selectedElel)
+      set(selectedElementAtom, newSelectedEl)
     }
+
+    // multy select by selectingArea
+    if (!get(isDraggingAtom) && !get(isDrawingAtom)) {
+      if (selectingArea) {
+        const areaStartX = selectingArea.startX < selectingArea.endX ? selectingArea.startX : selectingArea.endX
+        const areaStartY = selectingArea.startY < selectingArea.endY ? selectingArea.startY : selectingArea.endY
+        get(elementsAtom).map((element) => {
+          // if element in area
+          if (
+            element.x > areaStartX &&
+            element.y > areaStartY &&
+            element.x + element.width < areaStartX + Math.abs(selectingArea.endX - selectingArea.startX) &&
+            element.y + element.height < areaStartY + Math.abs(selectingArea.endY - selectingArea.startY)
+          ) {
+            set(selectedElementAtom, (prev) => [...prev, element]);
+          }
+        })
+      }
+    }
+
+    set(resizeVectorAtom, "")
     set(isDraggingAtom, false)
     set(selectingAreaAtom, null)
 

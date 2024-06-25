@@ -15,6 +15,7 @@ import {
   creationInitialElementAtom,
   selectingAreaAtom,
   grabCanvasAtom,
+  resizeVectorAtom,
 } from '../store/store';
 import { ElemenEvent, ZoomCanvasFn } from '../types/CommonTypes';
 import { transformCoordinates } from '../assets/utilities';
@@ -23,6 +24,7 @@ const Canvas = () => {
   const elements = useAtomValue(elementsAtom);
   const isDragging = useAtomValue(isDraggingAtom);
   const isDrawing = useAtomValue(isDrawingAtom);
+  const resizeVector = useAtomValue(resizeVectorAtom);
   const [, onMouseUp] = useAtom(onMouseUpAtom);
   const [, onMouseDown] = useAtom(onMouseDownAtom);
   const [, onMouseMove] = useAtom(onMouseMoveAtom);
@@ -70,7 +72,7 @@ const Canvas = () => {
         zoomCanvas(ZoomCanvasFn.ZOOMDOWN);
       }
       if (!keyPressed.ctrlKey) {
-        grabCanvas({ x: 0, y: e.deltaY });
+        grabCanvas({ x: 0, y: -e.deltaY });
       }
     };
 
@@ -116,22 +118,18 @@ const Canvas = () => {
       </defs>
 
       {elements.map((element) => (
-        <SingleElement
-          key={element.id}
-          element={element}
-          svgContainerRef={svgContainerRef.current}
-        />
+        <SingleElement key={element.id} element={element} />
       ))}
 
       {!isDragging &&
         !isDrawing &&
+        !resizeVector &&
         creationInitialElement.type_name !== 'grab' && <SelectingArea />}
 
       {creationInitialElement.type_name === 'image' && (
         <SingleElement
           key={creationInitialElement.id}
           element={creationInitialElement}
-          svgContainerRef={svgContainerRef.current}
         />
       )}
     </svg>

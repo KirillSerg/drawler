@@ -1,5 +1,5 @@
 import { useMemo } from 'react';
-import { useAtom } from 'jotai';
+import { useAtom, useAtomValue } from 'jotai';
 import deleteIcon from '../assets/icons/trash.svg';
 import {
   deleteElementsAtom,
@@ -12,39 +12,45 @@ import LineArrowIconBtn from './LineArrowIconBtn';
 import {
   ELEMENT_TYPE_VARIANTS,
   Element,
-  ElementsTypeName,
+  ElementProps,
 } from '../types/CommonTypes';
 
 const Inspector = () => {
   const [, deleteElements] = useAtom(deleteElementsAtom);
   const [, updateElements] = useAtom(updateElementsAtom);
-  const [selectedElement] = useAtom(selectedElementAtom);
-  const [initialElement, setInitialElement] = useAtom(
+  const selectedElement = useAtomValue(selectedElementAtom);
+  const [creationInitialElement, setCreationInitialElement] = useAtom(
     creationInitialElementAtom,
   );
 
-  const element = useMemo(() => {
-    if (selectedElement !== null) {
+  const elements = useMemo(() => {
+    if (selectedElement.length > 0) {
       return selectedElement;
     }
-    return initialElement;
-  }, [selectedElement, initialElement]);
+    return [creationInitialElement];
+  }, [selectedElement, creationInitialElement]);
 
-  const handlerSelectProperty = (typeName: ElementsTypeName) => {
-    if (selectedElement !== null) {
-      updateElements({
-        ...selectedElement,
-        type: ELEMENT_TYPE_VARIANTS[typeName] as Element['type'],
-        type_name: typeName,
-        markerEnd: typeName === 'arrow_line' ? 'url(#arrow)' : '',
-      });
+  const handlerSelectProperty = (props: ElementProps) => {
+    if (selectedElement.length > 0) {
+      selectedElement.forEach((el) =>
+        updateElements({
+          ...el,
+          ...props,
+          type:
+            (props.type_name &&
+              (ELEMENT_TYPE_VARIANTS[props.type_name] as Element['type'])) ||
+            el.type,
+        }),
+      );
     } else {
-      setInitialElement((prev) => {
+      setCreationInitialElement((prev) => {
         return {
           ...prev,
-          type: ELEMENT_TYPE_VARIANTS[typeName] as Element['type'],
-          type_name: typeName,
-          markerEnd: typeName === 'arrow_line' ? 'url(#arrow)' : '',
+          ...props,
+          type:
+            (props.type_name &&
+              (ELEMENT_TYPE_VARIANTS[props.type_name] as Element['type'])) ||
+            prev.type,
         };
       });
     }
@@ -53,7 +59,7 @@ const Inspector = () => {
   return (
     <aside className="fixed min-w-[10%] max-w-[25%] max-h-[80%] overflow-auto px-3 py-5  top-[10%] right-5 border border-black">
       Inspector
-      {element.id && (
+      {elements[0].id && (
         <img
           onClick={deleteElements}
           src={deleteIcon}
@@ -62,17 +68,19 @@ const Inspector = () => {
           height={25}
         />
       )}
-      {element.type === 'line' ? (
+      {elements.find((el) => el.type === 'line') ? (
         <>
           <LineIconBtn
             className={`${
-              element.type_name === 'line' ? 'bg-orange-500' : 'bg-inherit'
+              elements.find((el) => el.type_name === 'line')
+                ? 'bg-orange-500'
+                : 'bg-inherit'
             } h-8 w-8 p-[6px]`}
             handlerClick={handlerSelectProperty}
           />
           <LineArrowIconBtn
             className={`${
-              element.type_name === 'arrow_line'
+              elements.find((el) => el.type_name === 'arrow_line')
                 ? 'bg-orange-500'
                 : 'bg-inherit'
             } h-8 w-8 p-[6px]`}
