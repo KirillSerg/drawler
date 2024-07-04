@@ -1,16 +1,13 @@
-import { ElementProps } from '../types/CommonTypes';
+import { Element } from '../../types/CommonTypes';
 
 interface Props {
   className: string;
-  handlerClick: (props: ElementProps) => void;
+  handlerClick: (type_name: Element['type_name']) => void;
 }
 
 const EllipseIconBtn = ({ className, handlerClick }: Props) => {
   return (
-    <button
-      className={`${className}`}
-      onClick={() => handlerClick({ type_name: 'ellipse' })}
-    >
+    <button className={`${className}`} onClick={() => handlerClick('ellipse')}>
       <svg
         viewBox="0 0 24 24"
         height="100%"

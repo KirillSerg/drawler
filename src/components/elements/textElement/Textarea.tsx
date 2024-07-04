@@ -1,7 +1,7 @@
 import { useRef } from 'react';
 import { useAtom, useAtomValue } from 'jotai';
-import { isDrawingAtom, updateElementsAtom } from '../store/store';
-import { Element } from '../types/CommonTypes';
+import { isDrawingAtom, updateElementsAtom } from '../../../store/store';
+import { Element } from '../../../types/CommonTypes';
 
 type Props = {
   element: Element;

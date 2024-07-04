@@ -1,34 +1,36 @@
-import { ElementProps } from '../types/CommonTypes';
+import { ElementProps } from '../../types/CommonTypes';
 
 interface Props {
   className: string;
   handlerClick: (props: ElementProps) => void;
 }
 
-const RectIconBtn = ({ className, handlerClick }: Props) => {
+const LineProp = ({ className, handlerClick }: Props) => {
   return (
     <button
       className={`${className}`}
-      onClick={() => handlerClick({ type_name: 'rect' })}
+      onClick={() =>
+        handlerClick({ types: ['line'], type_name: 'line', markerEnd: '' })
+      }
     >
       <svg
+        id="line"
         viewBox="0 0 24 24"
         height="100%"
         width="100%"
         xmlns="http://www.w3.org/2000/svg"
       >
-        <rect
-          x="2"
-          y="2"
-          width="85%"
-          height="85%"
+        <line
+          x1="0"
+          y1="50%"
+          x2="100%"
+          y2="50%"
           stroke="black"
           strokeWidth="2"
-          fill="none"
         />
       </svg>
     </button>
   );
 };
 
-export default RectIconBtn;
+export default LineProp;

@@ -27,8 +27,8 @@ export interface Element {
 
 export interface ElementProps {
   id?: string;
-  type_name?: ElementsTypeName;
-  // type will be determined automatically
+  types: Element['type'][];
+  type_name?: Element['type_name']
   x?: number;
   y?: number;
   width?: number;

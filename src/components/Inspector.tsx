@@ -7,13 +7,9 @@ import {
   selectedElementAtom,
   updateElementsAtom,
 } from '../store/store';
-import LineIconBtn from './LineIconBtn';
-import LineArrowIconBtn from './LineArrowIconBtn';
-import {
-  ELEMENT_TYPE_VARIANTS,
-  Element,
-  ElementProps,
-} from '../types/CommonTypes';
+import { ElementProps } from '../types/CommonTypes';
+import LineArrowProp from './inspectorElements/LineArrowProp';
+import LineProp from './inspectorElements/LineProp';
 
 const Inspector = () => {
   const [, deleteElements] = useAtom(deleteElementsAtom);
@@ -32,25 +28,20 @@ const Inspector = () => {
 
   const handlerSelectProperty = (props: ElementProps) => {
     if (selectedElement.length > 0) {
-      selectedElement.forEach((el) =>
-        updateElements({
-          ...el,
-          ...props,
-          type:
-            (props.type_name &&
-              (ELEMENT_TYPE_VARIANTS[props.type_name] as Element['type'])) ||
-            el.type,
-        }),
-      );
+      selectedElement.forEach((el) => {
+        const isNeedToUpdate = props.types?.includes(el.type);
+        if (isNeedToUpdate) {
+          updateElements({
+            ...el,
+            ...props,
+          });
+        }
+      });
     } else {
       setCreationInitialElement((prev) => {
         return {
           ...prev,
           ...props,
-          type:
-            (props.type_name &&
-              (ELEMENT_TYPE_VARIANTS[props.type_name] as Element['type'])) ||
-            prev.type,
         };
       });
     }
@@ -70,7 +61,7 @@ const Inspector = () => {
       )}
       {elements.find((el) => el.type === 'line') ? (
         <>
-          <LineIconBtn
+          <LineProp
             className={`${
               elements.find((el) => el.type_name === 'line')
                 ? 'bg-orange-500'
@@ -78,7 +69,7 @@ const Inspector = () => {
             } h-8 w-8 p-[6px]`}
             handlerClick={handlerSelectProperty}
           />
-          <LineArrowIconBtn
+          <LineArrowProp
             className={`${
               elements.find((el) => el.type_name === 'arrow_line')
                 ? 'bg-orange-500'

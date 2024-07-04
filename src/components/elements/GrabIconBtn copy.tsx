@@ -1,8 +1,8 @@
-import { ElementProps } from '../types/CommonTypes';
+import { Element } from '../../types/CommonTypes';
 
 interface Props {
   className: string;
-  handlerClick: (props: ElementProps) => void;
+  handlerClick: (type_name: Element['type_name']) => void;
 }
 
 const GrabIconBtn = ({ className, handlerClick }: Props) => {
@@ -10,7 +10,7 @@ const GrabIconBtn = ({ className, handlerClick }: Props) => {
     <button
       id="canvasGrabBtn"
       className={`${className}`}
-      onClick={() => handlerClick({ type_name: 'grab' })}
+      onClick={() => handlerClick('grab')}
     >
       <svg
         fill="#000000"
