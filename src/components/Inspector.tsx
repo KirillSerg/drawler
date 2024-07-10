@@ -10,6 +10,9 @@ import {
 import { ElementProps } from '../types/CommonTypes';
 import LineArrowProp from './inspectorElements/LineArrowProp';
 import LineProp from './inspectorElements/LineProp';
+import EdgeRoundProp from './inspectorElements/EdgeRoundProp';
+import { updateBorderRadius } from '../assets/utilities';
+import EdgeSharpProp from './inspectorElements/EdgeSharpProp';
 
 const Inspector = () => {
   const [, deleteElements] = useAtom(deleteElementsAtom);
@@ -34,6 +37,8 @@ const Inspector = () => {
           updateElements({
             ...el,
             ...props,
+            rx: props.rx ? updateBorderRadius(el.width, el.height) : 0,
+            ry: props.ry ? updateBorderRadius(el.width, el.height) : 0,
           });
         }
       });
@@ -42,10 +47,25 @@ const Inspector = () => {
         return {
           ...prev,
           ...props,
+          rx: props.rx ? updateBorderRadius(prev.width, prev.height) : 0,
+          ry: props.ry ? updateBorderRadius(prev.width, prev.height) : 0,
         };
       });
     }
   };
+
+  const isArrow_line = elements.find((el) => el.type_name === 'arrow_line');
+  const isLine = elements.find((el) => el.type_name === 'line');
+  const isEdgesRound = elements.find(
+    (el) =>
+      (el.type === 'rect' || el.type === 'image') && (el.rx > 0 || el.ry > 0),
+  );
+
+  const isEdgesSharp = elements.find(
+    (el) =>
+      (el.type === 'rect' || el.type === 'image') &&
+      (el.rx === 0 || el.ry === 0),
+  );
 
   return (
     <aside className="fixed min-w-[10%] max-w-[25%] max-h-[80%] overflow-auto px-3 py-5  top-[10%] right-5 border border-black">
@@ -55,31 +75,43 @@ const Inspector = () => {
           onClick={deleteElements}
           src={deleteIcon}
           alt="delete"
-          width={25}
-          height={25}
+          width={24}
+          height={24}
         />
       )}
-      {elements.find((el) => el.type === 'line') ? (
+      {/* Line marker */}
+      {(isArrow_line || isLine) && (
         <>
           <LineProp
             className={`${
-              elements.find((el) => el.type_name === 'line')
-                ? 'bg-orange-500'
-                : 'bg-inherit'
+              isLine ? 'bg-orange-500' : 'bg-inherit'
             } h-8 w-8 p-[6px]`}
             handlerClick={handlerSelectProperty}
           />
           <LineArrowProp
             className={`${
-              elements.find((el) => el.type_name === 'arrow_line')
-                ? 'bg-orange-500'
-                : 'bg-inherit'
+              isArrow_line ? 'bg-orange-500' : 'bg-inherit'
             } h-8 w-8 p-[6px]`}
             handlerClick={handlerSelectProperty}
           />
         </>
-      ) : (
-        ''
+      )}
+      {/* Edges propertys */}
+      {(isEdgesRound || isEdgesSharp) && (
+        <>
+          <EdgeRoundProp
+            className={`${
+              isEdgesRound ? 'bg-orange-500' : 'bg-inherit'
+            } h-6 w-6`}
+            handlerClick={handlerSelectProperty}
+          />
+          <EdgeSharpProp
+            className={`${
+              isEdgesSharp ? 'bg-orange-500' : 'bg-inherit'
+            } h-6 w-6`}
+            handlerClick={handlerSelectProperty}
+          />
+        </>
       )}
     </aside>
   );

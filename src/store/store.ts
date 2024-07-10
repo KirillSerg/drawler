@@ -6,7 +6,8 @@ import {
   useResizedCoordinates,
   getTrianglePointsArrFromString,
   useUpdateXYAndDistance,
-  getPencilSize
+  getPencilSize,
+  updateBorderRadius
 } from "../assets/utilities";
 
 const initialElement: Element = {
@@ -15,12 +16,12 @@ const initialElement: Element = {
   id: "",
   x: 0,
   y: 0,
-  width: 1,
-  height: 1,
+  width: 0,
+  height: 0,
   cx: 0,
   cy: 0,
-  rx: 0.5,
-  ry: 0.5,
+  rx: 0,
+  ry: 0,
   x1: 0,
   y1: 0,
   x2: 0,
@@ -28,7 +29,7 @@ const initialElement: Element = {
   points: "",
   textvalue: "",
   d: "",
-  href: null,
+  href: "",
   markerEnd: "",
   stroke: 'black',
   strokeWidth: 4,
@@ -305,8 +306,8 @@ export const onMouseMoveAtom = atom(
             height: selectedEl.type_name === "pencil" ? getPencilSize(selectedEl)?.height : newHeight,
             cx: selectedEl.cx + (update.x - selectedEl.x) / 2,
             cy: selectedEl.cy + (update.y - selectedEl.y) / 2,
-            rx: selectedEl.type === "ellipse" ? newRX : 0,
-            ry: selectedEl.type === "ellipse" ? newRY : 0,
+            rx: selectedEl.type === "ellipse" ? newRX : selectedEl.rx !== 0 ? updateBorderRadius(newWidth, newHeight) : 0,
+            ry: selectedEl.type === "ellipse" ? newRY : selectedEl.ry !== 0 ? updateBorderRadius(newWidth, newHeight) : 0,
             x2: update.x,
             y2: update.y,
             // left-bottom, top, right-bottom

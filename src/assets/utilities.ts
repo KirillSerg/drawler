@@ -246,13 +246,17 @@ export const useResizedCoordinates = (
     width: updatedWidth,
     height: updatedHeight,
     cx: updatedCX,
-    rx: selectedEl.type === "ellipse" ? updatedRX : 0,
+    rx: selectedEl.type === "ellipse" ? updatedRX : selectedEl.rx !== 0 ? updateBorderRadius(updatedWidth, updatedHeight) : 0,
     cy: updatedCY,
-    ry: selectedEl.type === "ellipse" ? updatedRY : 0,
+    ry: selectedEl.type === "ellipse" ? updatedRY : selectedEl.ry !== 0 ? updateBorderRadius(updatedWidth, updatedHeight) : 0,
     x1: updatedX1,
     x2: updatedX2,
     points: updatedTrianglePointsArr.map(points => points.join()).join(" "),
     d: "M " + pencilPointsArr.map(points => points.join(" ")).join(" L "),
     fontSize: (updatedHeight / 1.5).toString(),
   })
+}
+
+export const updateBorderRadius = (width: number, height: number) => {
+  return width < height ? width * 0.2 : height * 0.2
 }
