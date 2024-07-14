@@ -41,7 +41,7 @@ const LineArrowProp = ({ className, handlerClick }: Props) => {
           x2="24"
           y2="12"
           stroke="black"
-          strokeWidth="2"
+          strokeWidth="1.5"
           markerEnd="url(#arrow)"
         />
       </svg>

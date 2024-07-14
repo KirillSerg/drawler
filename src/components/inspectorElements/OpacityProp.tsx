@@ -29,7 +29,7 @@ const OpacityProp = ({ className, handlerClick }: Props) => {
 
   return (
     <input
-      className={`${className}`}
+      className={`${className} w-full`}
       type="range"
       name="opacity"
       id="opacity"

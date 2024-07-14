@@ -26,7 +26,7 @@ const LineProp = ({ className, handlerClick }: Props) => {
           x2="100%"
           y2="50%"
           stroke="black"
-          strokeWidth="2"
+          strokeWidth="1.5"
         />
       </svg>
     </button>

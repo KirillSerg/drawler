@@ -74,7 +74,7 @@ const Inspector = () => {
         <aside className="fixed min-w-[10%] max-w-[25%] max-h-[80%] overflow-auto px-3 py-5 top-[10%] left-5 border border-black">
           <>
             <p>Actions</p>
-            <div id="actions" className="flex gap-x-1">
+            <div id="actions" className="flex flex-wrap gap-1">
               <img
                 onClick={deleteElements}
                 src={deleteIcon}
@@ -88,17 +88,17 @@ const Inspector = () => {
           {(isArrow_line || isLine) && (
             <>
               <p>Linehead</p>
-              <div id="linehead" className="flex gap-x-1">
+              <div id="linehead" className="flex flex-wrap gap-1">
                 <LineProp
                   className={`${
                     isLine ? 'bg-blue-300' : 'bg-gray-200'
-                  } h-8 w-8 p-[6px] rounded-md`}
+                  } h-8 min-w-8 p-[6px] rounded-md`}
                   handlerClick={handlerSelectProperty}
                 />
                 <LineArrowProp
                   className={`${
                     isArrow_line ? 'bg-blue-300' : 'bg-gray-200'
-                  } h-8 w-8 p-[6px] rounded-md`}
+                  } h-8 min-w-8 p-[6px] rounded-md`}
                   handlerClick={handlerSelectProperty}
                 />
               </div>
@@ -108,17 +108,17 @@ const Inspector = () => {
           {(isEdgesRound || isEdgesSharp) && (
             <>
               <p>Edges</p>
-              <div id="edges" className="flex gap-x-1">
+              <div id="edges" className="flex flex-wrap gap-1">
                 <EdgeRoundProp
                   className={`${
                     isEdgesRound ? 'bg-blue-300' : 'bg-gray-200'
-                  } h-8 w-8 p-[6px] rounded-md`}
+                  } h-8 min-w-8 p-[6px] rounded-md`}
                   handlerClick={handlerSelectProperty}
                 />
                 <EdgeSharpProp
                   className={`${
                     isEdgesSharp ? 'bg-blue-300' : 'bg-gray-200'
-                  } h-8 w-8 p-[6px] rounded-md`}
+                  } h-8 min-w-8 p-[6px] rounded-md`}
                   handlerClick={handlerSelectProperty}
                 />
               </div>
@@ -127,7 +127,6 @@ const Inspector = () => {
           {/* Opacity properties*/}
           <>
             <p>Opacity</p>
-
             <OpacityProp handlerClick={handlerSelectProperty} />
           </>
         </aside>
