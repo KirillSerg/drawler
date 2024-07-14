@@ -29,7 +29,7 @@ const App = () => {
       <Toolbar />
       <Canvas />
       <Inspector />
-      <Layers />
+      {/* <Layers /> */}
       <Zoom />
     </div>
   );
