@@ -73,13 +73,10 @@ const Inspector = () => {
   const isArrow_line = elements.find((el) => el.type_name === 'arrow_line');
   const isLine = elements.find((el) => el.type_name === 'line');
   const isEdgesRound = elements.find(
-    (el) =>
-      (el.type === 'rect' || el.type === 'image') && (el.rx > 0 || el.ry > 0),
+    (el) => el.type === 'rect' && (el.rx > 0 || el.ry > 0),
   );
   const isEdgesSharp = elements.find(
-    (el) =>
-      (el.type === 'rect' || el.type === 'image') &&
-      (el.rx === 0 || el.ry === 0),
+    (el) => el.type === 'rect' && (el.rx === 0 || el.ry === 0),
   );
   const isStrokeWidthSM = elements.find((el) => el.strokeWidth === 1);
   const isStrokeWidthMD = elements.find((el) => el.strokeWidth === 4);
