@@ -246,9 +246,9 @@ export const useResizedCoordinates = (
     width: updatedWidth,
     height: updatedHeight,
     cx: updatedCX,
-    rx: selectedEl.type === "ellipse" ? updatedRX : selectedEl.rx !== 0 ? updateBorderRadius(updatedWidth, updatedHeight) : 0,
+    rx: selectedEl.type === "ellipse" ? updatedRX : selectedEl.rx !== 0 ? getBorderRadius(updatedWidth, updatedHeight) : 0,
     cy: updatedCY,
-    ry: selectedEl.type === "ellipse" ? updatedRY : selectedEl.ry !== 0 ? updateBorderRadius(updatedWidth, updatedHeight) : 0,
+    ry: selectedEl.type === "ellipse" ? updatedRY : selectedEl.ry !== 0 ? getBorderRadius(updatedWidth, updatedHeight) : 0,
     x1: updatedX1,
     x2: updatedX2,
     points: updatedTrianglePointsArr.map(points => points.join()).join(" "),
@@ -257,6 +257,6 @@ export const useResizedCoordinates = (
   })
 }
 
-export const updateBorderRadius = (width: number, height: number) => {
-  return width < height ? width * 0.2 : height * 0.2
+export const getBorderRadius = (width: number, height: number, percent: number = 0.2) => {
+  return width < height ? width * percent : height * percent
 }

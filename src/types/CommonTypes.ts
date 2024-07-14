@@ -23,6 +23,7 @@ export interface Element {
   strokeWidth: number;
   fill: string;
   fontSize: string;
+  opacity: string;
 }
 
 export interface ElementProps {
@@ -51,6 +52,7 @@ export interface ElementProps {
   strokeWidth?: number;
   fill?: string;
   fontSize?: string;
+  opacity?: string;
 }
 
 export interface Area {

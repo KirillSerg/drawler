@@ -7,7 +7,7 @@ import {
   getTrianglePointsArrFromString,
   useUpdateXYAndDistance,
   getPencilSize,
-  updateBorderRadius
+  getBorderRadius
 } from "../assets/utilities";
 
 const initialElement: Element = {
@@ -35,6 +35,7 @@ const initialElement: Element = {
   strokeWidth: 4,
   fill: 'none',
   fontSize: "28px",
+  opacity: "1",
 }
 const initialCanvasViewBox = {
   x: 0,
@@ -306,8 +307,8 @@ export const onMouseMoveAtom = atom(
             height: selectedEl.type_name === "pencil" ? getPencilSize(selectedEl)?.height : newHeight,
             cx: selectedEl.cx + (update.x - selectedEl.x) / 2,
             cy: selectedEl.cy + (update.y - selectedEl.y) / 2,
-            rx: selectedEl.type === "ellipse" ? newRX : selectedEl.rx !== 0 ? updateBorderRadius(newWidth, newHeight) : 0,
-            ry: selectedEl.type === "ellipse" ? newRY : selectedEl.ry !== 0 ? updateBorderRadius(newWidth, newHeight) : 0,
+            rx: selectedEl.type === "ellipse" ? newRX : selectedEl.rx !== 0 ? getBorderRadius(newWidth, newHeight) : 0,
+            ry: selectedEl.type === "ellipse" ? newRY : selectedEl.ry !== 0 ? getBorderRadius(newWidth, newHeight) : 0,
             x2: update.x,
             y2: update.y,
             // left-bottom, top, right-bottom

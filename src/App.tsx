@@ -1,7 +1,7 @@
 import { useAtom, useAtomValue } from 'jotai';
 import Canvas from './components/Canvas';
 import Inspector from './components/Inspector';
-import Layers from './components/Layers';
+// import Layers from './components/Layers';
 import Toolbar from './components/Toolbar';
 import Zoom from './components/Zoom';
 import { isDrawingAtom, onKeyPressAtom } from './store/store';

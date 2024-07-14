@@ -11,8 +11,9 @@ import { ElementProps } from '../types/CommonTypes';
 import LineArrowProp from './inspectorElements/LineArrowProp';
 import LineProp from './inspectorElements/LineProp';
 import EdgeRoundProp from './inspectorElements/EdgeRoundProp';
-import { updateBorderRadius } from '../assets/utilities';
+import { getBorderRadius } from '../assets/utilities';
 import EdgeSharpProp from './inspectorElements/EdgeSharpProp';
+import OpacityProp from './inspectorElements/OpacityProp';
 
 const Inspector = () => {
   const [, deleteElements] = useAtom(deleteElementsAtom);
@@ -37,8 +38,8 @@ const Inspector = () => {
           updateElements({
             ...el,
             ...props,
-            rx: props.rx ? updateBorderRadius(el.width, el.height) : 0,
-            ry: props.ry ? updateBorderRadius(el.width, el.height) : 0,
+            rx: getBorderRadius(el.width, el.height, props.rx),
+            ry: getBorderRadius(el.width, el.height, props.ry),
           });
         }
       });
@@ -47,8 +48,8 @@ const Inspector = () => {
         return {
           ...prev,
           ...props,
-          rx: props.rx ? updateBorderRadius(prev.width, prev.height) : 0,
-          ry: props.ry ? updateBorderRadius(prev.width, prev.height) : 0,
+          rx: props.rx ? getBorderRadius(prev.width, prev.height, props.rx) : 0,
+          ry: props.ry ? getBorderRadius(prev.width, prev.height, props.ry) : 0,
         };
       });
     }
@@ -83,7 +84,7 @@ const Inspector = () => {
               />
             </div>
           </>
-          {/* Line marker */}
+          {/* Line marker properties*/}
           {(isArrow_line || isLine) && (
             <>
               <p>Linehead</p>
@@ -103,7 +104,7 @@ const Inspector = () => {
               </div>
             </>
           )}
-          {/* Edges propertys */}
+          {/* Edges properties */}
           {(isEdgesRound || isEdgesSharp) && (
             <>
               <p>Edges</p>
@@ -123,6 +124,12 @@ const Inspector = () => {
               </div>
             </>
           )}
+          {/* Opacity properties*/}
+          <>
+            <p>Opacity</p>
+
+            <OpacityProp handlerClick={handlerSelectProperty} />
+          </>
         </aside>
       )}
     </>
