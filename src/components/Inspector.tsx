@@ -6,6 +6,7 @@ import {
   creationInitialElementAtom,
   selectedElementAtom,
   updateElementsAtom,
+  isDrawingAtom,
 } from '../store/store';
 import { ElementProps } from '../types/CommonTypes';
 import LineArrowProp from './inspectorElements/LineArrowProp';
@@ -14,6 +15,7 @@ import EdgeRoundProp from './inspectorElements/EdgeRoundProp';
 import { getBorderRadius } from '../assets/utilities';
 import EdgeSharpProp from './inspectorElements/EdgeSharpProp';
 import OpacityProp from './inspectorElements/OpacityProp';
+import StrokeWidthProp from './inspectorElements/StrokeWidthProp';
 
 const Inspector = () => {
   const [, deleteElements] = useAtom(deleteElementsAtom);
@@ -22,6 +24,7 @@ const Inspector = () => {
   const [creationInitialElement, setCreationInitialElement] = useAtom(
     creationInitialElementAtom,
   );
+  const isDrawing = useAtomValue(isDrawingAtom);
 
   const elements = useMemo(() => {
     if (selectedElement.length > 0) {
@@ -38,8 +41,14 @@ const Inspector = () => {
           updateElements({
             ...el,
             ...props,
-            rx: getBorderRadius(el.width, el.height, props.rx),
-            ry: getBorderRadius(el.width, el.height, props.ry),
+            rx:
+              props.rx !== undefined
+                ? getBorderRadius(el.width, el.height, props.rx)
+                : el.rx,
+            ry:
+              props.ry !== undefined
+                ? getBorderRadius(el.width, el.height, props.ry)
+                : el.ry,
           });
         }
       });
@@ -48,8 +57,14 @@ const Inspector = () => {
         return {
           ...prev,
           ...props,
-          rx: props.rx ? getBorderRadius(prev.width, prev.height, props.rx) : 0,
-          ry: props.ry ? getBorderRadius(prev.width, prev.height, props.ry) : 0,
+          rx:
+            props.rx !== undefined
+              ? getBorderRadius(prev.width, prev.height, props.rx)
+              : prev.rx,
+          ry:
+            props.ry !== undefined
+              ? getBorderRadius(prev.width, prev.height, props.ry)
+              : prev.ry,
         };
       });
     }
@@ -61,16 +76,18 @@ const Inspector = () => {
     (el) =>
       (el.type === 'rect' || el.type === 'image') && (el.rx > 0 || el.ry > 0),
   );
-
   const isEdgesSharp = elements.find(
     (el) =>
       (el.type === 'rect' || el.type === 'image') &&
       (el.rx === 0 || el.ry === 0),
   );
+  const isStrokeWidthSM = elements.find((el) => el.strokeWidth === 1);
+  const isStrokeWidthMD = elements.find((el) => el.strokeWidth === 4);
+  const isStrokeWidthLG = elements.find((el) => el.strokeWidth === 10);
 
   return (
     <>
-      {elements[0].id && (
+      {(elements[0].id || isDrawing) && (
         <aside className="fixed min-w-[10%] max-w-[25%] max-h-[80%] overflow-auto px-3 py-5 top-[10%] left-5 border border-black">
           <>
             <p>Actions</p>
@@ -127,7 +144,37 @@ const Inspector = () => {
           {/* Opacity properties*/}
           <>
             <p>Opacity</p>
-            <OpacityProp handlerClick={handlerSelectProperty} />
+            <OpacityProp
+              handlerClick={handlerSelectProperty}
+              opacity={elements[0].opacity}
+            />
+          </>
+          {/* Stroke width properties*/}
+          <>
+            <p>Stroke width</p>
+            <div id="edges" className="flex flex-wrap gap-1">
+              <StrokeWidthProp
+                className={`${
+                  isStrokeWidthSM ? 'bg-blue-300' : 'bg-gray-200'
+                } h-8 min-w-8 p-[6px] rounded-md`}
+                handlerClick={handlerSelectProperty}
+                strokeWidth={1}
+              />
+              <StrokeWidthProp
+                className={`${
+                  isStrokeWidthMD ? 'bg-blue-300' : 'bg-gray-200'
+                } h-8 min-w-8 p-[6px] rounded-md`}
+                handlerClick={handlerSelectProperty}
+                strokeWidth={4}
+              />
+              <StrokeWidthProp
+                className={`${
+                  isStrokeWidthLG ? 'bg-blue-300' : 'bg-gray-200'
+                } h-8 min-w-8 p-[6px] rounded-md`}
+                handlerClick={handlerSelectProperty}
+                strokeWidth={10}
+              />
+            </div>
           </>
         </aside>
       )}

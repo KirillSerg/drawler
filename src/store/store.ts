@@ -78,7 +78,12 @@ export const onKeyPressAtom = atom(
         set(deleteElementsAtom)
         break;
       case (key.key === "Escape"):
-        set(creationInitialElementAtom, initialElement)
+        set(creationInitialElementAtom, (prev) => ({
+          ...prev,
+          type: "free",
+          type_name: "free",
+          id: "",
+        }))
         break;
       case (key.key === "+" && key.ctrlKey):
         set(zoomCanvasAtom, ZoomCanvasFn.ZOOMUP)
@@ -87,7 +92,12 @@ export const onKeyPressAtom = atom(
         set(zoomCanvasAtom, ZoomCanvasFn.ZOOMDOWN)
         break;
       case (!key.ctrlKey && creationInitialElement.type_name === "grab"):
-        set(creationInitialElementAtom, initialElement)
+        set(creationInitialElementAtom, (prev) => ({
+          ...prev,
+          type: "free",
+          type_name: "free",
+          id: "",
+        }))
         break;
     }
   }
@@ -186,7 +196,7 @@ export const onMouseDownAtom = atom(
       endX: update.x,
       endY: update.y
     })
-    if (get(isDrawingAtom)) {
+    if (get(isDrawingAtom) && !get(keyPressedAtom).ctrlKey) {
       const newEl = {
         ...get(creationInitialElementAtom),
         id: crypto.randomUUID(),
@@ -337,7 +347,7 @@ export const onMouseMoveAtom = atom(
       set(selectingAreaAtom, { ...selectingArea, endX: update.x, endY: update.y })
     }
 
-    // this is necessary to display the selected image and to move this image following the cursor
+    // this is necessary to display the selected image preview and to move this image following the cursor
     set(creationInitialElementAtom, (prev) => {
       return {
         ...prev,
@@ -388,7 +398,12 @@ export const onMouseUpAtom = atom(
 
     const isNeedtoResetCreatinType = creationInitialElement.type_name === "pencil" || creationInitialElement.type_name === "grab"
     if (!isNeedtoResetCreatinType) {
-      set(creationInitialElementAtom, initialElement)
+      set(creationInitialElementAtom, (prev) => ({
+        ...prev,
+        type: "free",
+        type_name: "free",
+        id: "",
+      }))
     }
   }
 )
