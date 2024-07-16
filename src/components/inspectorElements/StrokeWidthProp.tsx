@@ -13,15 +13,12 @@ const StrokeWidthProp = ({ className, handlerClick, strokeWidth }: Props) => {
       onClick={() =>
         handlerClick({
           types: [
-            'grab',
-            'free',
             'rect',
             'ellipse',
             'line',
             'polygon',
             'foreignObject',
             'path',
-            'image',
           ],
           strokeWidth,
         })

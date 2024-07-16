@@ -38,6 +38,7 @@ const Textarea = ({ element }: Props) => {
         border: 'none',
         scrollbarWidth: 'none',
         backgroundColor: element.fill,
+        color: element.stroke,
       }}
       placeholder="text"
       value={element.textvalue}

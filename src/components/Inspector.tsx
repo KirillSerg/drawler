@@ -16,6 +16,7 @@ import { getBorderRadius } from '../assets/utilities';
 import EdgeSharpProp from './inspectorElements/EdgeSharpProp';
 import OpacityProp from './inspectorElements/OpacityProp';
 import StrokeWidthProp from './inspectorElements/StrokeWidthProp';
+import ColorsPalette from './inspectorElements/ColorsPalette';
 
 const Inspector = () => {
   const [, deleteElements] = useAtom(deleteElementsAtom);
@@ -85,7 +86,7 @@ const Inspector = () => {
   return (
     <>
       {(elements[0].id || isDrawing) && (
-        <aside className="fixed min-w-[10%] max-w-[25%] max-h-[80%] overflow-auto px-3 py-5 top-[10%] left-5 border border-black">
+        <aside className="fixed min-w-[10%] max-w-[20%] max-h-[80%] overflow-auto px-3 py-5 top-[10%] left-5 border border-black">
           <>
             <p>Actions</p>
             <div id="actions" className="flex flex-wrap gap-1">
@@ -95,6 +96,26 @@ const Inspector = () => {
                 alt="delete"
                 width={24}
                 height={24}
+              />
+            </div>
+          </>
+          <>
+            <p>Backgraund</p>
+            <div id="backgraund" className="flex flex-wrap gap-1">
+              <ColorsPalette
+                targetProp={'fill'}
+                handlerClick={handlerSelectProperty}
+                activeColor={elements[0].fill}
+              />
+            </div>
+          </>
+          <>
+            <p>Stroke</p>
+            <div id="backgraund" className="flex flex-wrap gap-1">
+              <ColorsPalette
+                targetProp={'stroke'}
+                handlerClick={handlerSelectProperty}
+                activeColor={elements[0].stroke}
               />
             </div>
           </>

@@ -260,3 +260,7 @@ export const useResizedCoordinates = (
 export const getBorderRadius = (width: number, height: number, percent: number = 0.2) => {
   return width < height ? width * percent : height * percent
 }
+
+export const colorsPalette = [
+  "transparent", "black", "white", "gray", "brown", "cyan", "blue", "violet", "#be4bdb", "pink", "green", "teal", "yellow", "orange", "red"
+]

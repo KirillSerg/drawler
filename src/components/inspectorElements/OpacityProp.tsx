@@ -20,8 +20,6 @@ const OpacityProp = ({ className, handlerClick, opacity }: Props) => {
       onChange={(e) =>
         handlerClick({
           types: [
-            'grab',
-            'free',
             'rect',
             'ellipse',
             'line',
