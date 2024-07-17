@@ -17,6 +17,7 @@ import EdgeSharpProp from './inspectorElements/EdgeSharpProp';
 import OpacityProp from './inspectorElements/OpacityProp';
 import StrokeWidthProp from './inspectorElements/StrokeWidthProp';
 import ColorsPalette from './inspectorElements/ColorsPalette';
+import StrokeStyleProp from './inspectorElements/StrokeStyleProp';
 
 const Inspector = () => {
   const [, deleteElements] = useAtom(deleteElementsAtom);
@@ -82,6 +83,11 @@ const Inspector = () => {
   const isStrokeWidthSM = elements.find((el) => el.strokeWidth === 1);
   const isStrokeWidthMD = elements.find((el) => el.strokeWidth === 4);
   const isStrokeWidthLG = elements.find((el) => el.strokeWidth === 10);
+  const isStrokeDott = elements.find((el) => el.strokeLinecap === 'round');
+  const isStrokeDash = elements.find(
+    (el) => el.strokeDasharray && !isStrokeDott,
+  );
+  const isStrokeSolid = elements.find((el) => !el.strokeDasharray);
 
   return (
     <>
@@ -191,6 +197,33 @@ const Inspector = () => {
                 } h-8 min-w-8 p-[6px] rounded-md`}
                 handlerClick={handlerSelectProperty}
                 strokeWidth={10}
+              />
+            </div>
+          </>
+          {/* Stroke style properties*/}
+          <>
+            <p>Stroke style</p>
+            <div id="edges" className="flex flex-wrap gap-1">
+              <StrokeStyleProp
+                className={`${
+                  isStrokeSolid ? 'bg-blue-300' : 'bg-gray-200'
+                } h-8 min-w-8 p-[6px] rounded-md`}
+                handlerClick={handlerSelectProperty}
+              />
+              <StrokeStyleProp
+                className={`${
+                  isStrokeDash ? 'bg-blue-300' : 'bg-gray-200'
+                } h-8 min-w-8 p-[6px] rounded-md`}
+                handlerClick={handlerSelectProperty}
+                strokeDasharray="20 10"
+              />
+              <StrokeStyleProp
+                className={`${
+                  isStrokeDott ? 'bg-blue-300' : 'bg-gray-200'
+                } h-8 min-w-8 p-[6px] rounded-md`}
+                handlerClick={handlerSelectProperty}
+                strokeDasharray="1 15"
+                strokeLinecap="round"
               />
             </div>
           </>

@@ -33,6 +33,8 @@ const initialElement: Element = {
   markerEnd: "",
   stroke: 'black',
   strokeWidth: 4,
+  strokeDasharray: "",
+  strokeLinecap: "",
   fill: 'none',
   fontSize: "28px",
   opacity: "1",

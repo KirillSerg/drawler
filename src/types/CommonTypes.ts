@@ -21,6 +21,8 @@ export interface Element {
   markerEnd: string;
   stroke: string;
   strokeWidth: number;
+  strokeDasharray: string;
+  strokeLinecap: string;
   fill: string;
   fontSize: string;
   opacity: string;
@@ -50,6 +52,8 @@ export interface ElementProps {
   isSelected?: boolean;
   stroke?: string;
   strokeWidth?: number;
+  strokeDasharray?: string;
+  strokeLinecap?: string;
   fill?: string;
   fontSize?: string;
   opacity?: string;
