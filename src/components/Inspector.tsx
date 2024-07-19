@@ -18,6 +18,7 @@ import OpacityProp from './inspectorElements/OpacityProp';
 import StrokeWidthProp from './inspectorElements/StrokeWidthProp';
 import ColorsPalette from './inspectorElements/ColorsPalette';
 import StrokeStyleProp from './inspectorElements/StrokeStyleProp';
+import DuplicateProp from './inspectorElements/DuplicateProp';
 
 const Inspector = () => {
   const [, deleteElements] = useAtom(deleteElementsAtom);
@@ -103,27 +104,25 @@ const Inspector = () => {
                 width={24}
                 height={24}
               />
+              <DuplicateProp />
             </div>
           </>
           <>
             <p>Backgraund</p>
-            <div id="backgraund" className="flex flex-wrap gap-1">
-              <ColorsPalette
-                targetProp={'fill'}
-                handlerClick={handlerSelectProperty}
-                activeColor={elements[0].fill}
-              />
-            </div>
+            <ColorsPalette
+              targetProp={'fill'}
+              handlerClick={handlerSelectProperty}
+              activeColor={elements[0].fill}
+            />
           </>
           <>
             <p>Stroke</p>
-            <div id="backgraund" className="flex flex-wrap gap-1">
-              <ColorsPalette
-                targetProp={'stroke'}
-                handlerClick={handlerSelectProperty}
-                activeColor={elements[0].stroke}
-              />
-            </div>
+
+            <ColorsPalette
+              targetProp={'stroke'}
+              handlerClick={handlerSelectProperty}
+              activeColor={elements[0].stroke}
+            />
           </>
           {/* Line marker properties*/}
           {(isArrow_line || isLine) && (

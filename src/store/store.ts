@@ -278,7 +278,7 @@ export const onMouseMoveAtom = atom(
               +point[1] + (update.y - selectingArea.startY)
             ]
           )
-          const newPoints = newTrianglePointsArr.map(points => points.join()).join(" ")
+          const newTrianglePoints = newTrianglePointsArr.map(points => points.join()).join(" ")
           // pencil
           const newPencilPointsArr = getPencilPointsArrFromString(selectedEl.d).map((point) =>
             [
@@ -298,7 +298,7 @@ export const onMouseMoveAtom = atom(
             x1: newX1,
             y2: newY2,
             x2: newX2,
-            points: newPoints,
+            points: newTrianglePoints,
             d: newPathData,
           })
         }
@@ -410,3 +410,44 @@ export const onMouseUpAtom = atom(
   }
 )
 
+export const duplicateAtom = atom(
+  null,
+  (get, set) => {
+    const selectedElement = get(selectedElementAtom)
+    set(selectedElementAtom, [])
+    selectedElement.forEach((el) => {
+      const newTrianglePointsArr = getTrianglePointsArrFromString(el.points).map((point) =>
+        [
+          +point[0] + 50,
+          +point[1] + 50
+        ]
+      )
+      const newTrianglePoints = newTrianglePointsArr.map(points => points.join()).join(" ")
+      const newPencilPointsArr = getPencilPointsArrFromString(el.d).map((point) =>
+        [
+          point[0] + 50,
+          point[1] + 50
+        ]
+      )
+      const newPathData = "M " + newPencilPointsArr.map(points => points.join(" ")).join(" L ")
+
+      const duplicatedElemment = {
+        ...el,
+        id: crypto.randomUUID(),
+        x: el.x + 50,
+        y: el.y + 50,
+        cx: el.cx + 50,
+        cy: el.cy + 50,
+        x1: el.x1 + 50,
+        y1: el.y1 + 50,
+        x2: el.x2 + 50,
+        y2: el.y2 + 50,
+        points: newTrianglePoints,
+        d: newPathData,
+      }
+
+      set(elementsAtom, prev => [...prev, duplicatedElemment])
+      set(selectedElementAtom, prev => [...prev, duplicatedElemment])
+    })
+  }
+)

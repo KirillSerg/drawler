@@ -10,11 +10,14 @@ interface Props {
 
 const ColorsPalette = ({ targetProp, handlerClick, activeColor }: Props) => {
   return (
-    <>
+    <div
+      id="backgraund"
+      className="transition-all ease-in-out duration-700 delay-100 flex flex-wrap gap-1 max-h-5 overflow-hidden hover:max-h-96"
+    >
       {colorsPalette.map((color) => (
         <button
           key={color}
-          className={`w-5 h-5 rounded-sm ${activeColor === color ? 'border-2 border-dotted' : ''}`}
+          className={`w-5 h-5 rounded-sm ${activeColor === color ? 'border-2 border-dotted' : 'border-[1px] border-blue-100'}`}
           style={{
             backgroundColor: `${color}`,
             backgroundImage: `${color === 'transparent' ? `url(${transparentFone})` : ''}`,
@@ -28,7 +31,7 @@ const ColorsPalette = ({ targetProp, handlerClick, activeColor }: Props) => {
           }
         ></button>
       ))}
-    </>
+    </div>
   );
 };
 
