@@ -81,14 +81,24 @@ const Inspector = () => {
   const isEdgesSharp = elements.find(
     (el) => el.type === 'rect' && (el.rx === 0 || el.ry === 0),
   );
-  const isStrokeWidthSM = elements.find((el) => el.strokeWidth === 1);
-  const isStrokeWidthMD = elements.find((el) => el.strokeWidth === 4);
-  const isStrokeWidthLG = elements.find((el) => el.strokeWidth === 10);
-  const isStrokeDott = elements.find((el) => el.strokeLinecap === 'round');
-  const isStrokeDash = elements.find(
-    (el) => el.strokeDasharray && !isStrokeDott,
+  const isStrokeWidthSM = elements.find(
+    (el) => el.strokeWidth === 1 && el.type_name !== 'image',
   );
-  const isStrokeSolid = elements.find((el) => !el.strokeDasharray);
+  const isStrokeWidthMD = elements.find(
+    (el) => el.strokeWidth === 4 && el.type_name !== 'image',
+  );
+  const isStrokeWidthLG = elements.find(
+    (el) => el.strokeWidth === 10 && el.type_name !== 'image',
+  );
+  const isStrokeDott = elements.find(
+    (el) => el.strokeLinecap === 'round' && el.type_name !== 'image',
+  );
+  const isStrokeDash = elements.find(
+    (el) => el.strokeDasharray && !isStrokeDott && el.type_name !== 'image',
+  );
+  const isStrokeSolid = elements.find(
+    (el) => !el.strokeDasharray && el.type_name !== 'image',
+  );
 
   return (
     <>
