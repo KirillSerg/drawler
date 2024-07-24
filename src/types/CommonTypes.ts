@@ -22,7 +22,7 @@ export interface Element {
   stroke: string;
   strokeWidth: number;
   strokeDasharray: string;
-  strokeLinecap: string;
+  strokeLinecap: 'butt' | 'round' | 'square' | 'inherit' | undefined;
   fill: string;
   fontSize: string;
   opacity: string;
@@ -53,7 +53,7 @@ export interface ElementProps {
   stroke?: string;
   strokeWidth?: number;
   strokeDasharray?: string;
-  strokeLinecap?: string;
+  strokeLinecap?: 'butt' | 'round' | 'square' | 'inherit';
   fill?: string;
   fontSize?: string;
   opacity?: string;

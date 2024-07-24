@@ -4,7 +4,7 @@ interface Props {
   className?: string;
   handlerClick: (props: ElementProps) => void;
   strokeDasharray?: string;
-  strokeLinecap?: 'butt' | 'round' | 'square' | 'inherit' | undefined;
+  strokeLinecap?: 'butt' | 'round' | 'square' | 'inherit';
 }
 
 const StrokeStyleProp = ({

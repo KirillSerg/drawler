@@ -34,7 +34,7 @@ const initialElement: Element = {
   stroke: 'black',
   strokeWidth: 4,
   strokeDasharray: "",
-  strokeLinecap: "",
+  strokeLinecap: undefined,
   fill: 'none',
   fontSize: "28px",
   opacity: "1",

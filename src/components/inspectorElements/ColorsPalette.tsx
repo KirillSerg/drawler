@@ -25,7 +25,14 @@ const ColorsPalette = ({ targetProp, handlerClick, activeColor }: Props) => {
           }}
           onClick={() =>
             handlerClick({
-              types: ['rect', 'ellipse', 'line', 'polygon', 'foreignObject'],
+              types: [
+                'rect',
+                'ellipse',
+                'line',
+                'polygon',
+                'foreignObject',
+                'path',
+              ],
               [targetProp]: color,
             })
           }
