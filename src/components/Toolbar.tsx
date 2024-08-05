@@ -1,23 +1,19 @@
 import { useAtom } from 'jotai';
-import LineIconBtn from './LineIconBtn';
-import LineArrowIconBtn from './LineArrowIconBtn';
-import TriangleIconBtn from './TriangleIconBtn';
-import EllipseIconBtn from './EllipseIconBtn';
-import RectIconBtn from './RectIconBtn';
-import FreeIconBtn from './FreeIconBtn';
-import TextIconBtn from './TextIconBtn';
-import PencilIconBtn from './PencilIconBtn';
-import GrabIconBtn from './GrabIconBtn copy';
-import ImageIconBtn from './ImageIconBtn';
+import LineIconBtn from './elements/LineIconBtn';
+import LineArrowIconBtn from './elements/LineArrowIconBtn';
+import TriangleIconBtn from './elements/TriangleIconBtn';
+import EllipseIconBtn from './elements/EllipseIconBtn';
+import RectIconBtn from './elements/RectIconBtn';
+import FreeIconBtn from './elements/FreeIconBtn';
+import TextIconBtn from './elements/textElement/TextIconBtn';
+import PencilIconBtn from './elements/PencilIconBtn';
+import GrabIconBtn from './elements/GrabIconBtn copy';
+import ImageIconBtn from './elements/ImageIconBtn';
 import {
   creationInitialElementAtom,
   selectedElementAtom,
 } from '../store/store';
-import {
-  ELEMENT_TYPE_VARIANTS,
-  Element,
-  ElementProps,
-} from '../types/CommonTypes';
+import { ELEMENT_TYPE_VARIANTS, Element } from '../types/CommonTypes';
 
 const Toolbar = () => {
   const [creationInitialElement, setCreationInitialElement] = useAtom(
@@ -25,15 +21,17 @@ const Toolbar = () => {
   );
   const [, setSelectedElement] = useAtom(selectedElementAtom);
 
-  const handlerSelectElement = (props: ElementProps) => {
+  const handlerSelectElement = (type_name: Element['type_name']) => {
     setCreationInitialElement((prev) => {
       return {
         ...prev,
-        ...props,
+        type_name,
         type:
-          (props.type_name &&
-            (ELEMENT_TYPE_VARIANTS[props.type_name] as Element['type'])) ||
-          prev.type,
+          (ELEMENT_TYPE_VARIANTS[type_name] as Element['type']) || prev.type,
+        markerEnd: type_name === 'arrow_line' ? 'url(#arrow)' : '',
+        width: type_name === 'image' ? 100 : 1,
+        height: type_name === 'image' ? 100 : 1,
+        fill: type_name === 'text' ? 'transparent' : 'none',
       };
     });
     setSelectedElement([]);

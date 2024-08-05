@@ -6,7 +6,8 @@ import {
   useResizedCoordinates,
   getTrianglePointsArrFromString,
   useUpdateXYAndDistance,
-  getPencilSize
+  getPencilSize,
+  getBorderRadius
 } from "../assets/utilities";
 
 const initialElement: Element = {
@@ -15,12 +16,12 @@ const initialElement: Element = {
   id: "",
   x: 0,
   y: 0,
-  width: 1,
-  height: 1,
+  width: 0,
+  height: 0,
   cx: 0,
   cy: 0,
-  rx: 0.5,
-  ry: 0.5,
+  rx: 0,
+  ry: 0,
   x1: 0,
   y1: 0,
   x2: 0,
@@ -28,12 +29,15 @@ const initialElement: Element = {
   points: "",
   textvalue: "",
   d: "",
-  href: null,
+  href: "",
   markerEnd: "",
   stroke: 'black',
   strokeWidth: 4,
+  strokeDasharray: "",
+  strokeLinecap: undefined,
   fill: 'none',
   fontSize: "28px",
+  opacity: "1",
 }
 const initialCanvasViewBox = {
   x: 0,
@@ -76,7 +80,12 @@ export const onKeyPressAtom = atom(
         set(deleteElementsAtom)
         break;
       case (key.key === "Escape"):
-        set(creationInitialElementAtom, initialElement)
+        set(creationInitialElementAtom, (prev) => ({
+          ...prev,
+          type: "free",
+          type_name: "free",
+          id: "",
+        }))
         break;
       case (key.key === "+" && key.ctrlKey):
         set(zoomCanvasAtom, ZoomCanvasFn.ZOOMUP)
@@ -85,7 +94,12 @@ export const onKeyPressAtom = atom(
         set(zoomCanvasAtom, ZoomCanvasFn.ZOOMDOWN)
         break;
       case (!key.ctrlKey && creationInitialElement.type_name === "grab"):
-        set(creationInitialElementAtom, initialElement)
+        set(creationInitialElementAtom, (prev) => ({
+          ...prev,
+          type: "free",
+          type_name: "free",
+          id: "",
+        }))
         break;
     }
   }
@@ -184,7 +198,7 @@ export const onMouseDownAtom = atom(
       endX: update.x,
       endY: update.y
     })
-    if (get(isDrawingAtom)) {
+    if (get(isDrawingAtom) && !get(keyPressedAtom).ctrlKey) {
       const newEl = {
         ...get(creationInitialElementAtom),
         id: crypto.randomUUID(),
@@ -264,7 +278,7 @@ export const onMouseMoveAtom = atom(
               +point[1] + (update.y - selectingArea.startY)
             ]
           )
-          const newPoints = newTrianglePointsArr.map(points => points.join()).join(" ")
+          const newTrianglePoints = newTrianglePointsArr.map(points => points.join()).join(" ")
           // pencil
           const newPencilPointsArr = getPencilPointsArrFromString(selectedEl.d).map((point) =>
             [
@@ -284,7 +298,7 @@ export const onMouseMoveAtom = atom(
             x1: newX1,
             y2: newY2,
             x2: newX2,
-            points: newPoints,
+            points: newTrianglePoints,
             d: newPathData,
           })
         }
@@ -305,8 +319,8 @@ export const onMouseMoveAtom = atom(
             height: selectedEl.type_name === "pencil" ? getPencilSize(selectedEl)?.height : newHeight,
             cx: selectedEl.cx + (update.x - selectedEl.x) / 2,
             cy: selectedEl.cy + (update.y - selectedEl.y) / 2,
-            rx: selectedEl.type === "ellipse" ? newRX : 0,
-            ry: selectedEl.type === "ellipse" ? newRY : 0,
+            rx: selectedEl.type === "ellipse" ? newRX : selectedEl.rx !== 0 ? getBorderRadius(newWidth, newHeight) : 0,
+            ry: selectedEl.type === "ellipse" ? newRY : selectedEl.ry !== 0 ? getBorderRadius(newWidth, newHeight) : 0,
             x2: update.x,
             y2: update.y,
             // left-bottom, top, right-bottom
@@ -335,7 +349,7 @@ export const onMouseMoveAtom = atom(
       set(selectingAreaAtom, { ...selectingArea, endX: update.x, endY: update.y })
     }
 
-    // this is necessary to display the selected image and to move this image following the cursor
+    // this is necessary to display the selected image preview and to move this image following the cursor
     set(creationInitialElementAtom, (prev) => {
       return {
         ...prev,
@@ -386,8 +400,54 @@ export const onMouseUpAtom = atom(
 
     const isNeedtoResetCreatinType = creationInitialElement.type_name === "pencil" || creationInitialElement.type_name === "grab"
     if (!isNeedtoResetCreatinType) {
-      set(creationInitialElementAtom, initialElement)
+      set(creationInitialElementAtom, (prev) => ({
+        ...prev,
+        type: "free",
+        type_name: "free",
+        id: "",
+      }))
     }
   }
 )
 
+export const duplicateAtom = atom(
+  null,
+  (get, set) => {
+    const selectedElement = get(selectedElementAtom)
+    set(selectedElementAtom, [])
+    selectedElement.forEach((el) => {
+      const newTrianglePointsArr = getTrianglePointsArrFromString(el.points).map((point) =>
+        [
+          +point[0] + 50,
+          +point[1] + 50
+        ]
+      )
+      const newTrianglePoints = newTrianglePointsArr.map(points => points.join()).join(" ")
+      const newPencilPointsArr = getPencilPointsArrFromString(el.d).map((point) =>
+        [
+          point[0] + 50,
+          point[1] + 50
+        ]
+      )
+      const newPathData = "M " + newPencilPointsArr.map(points => points.join(" ")).join(" L ")
+
+      const duplicatedElemment = {
+        ...el,
+        id: crypto.randomUUID(),
+        x: el.x + 50,
+        y: el.y + 50,
+        cx: el.cx + 50,
+        cy: el.cy + 50,
+        x1: el.x1 + 50,
+        y1: el.y1 + 50,
+        x2: el.x2 + 50,
+        y2: el.y2 + 50,
+        points: newTrianglePoints,
+        d: newPathData,
+      }
+
+      set(elementsAtom, prev => [...prev, duplicatedElemment])
+      set(selectedElementAtom, prev => [...prev, duplicatedElemment])
+    })
+  }
+)

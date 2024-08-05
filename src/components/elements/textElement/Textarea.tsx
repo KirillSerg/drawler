@@ -1,7 +1,7 @@
 import { useRef } from 'react';
 import { useAtom, useAtomValue } from 'jotai';
-import { isDrawingAtom, updateElementsAtom } from '../store/store';
-import { Element } from '../types/CommonTypes';
+import { isDrawingAtom, updateElementsAtom } from '../../../store/store';
+import { Element } from '../../../types/CommonTypes';
 
 type Props = {
   element: Element;
@@ -38,6 +38,7 @@ const Textarea = ({ element }: Props) => {
         border: 'none',
         scrollbarWidth: 'none',
         backgroundColor: element.fill,
+        color: element.stroke,
       }}
       placeholder="text"
       value={element.textvalue}

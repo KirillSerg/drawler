@@ -1,17 +1,15 @@
-import { ElementProps } from '../types/CommonTypes';
+import { Element } from '../../types/CommonTypes';
 
 interface Props {
   className: string;
-  handlerClick: (props: ElementProps) => void;
+  handlerClick: (type_name: Element['type_name']) => void;
 }
 
 const LineArrowIconBtn = ({ className, handlerClick }: Props) => {
   return (
     <button
       className={`${className}`}
-      onClick={() =>
-        handlerClick({ type_name: 'arrow_line', markerEnd: 'url(#arrow)' })
-      }
+      onClick={() => handlerClick('arrow_line')}
     >
       <svg
         viewBox="0 0 24 24"

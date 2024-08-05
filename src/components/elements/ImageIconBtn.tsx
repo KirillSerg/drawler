@@ -1,11 +1,11 @@
 import { useEffect, useRef } from 'react';
 import { useAtom } from 'jotai';
-import { ElementProps } from '../types/CommonTypes';
-import { creationInitialElementAtom } from '../store/store';
+import { Element } from '../../types/CommonTypes';
+import { creationInitialElementAtom } from '../../store/store';
 
 interface Props {
   className: string;
-  handlerClick: (props: ElementProps) => void;
+  handlerClick: (type_name: Element['type_name']) => void;
 }
 
 const ImageIconBtn = ({ className, handlerClick }: Props) => {
@@ -17,7 +17,6 @@ const ImageIconBtn = ({ className, handlerClick }: Props) => {
     if (e.target.files && e.target.files[0]) {
       const reader = new FileReader();
       reader.onloadend = () => {
-        // if (reader.result !== null)
         setCreationInitialElement((prev) => {
           return { ...prev, href: reader.result };
         });
@@ -34,18 +33,13 @@ const ImageIconBtn = ({ className, handlerClick }: Props) => {
   useEffect(() => {
     if (fileInputRef.current) {
       fileInputRef.current.addEventListener('cancel', () => {
-        handlerClick({ type_name: 'free', width: 1, height: 1 });
+        handlerClick('free');
       });
     }
   }, [handlerClick]);
 
   return (
-    <button
-      className={className}
-      onClick={() =>
-        handlerClick({ type_name: 'image', width: 100, height: 100 })
-      }
-    >
+    <button className={className} onClick={() => handlerClick('image')}>
       <label
         htmlFor="image"
         className="absolute top-0 left-0 w-full h-full cursor-pointer"

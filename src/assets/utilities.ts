@@ -246,9 +246,9 @@ export const useResizedCoordinates = (
     width: updatedWidth,
     height: updatedHeight,
     cx: updatedCX,
-    rx: selectedEl.type === "ellipse" ? updatedRX : 0,
+    rx: selectedEl.type === "ellipse" ? updatedRX : selectedEl.rx !== 0 ? getBorderRadius(updatedWidth, updatedHeight) : 0,
     cy: updatedCY,
-    ry: selectedEl.type === "ellipse" ? updatedRY : 0,
+    ry: selectedEl.type === "ellipse" ? updatedRY : selectedEl.ry !== 0 ? getBorderRadius(updatedWidth, updatedHeight) : 0,
     x1: updatedX1,
     x2: updatedX2,
     points: updatedTrianglePointsArr.map(points => points.join()).join(" "),
@@ -256,3 +256,11 @@ export const useResizedCoordinates = (
     fontSize: (updatedHeight / 1.5).toString(),
   })
 }
+
+export const getBorderRadius = (width: number, height: number, percent: number = 0.2) => {
+  return width < height ? width * percent : height * percent
+}
+
+export const colorsPalette = [
+  "transparent", "black", "white", "gray", "brown", "cyan", "blue", "violet", "#be4bdb", "pink", "green", "teal", "yellow", "orange", "red"
+]

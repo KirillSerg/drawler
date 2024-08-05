@@ -1,4 +1,4 @@
-import Textarea from './Textarea';
+import Textarea from './elements/textElement/Textarea';
 import { useAtom, useAtomValue } from 'jotai';
 import {
   isDrawingAtom,

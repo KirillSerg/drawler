@@ -21,14 +21,17 @@ export interface Element {
   markerEnd: string;
   stroke: string;
   strokeWidth: number;
+  strokeDasharray: string;
+  strokeLinecap: 'butt' | 'round' | 'square' | 'inherit' | undefined;
   fill: string;
   fontSize: string;
+  opacity: string;
 }
 
 export interface ElementProps {
   id?: string;
-  type_name?: ElementsTypeName;
-  // type will be determined automatically
+  types: Element['type'][];
+  type_name?: Element['type_name']
   x?: number;
   y?: number;
   width?: number;
@@ -49,8 +52,11 @@ export interface ElementProps {
   isSelected?: boolean;
   stroke?: string;
   strokeWidth?: number;
+  strokeDasharray?: string;
+  strokeLinecap?: 'butt' | 'round' | 'square' | 'inherit';
   fill?: string;
   fontSize?: string;
+  opacity?: string;
 }
 
 export interface Area {

@@ -66,10 +66,10 @@ const SelectingFrame = ({ element }: Props) => {
           className="hover:cursor-nwse-resize"
           onMouseDown={() => setResizeVector('nordwest')}
           onMouseUp={onMouseUp}
-          x={element.x - element.strokeWidth / 2 - 6}
-          y={element.y - element.strokeWidth / 2 - 6}
-          width="6"
-          height="6"
+          x={element.x - element.strokeWidth / 2 - 7}
+          y={element.y - element.strokeWidth / 2 - 7}
+          width="10"
+          height="10"
           stroke="blue"
           fill="white"
         />
@@ -79,10 +79,10 @@ const SelectingFrame = ({ element }: Props) => {
           className="hover:cursor-nesw-resize"
           onMouseDown={() => setResizeVector('nordeast')}
           onMouseUp={onMouseUp}
-          x={element.x + element.width - element.strokeWidth / 2 + 4}
-          y={element.y - element.strokeWidth / 2 - 6}
-          width="6"
-          height="6"
+          x={element.x + element.width - element.strokeWidth / 2 + 7}
+          y={element.y - element.strokeWidth / 2 - 7}
+          width="10"
+          height="10"
           stroke="blue"
           fill="white"
         />
@@ -92,10 +92,10 @@ const SelectingFrame = ({ element }: Props) => {
           className="hover:cursor-nwse-resize"
           onMouseDown={() => setResizeVector('southeast')}
           onMouseUp={onMouseUp}
-          x={element.x + element.width - element.strokeWidth / 2 + 4}
-          y={element.y + element.height - element.strokeWidth / 2 + 4}
-          width="6"
-          height="6"
+          x={element.x + element.width - element.strokeWidth / 2 + 7}
+          y={element.y + element.height - element.strokeWidth / 2 + 7}
+          width="10"
+          height="10"
           stroke="blue"
           fill="white"
         />
@@ -105,10 +105,10 @@ const SelectingFrame = ({ element }: Props) => {
           className="hover:cursor-nesw-resize"
           onMouseDown={() => setResizeVector('southwest')}
           onMouseUp={onMouseUp}
-          x={element.x - element.strokeWidth / 2 - 6}
-          y={element.y + element.height - element.strokeWidth / 2 + 4}
-          width="6"
-          height="6"
+          x={element.x - element.strokeWidth / 2 - 7}
+          y={element.y + element.height - element.strokeWidth / 2 + 7}
+          width="10"
+          height="10"
           stroke="blue"
           fill="white"
         />
