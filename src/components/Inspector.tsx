@@ -6,6 +6,7 @@ import {
   selectedElementAtom,
   updateElementsAtom,
   isDrawingAtom,
+  setLayersAtom,
 } from '../store/store';
 import LineArrowProp from './inspectorElements/LineArrowProp';
 import LineProp from './inspectorElements/LineProp';
@@ -30,6 +31,7 @@ import {
 const Inspector = () => {
   const [, deleteElements] = useAtom(deleteElementsAtom);
   const [, updateElements] = useAtom(updateElementsAtom);
+  const [, setLayers] = useAtom(setLayersAtom);
   const selectedElement = useAtomValue(selectedElementAtom);
   const [creationInitialElement, setCreationInitialElement] = useAtom(
     creationInitialElementAtom,
@@ -248,18 +250,30 @@ const Inspector = () => {
                 <LayersBtn
                   Icon={IconLayerToBackFront}
                   className="bg-gray-200 h-8 min-w-8 p-[6px] rounded-md rotate-180"
+                  handlerClick={() => {
+                    setLayers('back');
+                  }}
                 />
                 <LayersBtn
                   Icon={IconLayerToBackwardForward}
                   className="bg-gray-200 h-8 min-w-8 p-[6px] rounded-md rotate-180"
+                  handlerClick={() => {
+                    setLayers('backward');
+                  }}
                 />
                 <LayersBtn
                   Icon={IconLayerToBackwardForward}
                   className="bg-gray-200 h-8 min-w-8 p-[6px] rounded-md"
+                  handlerClick={() => {
+                    setLayers('forward');
+                  }}
                 />
                 <LayersBtn
                   Icon={IconLayerToBackFront}
                   className="bg-gray-200 h-8 min-w-8 p-[6px] rounded-md"
+                  handlerClick={() => {
+                    setLayers('front');
+                  }}
                 />
               </div>
             </>
