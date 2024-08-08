@@ -1,14 +1,13 @@
 import { useMemo } from 'react';
 import { useAtom, useAtomValue } from 'jotai';
-import deleteIcon from '../assets/icons/trash.svg';
 import {
   deleteElementsAtom,
   creationInitialElementAtom,
   selectedElementAtom,
   updateElementsAtom,
   isDrawingAtom,
+  setLayersAtom,
 } from '../store/store';
-import { ElementProps } from '../types/CommonTypes';
 import LineArrowProp from './inspectorElements/LineArrowProp';
 import LineProp from './inspectorElements/LineProp';
 import EdgeRoundProp from './inspectorElements/EdgeRoundProp';
@@ -19,10 +18,20 @@ import StrokeWidthProp from './inspectorElements/StrokeWidthProp';
 import ColorsPalette from './inspectorElements/ColorsPalette';
 import StrokeStyleProp from './inspectorElements/StrokeStyleProp';
 import DuplicateProp from './inspectorElements/DuplicateProp';
+import LayersBtn from './inspectorElements/LayersBtn';
+
+import { ElementProps } from '../types/CommonTypes';
+
+import deleteIcon from '../assets/icons/trash.svg';
+import {
+  IconLayerToBackFront,
+  IconLayerToBackwardForward,
+} from '../assets/icons/Icons';
 
 const Inspector = () => {
   const [, deleteElements] = useAtom(deleteElementsAtom);
   const [, updateElements] = useAtom(updateElementsAtom);
+  const [, setLayers] = useAtom(setLayersAtom);
   const selectedElement = useAtomValue(selectedElementAtom);
   const [creationInitialElement, setCreationInitialElement] = useAtom(
     creationInitialElementAtom,
@@ -234,6 +243,40 @@ const Inspector = () => {
                 strokeLinecap="round"
               />
             </div>
+
+            <>
+              <p>Layers</p>
+              <div id="layers" className="flex flex-wrap gap-1">
+                <LayersBtn
+                  Icon={IconLayerToBackFront}
+                  className="bg-gray-200 h-8 min-w-8 p-[6px] rounded-md rotate-180"
+                  handlerClick={() => {
+                    setLayers('back');
+                  }}
+                />
+                <LayersBtn
+                  Icon={IconLayerToBackwardForward}
+                  className="bg-gray-200 h-8 min-w-8 p-[6px] rounded-md rotate-180"
+                  handlerClick={() => {
+                    setLayers('backward');
+                  }}
+                />
+                <LayersBtn
+                  Icon={IconLayerToBackwardForward}
+                  className="bg-gray-200 h-8 min-w-8 p-[6px] rounded-md"
+                  handlerClick={() => {
+                    setLayers('forward');
+                  }}
+                />
+                <LayersBtn
+                  Icon={IconLayerToBackFront}
+                  className="bg-gray-200 h-8 min-w-8 p-[6px] rounded-md"
+                  handlerClick={() => {
+                    setLayers('front');
+                  }}
+                />
+              </div>
+            </>
           </>
         </aside>
       )}
