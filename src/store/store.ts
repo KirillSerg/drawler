@@ -458,7 +458,6 @@ export const setLayersAtom = atom(
   null,
   (get, set, direction: string) => {
     const selectedElement = get(selectedElementAtom)
-    // selectedElement.forEach((el, index) => )
     switch (direction) {
       case "back":
         set(elementsAtom, (prev) => {
@@ -467,7 +466,7 @@ export const setLayersAtom = atom(
         })
         break;
       case "backward":
-        // spaghetti code / crappy code / shit code
+        // spaghetti code / crappy code
         set(elementsAtom, (prev) => {
           const resultArray: typeof prev = []
           const elementsToMove: typeof prev = []
@@ -486,7 +485,7 @@ export const setLayersAtom = atom(
         })
         break;
       case "forward":
-        // spaghetti code / crappy code / shit code
+        // spaghetti code / crappy code
         set(elementsAtom, (prev) => {
           const resultArray: typeof prev = []
           const elementsToMove: typeof prev = []
