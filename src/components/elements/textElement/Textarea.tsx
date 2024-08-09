@@ -1,6 +1,10 @@
 import { useRef } from 'react';
 import { useAtom, useAtomValue } from 'jotai';
-import { isDrawingAtom, updateElementsAtom } from '../../../store/store';
+import {
+  isDrawingAtom,
+  setHistoryAtom,
+  updateElementsAtom,
+} from '../../../store/store';
 import { Element } from '../../../types/CommonTypes';
 
 type Props = {
@@ -9,6 +13,7 @@ type Props = {
 
 const Textarea = ({ element }: Props) => {
   const [, updateElements] = useAtom(updateElementsAtom);
+  const [, setHistory] = useAtom(setHistoryAtom);
   const isDrawing = useAtomValue(isDrawingAtom);
 
   const textareaRef = useRef<HTMLTextAreaElement>(null);
@@ -31,6 +36,7 @@ const Textarea = ({ element }: Props) => {
       ref={textareaRef}
       rows={1}
       autoFocus={isDrawing}
+      onBlur={setHistory}
       style={{
         width: '100%',
         height: '100%',

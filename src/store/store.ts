@@ -49,6 +49,10 @@ const initialCanvasViewBox = {
 
 export const creationInitialElementAtom = atom<Element>(initialElement)
 
+export const historyAtom = atomWithStorage<Element[][]>("history", [[]])
+
+export const currentHistoryIndexAtom = atomWithStorage<number>("historyIndex", 0)
+
 export const elementsAtom = atomWithStorage<Element[]>("elements", [])
 
 export const selectedElementAtom = atom<Element[] | []>([])
@@ -164,9 +168,15 @@ export const updateElementsAtom = atom(
       && !get(isDraggingAtom)
       && !get(isDrawingAtom)
       && !get(resizeVectorAtom)
-    ) set(selectedElementAtom, (prev) => {
-      return prev?.map(el => el.id === updatedElement.id ? updatedElement : el) || null
-    })
+    ) {
+      set(selectedElementAtom, (prev) => {
+        return prev?.map(el => el.id === updatedElement.id ? updatedElement : el) || null
+      })
+      if (updatedElement.type_name !== 'text') {
+        set(setHistoryAtom)
+      }
+    }
+
     // if drawing with pencil we need to put fresh d
     if (updatedElement.type_name === "pencil" && get(isDrawingAtom)) {
       set(selectedElementAtom, (prev) => {
@@ -182,6 +192,7 @@ export const deleteElementsAtom = atom(
     const selectedElement = get(selectedElementAtom)
     set(elementsAtom, (prev) => prev.filter((el) => !selectedElement.find((selectedEl) => selectedEl.id === el.id)))
     set(selectedElementAtom, [])
+    set(setHistoryAtom)
   }
 )
 
@@ -397,6 +408,7 @@ export const onMouseUpAtom = atom(
     set(resizeVectorAtom, "")
     set(isDraggingAtom, false)
     set(selectingAreaAtom, null)
+    set(setHistoryAtom)
 
     const isNeedtoResetCreatinType = creationInitialElement.type_name === "pencil" || creationInitialElement.type_name === "grab"
     if (!isNeedtoResetCreatinType) {
@@ -448,6 +460,36 @@ export const duplicateAtom = atom(
 
       set(elementsAtom, prev => [...prev, duplicatedElemment])
       set(selectedElementAtom, prev => [...prev, duplicatedElemment])
+      set(setHistoryAtom)
     })
+  }
+)
+
+export const setHistoryAtom = atom(
+  null,
+  (get, set) => {
+    set(historyAtom, (prev) => {
+      // it's need to cut newest and continue build history chain from some previous snapshot if user was clicked undo btn
+      const previousHistoryFromCurrentIndex = prev.slice(get(currentHistoryIndexAtom))
+      if (get(elementsAtom) !== previousHistoryFromCurrentIndex[0] && !!get(elementsAtom).length) {
+        return [get(elementsAtom), ...previousHistoryFromCurrentIndex]
+      } else { return prev }
+    })
+    set(currentHistoryIndexAtom, 0)
+  }
+)
+
+export const useHistoryAtom = atom(
+  // this call of history (and current history index) is need to enable localStorage and use this history after refresh page when clicking hystory control btn
+  (get) => { get(historyAtom), get(currentHistoryIndexAtom) },
+  (get, set, direction: number) => {
+    const history = get(historyAtom)
+    const newIndex = get(currentHistoryIndexAtom) + direction
+    const isEndOfHistory = history.length - 1 < newIndex || newIndex < 0
+    if (!isEndOfHistory) {
+      const snapshot = history[newIndex]
+      set(elementsAtom, snapshot)
+      set(currentHistoryIndexAtom, newIndex)
+    }
   }
 )

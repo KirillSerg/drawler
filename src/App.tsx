@@ -5,6 +5,7 @@ import Inspector from './components/Inspector';
 import Toolbar from './components/Toolbar';
 import Zoom from './components/Zoom';
 import { isDrawingAtom, onKeyPressAtom } from './store/store';
+import HistoryControls from './components/HistoryControls';
 
 const App = () => {
   const [, onKeyPress] = useAtom(onKeyPressAtom);
@@ -30,7 +31,10 @@ const App = () => {
       <Canvas />
       <Inspector />
       {/* <Layers /> */}
-      <Zoom />
+      <div className="w-full flex justify-end px-5">
+        <Zoom />
+        <HistoryControls />
+      </div>
     </div>
   );
 };
