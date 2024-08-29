@@ -33,7 +33,7 @@ const SingleElement = ({ element }: Props) => {
             onMouseDown={() => onDragStart(element)}
             onMouseUp={onMouseUp}
           >
-            {element.type === 'foreignObject' && <Textarea element={element} />}
+            {element.type_name === 'text' && <Textarea element={element} />}
           </element.type>
 
           {isSelected && !isDrawing && <SelectingFrame element={element} />}
