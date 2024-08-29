@@ -255,6 +255,8 @@ export const onDragStartAtom = atom(
         } else {
           set(selectedElementAtom, [element])
         }
+      } else {
+        set(selectedElementAtom, [element])
       }
       set(isDraggingAtom, true)
     }
@@ -462,6 +464,66 @@ export const duplicateAtom = atom(
       set(selectedElementAtom, prev => [...prev, duplicatedElemment])
       set(setHistoryAtom)
     })
+  }
+)
+
+export const setLayersAtom = atom(
+  null,
+  (get, set, direction: string) => {
+    const selectedElement = get(selectedElementAtom)
+    switch (direction) {
+      case "back":
+        set(elementsAtom, (prev) => {
+          const filteredArray = prev.filter((el) => !selectedElement.find((selectedEl) => selectedEl.id === el.id))
+          return [...selectedElement, ...filteredArray]
+        })
+        break;
+      case "backward":
+        // spaghetti code / crappy code
+        set(elementsAtom, (prev) => {
+          const resultArray: typeof prev = []
+          const elementsToMove: typeof prev = []
+          const indexes: number[] = []
+          prev.forEach((el, i) => {
+            // filtering and saving index & element to insert
+            if (selectedElement.find((selectedEl) => selectedEl.id === el.id && i > 0)) {
+              elementsToMove.push(el)
+              indexes.push(i)
+            } else {
+              resultArray.push(el)
+            }
+          })
+          elementsToMove.forEach((el, i) => resultArray.splice(indexes[i] - 1, 0, el))
+          return resultArray
+        })
+        break;
+      case "forward":
+        // spaghetti code / crappy code
+        set(elementsAtom, (prev) => {
+          const resultArray: typeof prev = []
+          const elementsToMove: typeof prev = []
+          const indexes: number[] = []
+          prev.forEach((el, i) => {
+            if (selectedElement.find((selectedEl) => selectedEl.id === el.id)) {
+              elementsToMove.push(el)
+              indexes.push(i)
+            } else {
+              resultArray.push(el)
+            }
+          })
+          elementsToMove.forEach((el, i) => resultArray.splice(indexes[i] + 1, 0, el))
+          return resultArray
+        })
+        break;
+      case "front":
+        set(elementsAtom, (prev) => {
+          const filteredArray = prev.filter((el) => !selectedElement.find((selectedEl) => selectedEl.id === el.id))
+          return [...filteredArray, ...selectedElement]
+        })
+        break;
+
+    }
+
   }
 )
 
