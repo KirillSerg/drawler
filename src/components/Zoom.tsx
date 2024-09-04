@@ -7,16 +7,16 @@ const Zoom = () => {
   const [, zoomCanvas] = useAtom(zoomCanvasAtom);
 
   return (
-    // <div className="w-full flex justify-end px-5">
-    <div className="h-fit w-fit px-2 fixed bottom-3 flex justify-center items-center gap-4 border-[1px] border-black">
+    // h-fit w-fit px-2 fixed bottom-3 flex justify-center items-center gap-4 border-[1px] border-black
+    <div className="w-[50%] flex justify-between items-center bg-gray-200 rounded-lg p-1">
       <button
         id="zoomdown"
-        className="font-bold text-xl leading-none text-start"
+        className="font-bold text-xl"
         onClick={() => {
           zoomCanvas(ZoomCanvasFn.ZOOMDOWN);
         }}
       >
-        -
+        &minus;
       </button>
 
       <button
@@ -39,7 +39,6 @@ const Zoom = () => {
         +
       </button>
     </div>
-    // </div>
   );
 };
 

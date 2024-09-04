@@ -112,7 +112,7 @@ const Inspector = () => {
   return (
     <>
       {(elements[0].id || isDrawing) && (
-        <aside className="fixed min-w-[10%] max-w-[20%] max-h-[80%] overflow-auto px-3 py-5 top-[10%] right-5 border border-black">
+        <aside className="fixed min-w-[10%] max-w-[20%] max-h-[70%] overflow-auto px-3 py-5 top-[10%] right-5 shadow-[5px_5px_30px_#d9d9d9] bg-white rounded-lg">
           <>
             <p>Actions</p>
             <div id="actions" className="flex flex-wrap gap-1">

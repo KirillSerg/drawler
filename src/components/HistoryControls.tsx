@@ -1,21 +1,30 @@
 import { useAtom } from 'jotai';
-import { useHistoryAtom } from '../store/store';
+import {
+  currentHistoryIndexAtom,
+  historyAtom,
+  useHistoryAtom,
+} from '../store/store';
 
 const HistoryControls = () => {
   const [, doRedo] = useAtom(useHistoryAtom);
+  const [currentHistoryIndex] = useAtom(currentHistoryIndexAtom);
+  const [history] = useAtom(historyAtom);
 
   return (
-    // <div className="w-full flex justify-end px-5">
-    <div className="h-fit w-fit px-2 fixed bottom-3 right-[20%] flex justify-center items-center gap-4 border-[1px] border-black">
+    // h-fit w-fit px-2 fixed bottom-3 right-[20%] flex justify-center items-center gap-4 border-[1px] border-black
+    <div className="flex justify-between items-center gap-3 bg-gray-200 rounded-lg p-1">
       <button
         // id=""
-        className="h-7 w-7"
+        className="h-6 w-6"
         onClick={() => doRedo(1)}
+        disabled={history.length - 1 == currentHistoryIndex}
       >
         <svg
           viewBox="0 0 20 20"
           fill="none"
-          stroke="currentColor"
+          stroke={
+            history.length - 1 == currentHistoryIndex ? 'grey' : 'currentColor'
+          }
           strokeLinecap="round"
           strokeLinejoin="round"
           width={'100%'}
@@ -30,13 +39,14 @@ const HistoryControls = () => {
 
       <button
         // id=""
-        className="h-7 w-7"
+        className="h-6 w-6"
         onClick={() => doRedo(-1)}
+        disabled={currentHistoryIndex == 0}
       >
         <svg
           viewBox="0 0 20 20"
           fill="none"
-          stroke="currentColor"
+          stroke={currentHistoryIndex == 0 ? 'grey' : 'currentColor'}
           strokeLinecap="round"
           strokeLinejoin="round"
           width={'100%'}
@@ -49,7 +59,6 @@ const HistoryControls = () => {
         </svg>
       </button>
     </div>
-    // </div>
   );
 };
 

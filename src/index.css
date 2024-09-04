@@ -8,7 +8,7 @@
   border-radius: 100px;
 }
 ::-webkit-scrollbar-track {
-  background: rgb(230, 229, 229);
+  background: none;
 }
 ::-webkit-scrollbar-thumb {
   width: 8px;

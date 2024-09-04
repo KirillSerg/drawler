@@ -29,9 +29,9 @@ const App = () => {
       <Toolbar />
       <Canvas />
       <Inspector />
-      <div className="w-full flex justify-end px-5">
-        <Zoom />
+      <div className="w-full flex justify-between absolute bottom-4 right-5 min-w-[10%] max-w-[20%] h-fit">
         <HistoryControls />
+        <Zoom />
       </div>
     </div>
   );
