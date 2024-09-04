@@ -35,7 +35,7 @@ const initialElement: Element = {
   strokeWidth: 4,
   strokeDasharray: "",
   strokeLinecap: undefined,
-  fill: 'none',
+  fill: 'transparent',
   fontSize: "28px",
   opacity: "1",
 }
@@ -255,8 +255,6 @@ export const onDragStartAtom = atom(
         } else {
           set(selectedElementAtom, [element])
         }
-      } else {
-        set(selectedElementAtom, [element])
       }
       set(isDraggingAtom, true)
     }
@@ -360,6 +358,28 @@ export const onMouseMoveAtom = atom(
       }
 
       set(selectingAreaAtom, { ...selectingArea, endX: update.x, endY: update.y })
+
+      // multy select by selectingArea
+      const resizeVector = get(resizeVectorAtom)
+      if (!get(isDraggingAtom) && !get(isDrawingAtom) && !resizeVector) {
+        if (selectingArea) {
+          const areaStartX = selectingArea.startX < selectingArea.endX ? selectingArea.startX : selectingArea.endX
+          const areaStartY = selectingArea.startY < selectingArea.endY ? selectingArea.startY : selectingArea.endY
+          get(elementsAtom).map((element) => {
+            // if element in area
+            if (
+              element.x > areaStartX &&
+              element.y > areaStartY &&
+              element.x + element.width < areaStartX + Math.abs(selectingArea.endX - selectingArea.startX) &&
+              element.y + element.height < areaStartY + Math.abs(selectingArea.endY - selectingArea.startY)
+            ) {
+              set(selectedElementAtom, (prev) => [...prev, element]);
+            } else {
+              set(selectedElementAtom, (prev) => prev.filter((el) => element.id !== el.id));
+            }
+          })
+        }
+      }
     }
 
     // this is necessary to display the selected image preview and to move this image following the cursor
@@ -379,7 +399,6 @@ export const onMouseUpAtom = atom(
     // console.log("onMouseUpAtom")
     const creationInitialElement = get(creationInitialElementAtom)
     const selectedElement = get(selectedElementAtom)
-    const selectingArea = get(selectingAreaAtom)
 
     // update selected el from original element
     if (selectedElement.length > 0) {
@@ -388,24 +407,7 @@ export const onMouseUpAtom = atom(
       set(selectedElementAtom, newSelectedEl)
     }
 
-    // multy select by selectingArea
-    if (!get(isDraggingAtom) && !get(isDrawingAtom)) {
-      if (selectingArea) {
-        const areaStartX = selectingArea.startX < selectingArea.endX ? selectingArea.startX : selectingArea.endX
-        const areaStartY = selectingArea.startY < selectingArea.endY ? selectingArea.startY : selectingArea.endY
-        get(elementsAtom).map((element) => {
-          // if element in area
-          if (
-            element.x > areaStartX &&
-            element.y > areaStartY &&
-            element.x + element.width < areaStartX + Math.abs(selectingArea.endX - selectingArea.startX) &&
-            element.y + element.height < areaStartY + Math.abs(selectingArea.endY - selectingArea.startY)
-          ) {
-            set(selectedElementAtom, (prev) => [...prev, element]);
-          }
-        })
-      }
-    }
+
 
     set(resizeVectorAtom, "")
     set(isDraggingAtom, false)

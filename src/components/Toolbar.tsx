@@ -31,7 +31,6 @@ const Toolbar = () => {
         markerEnd: type_name === 'arrow_line' ? 'url(#arrow)' : '',
         width: type_name === 'image' ? 100 : 1,
         height: type_name === 'image' ? 100 : 1,
-        fill: type_name === 'text' ? 'transparent' : 'none',
       };
     });
     setSelectedElement([]);

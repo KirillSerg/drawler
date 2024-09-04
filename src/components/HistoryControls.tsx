@@ -11,7 +11,6 @@ const HistoryControls = () => {
   const [history] = useAtom(historyAtom);
 
   return (
-    // h-fit w-fit px-2 fixed bottom-3 right-[20%] flex justify-center items-center gap-4 border-[1px] border-black
     <div className="flex justify-between items-center gap-3 bg-gray-200 rounded-lg p-1">
       <button
         // id=""
