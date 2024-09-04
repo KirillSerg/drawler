@@ -195,7 +195,6 @@ test("Grab canvas", async ({ page }) => {
 
 test("Selecting frame", async ({ page }) => {
   await page.goto('http://localhost:5173/');
-
   const toolbarRect = page.locator('header > button > svg > rect')
   await toolbarRect.click()
   await page.mouse.move(300, 300);
@@ -244,6 +243,7 @@ test("Selecting frame", async ({ page }) => {
   await page.mouse.move(1, 1);
   await page.mouse.down();
   await page.mouse.move(600, 600);
+  await page.mouse.move(700, 700); // page.locator('id=frame') below is not visible if don't add this one more move
   await page.mouse.up();
   // check the numbers of frame and what it is visible
   const framesNumber = await page.locator('id=frame').count()
