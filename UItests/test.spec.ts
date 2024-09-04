@@ -41,7 +41,7 @@ test("Create rect", async ({ page }) => {
 
 test("Create triangle(polygon)", async ({ page }) => {
   await page.goto('http://localhost:5173/');
-  const toolbarTriangle = page.locator('header > button > svg > polygon')
+  const toolbarTriangle = page.locator('header > [id=triangle]')
   await toolbarTriangle.click()
   await page.mouse.move(300, 300);
   await page.mouse.down();

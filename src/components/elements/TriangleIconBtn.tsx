@@ -7,7 +7,11 @@ interface Props {
 
 const TriangleIconBtn = ({ className, handlerClick }: Props) => {
   return (
-    <button className={`${className}`} onClick={() => handlerClick('polygon')}>
+    <button
+      id="triangle"
+      className={`${className}`}
+      onClick={() => handlerClick('polygon')}
+    >
       <svg
         viewBox="0 0 24 24"
         height="100%"
