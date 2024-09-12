@@ -81,6 +81,8 @@ export const useResizedCoordinates = (
   // line
   let updatedX1 = selectedEl.x1
   let updatedX2 = selectedEl.x2
+  let updatedY1 = selectedEl.y1
+  let updatedY2 = selectedEl.y2
   // poligon(triangle)
   let updatedTrianglePointsArr = getTrianglePointsArrFromString(selectedEl.points)
   // pencil
@@ -157,6 +159,7 @@ export const useResizedCoordinates = (
     updatedCX = selectedEl.cx + (update.x - selectingArea.startX) / 2
     updatedRX = Math.abs(selectedEl.rx + (update.x - selectingArea.startX) / 2)
     updatedX2 = selectedEl.x2 + (update.x - selectingArea.startX)
+    updatedY2 = selectedEl.y2 + (update.y - selectingArea.startY)
 
     if (+updatedTrianglePointsArr[0][0] < +updatedTrianglePointsArr[2][0]) {
       // left-bottom, top, right-bottom
@@ -187,6 +190,7 @@ export const useResizedCoordinates = (
     updatedCX = selectedEl.cx + (update.x - selectingArea.startX) / 2
     updatedRX = Math.abs(selectedEl.rx - (update.x - selectingArea.startX) / 2)
     updatedX1 = selectedEl.x1 + (update.x - selectingArea.startX)
+    updatedY1 = selectedEl.y1 + (update.y - selectingArea.startY)
 
     if (+updatedTrianglePointsArr[0][0] > +updatedTrianglePointsArr[2][0]) {
       // left-bottom, top, right-bottom
@@ -251,6 +255,8 @@ export const useResizedCoordinates = (
     ry: selectedEl.type === "ellipse" ? updatedRY : selectedEl.ry !== 0 ? getBorderRadius(updatedWidth, updatedHeight) : 0,
     x1: updatedX1,
     x2: updatedX2,
+    y1: updatedY1,
+    y2: updatedY2,
     points: updatedTrianglePointsArr.map(points => points.join()).join(" "),
     d: "M " + pencilPointsArr.map(points => points.join(" ")).join(" L "),
     fontSize: (updatedHeight / 1.5).toString(),

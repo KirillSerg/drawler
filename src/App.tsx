@@ -1,10 +1,10 @@
 import { useAtom, useAtomValue } from 'jotai';
-import Canvas from './components/Canvas';
-import Inspector from './components/Inspector';
-import Toolbar from './components/Toolbar';
-import Zoom from './components/Zoom';
+import Canvas from './components/canvas/Canvas';
+import Inspector from './components/inspector/Inspector';
+import Toolbar from './components/toolbar/Toolbar';
+import Zoom from './components/canvas/canvasElements/Zoom';
 import { isDrawingAtom, onKeyPressAtom } from './store/store';
-import HistoryControls from './components/HistoryControls';
+import HistoryControls from './components/canvas/canvasElements/HistoryControls';
 
 const App = () => {
   const [, onKeyPress] = useAtom(onKeyPressAtom);
@@ -29,9 +29,9 @@ const App = () => {
       <Toolbar />
       <Canvas />
       <Inspector />
-      <div className="w-full flex justify-end px-5">
-        <Zoom />
+      <div className="w-full flex justify-between absolute bottom-4 right-5 min-w-[10%] max-w-[20%] h-fit">
         <HistoryControls />
+        <Zoom />
       </div>
     </div>
   );
