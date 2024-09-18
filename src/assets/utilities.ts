@@ -270,3 +270,52 @@ export const getBorderRadius = (width: number, height: number, percent: number =
 export const colorsPalette = [
   "transparent", "black", "white", "gray", "brown", "cyan", "blue", "violet", "#be4bdb", "pink", "green", "teal", "yellow", "orange", "red"
 ]
+
+export const getConnect = (line: Element, allelements: Element[]) => {
+  let connectByStartTo: Element | null = null
+  let connectByEndTo: Element | null = null
+  const elementsToConnect: Element["connectedlines"] = []
+  const elementsToDisconnect: Element[] = []
+
+  // loop in the reverse direction to connect to the last element (higher in layers)
+  for (let i = allelements.length - 1; i >= 0; i--) {
+    if (
+      line.id !== allelements[i].id &&
+      !connectByStartTo &&
+      line.x1 >= allelements[i].x &&
+      line.y1 >= allelements[i].y &&
+      line.x1 <= allelements[i].x + allelements[i].width &&
+      line.y1 <= allelements[i].y + allelements[i].height
+    ) {
+      connectByStartTo = allelements[i]
+    } else if (allelements[i].connectedlines.find((connect) => connect.element.id === line.id && connect.byStart)) {
+      elementsToDisconnect.push(allelements[i])
+    }
+    if (
+      line.id !== allelements[i].id &&
+      !connectByEndTo &&
+      line.x2 >= allelements[i].x &&
+      line.y2 >= allelements[i].y &&
+      line.x2 <= allelements[i].x + allelements[i].width &&
+      line.y2 <= allelements[i].y + allelements[i].height
+    ) {
+      connectByEndTo = allelements[i]
+    } else if (allelements[i].connectedlines.find((connect) => connect.element.id === line.id && connect.byEnd)) {
+      elementsToDisconnect.push(allelements[i])
+    }
+  }
+
+  if (connectByStartTo && connectByEndTo && connectByStartTo?.id === connectByEndTo?.id) {
+    return { elementsToConnect: [{ element: connectByStartTo, byStart: true, byEnd: true }], elementsToDisconnect }
+  }
+
+  if (connectByStartTo) {
+    elementsToConnect.push({ element: connectByStartTo, byStart: true, byEnd: false })
+  }
+  if (connectByEndTo) {
+    elementsToConnect.push({ element: connectByEndTo, byStart: false, byEnd: true })
+  }
+
+  return ({ elementsToConnect, elementsToDisconnect })
+}
+
