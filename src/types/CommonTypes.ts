@@ -26,6 +26,11 @@ export interface Element {
   fill: string;
   fontSize: string;
   opacity: string;
+  connectedlines: {
+    element: Element;
+    byStart: boolean;
+    byEnd: boolean;
+  }[]
 }
 
 export interface ElementProps {

@@ -7,7 +7,8 @@ import {
   getTrianglePointsArrFromString,
   useUpdateXYAndDistance,
   getPencilSize,
-  getBorderRadius
+  getBorderRadius,
+  getConnect,
 } from "../assets/utilities";
 
 const initialElement: Element = {
@@ -38,6 +39,7 @@ const initialElement: Element = {
   fill: 'transparent',
   fontSize: "28px",
   opacity: "1",
+  connectedlines: []
 }
 const initialCanvasViewBox = {
   x: 0,
@@ -299,6 +301,44 @@ export const onMouseMoveAtom = atom(
           )
           const newPathData = "M " + newPencilPointsArr.map(points => points.join(" ")).join(" L ")
 
+          // drag connected lines and update updated params in this element
+          const newConnections = selectedEl.connectedlines.map((connect) => {
+            // if line was draged by another conected element, we need that newest coordinates
+            const originalLine = get(elementsAtom).find((elem) => elem.id === connect.element.id)
+            if (originalLine && connect.byStart && connect.byEnd) {
+              const newConnectedLine = {
+                ...originalLine,
+                x: connect.element.x + (update.x - selectingArea.startX),
+                y: connect.element.y + (update.y - selectingArea.startY),
+                x1: connect.element.x1 + (update.x - selectingArea.startX),
+                y1: connect.element.y1 + (update.y - selectingArea.startY),
+                x2: connect.element.x2 + (update.x - selectingArea.startX),
+                y2: connect.element.y2 + (update.y - selectingArea.startY),
+              }
+              set(updateElementsAtom, newConnectedLine)
+              return { ...connect, element: newConnectedLine }
+            } else if (originalLine && connect.byStart) {
+              const newConnectedLine = {
+                ...originalLine,
+                x: connect.element.x + (update.x - selectingArea.startX),
+                y: connect.element.y + (update.y - selectingArea.startY),
+                x1: connect.element.x1 + (update.x - selectingArea.startX),
+                y1: connect.element.y1 + (update.y - selectingArea.startY),
+              }
+              set(updateElementsAtom, newConnectedLine)
+              return { ...connect, element: newConnectedLine }
+            } else if (originalLine && connect.byEnd) {
+              const newConnectedLine = {
+                ...originalLine,
+                x2: connect.element.x2 + (update.x - selectingArea.startX),
+                y2: connect.element.y2 + (update.y - selectingArea.startY),
+              }
+              set(updateElementsAtom, newConnectedLine)
+              return { ...connect, element: newConnectedLine }
+            } else return connect
+          })
+
+
           set(updateElementsAtom, {
             ...selectedEl,
             x: newX,
@@ -311,6 +351,7 @@ export const onMouseMoveAtom = atom(
             x2: newX2,
             points: newTrianglePoints,
             d: newPathData,
+            connectedlines: newConnections
           })
         }
 
@@ -402,12 +443,44 @@ export const onMouseUpAtom = atom(
 
     // update selected el from original element
     if (selectedElement.length > 0) {
-      const newSelectedEl = selectedElement.map((selectedElel) =>
-        get(elementsAtom).find(el => el.id === selectedElel.id) || selectedElel)
+      const newSelectedEl = selectedElement.map((selectedElel) => {
+        const updatedMainElement = get(elementsAtom).find(el => el.id === selectedElel.id) || selectedElel
+        const updatedConnectedLines = updatedMainElement.connectedlines.map((connect) => {
+          const updatedLine = get(elementsAtom).find(el => el.id === connect.element.id) || connect.element
+          return { ...connect, element: updatedLine }
+        })
+        return { ...updatedMainElement, connectedlines: updatedConnectedLines }
+      })
       set(selectedElementAtom, newSelectedEl)
+
+      //check and update connections in line-elements
+      newSelectedEl.map((line) => {
+        if (line.type === "line") {
+          const { elementsToConnect, elementsToDisconnect } = getConnect(line, get(elementsAtom))
+          // if line was moved out from element, we must remove connetion what was before
+          elementsToDisconnect.forEach((element) => {
+            const connectedlines = element.connectedlines.filter(
+              (connectedline) => connectedline.element.id !== line.id
+            )
+            set(updateElementsAtom, {
+              ...element,
+              connectedlines: connectedlines
+            })
+          })
+
+          // add connect to the element if line in its area
+          elementsToConnect.forEach((connect) => {
+            const connectedlines = connect.element.connectedlines.filter(
+              (connectedline) => connectedline.element.id !== line.id
+            )
+            set(updateElementsAtom, {
+              ...connect.element,
+              connectedlines: [...connectedlines, { ...connect, element: line }]
+            })
+          })
+        }
+      })
     }
-
-
 
     set(resizeVectorAtom, "")
     set(isDraggingAtom, false)

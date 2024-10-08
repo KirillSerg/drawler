@@ -81,7 +81,7 @@ const SelectingFrame = ({ element }: Props) => {
               className="hover:cursor-nesw-resize"
               onMouseDown={() => setResizeVector('nordeast')}
               onMouseUp={onMouseUp}
-              x={element.x + element.width - element.strokeWidth / 2 + 7}
+              x={element.x + element.width - element.strokeWidth / 2 + 1}
               y={element.y - element.strokeWidth / 2 - 7}
               width="10"
               height="10"
@@ -94,8 +94,8 @@ const SelectingFrame = ({ element }: Props) => {
               className="hover:cursor-nwse-resize"
               onMouseDown={() => setResizeVector('southeast')}
               onMouseUp={onMouseUp}
-              x={element.x + element.width - element.strokeWidth / 2 + 7}
-              y={element.y + element.height - element.strokeWidth / 2 + 7}
+              x={element.x + element.width - element.strokeWidth / 2 + 1}
+              y={element.y + element.height - element.strokeWidth / 2 + 1}
               width="10"
               height="10"
               stroke="blue"
@@ -108,7 +108,7 @@ const SelectingFrame = ({ element }: Props) => {
               onMouseDown={() => setResizeVector('southwest')}
               onMouseUp={onMouseUp}
               x={element.x - element.strokeWidth / 2 - 7}
-              y={element.y + element.height - element.strokeWidth / 2 + 7}
+              y={element.y + element.height - element.strokeWidth / 2 + 1}
               width="10"
               height="10"
               stroke="blue"
