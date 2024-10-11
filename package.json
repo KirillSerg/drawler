@@ -1,5 +1,11 @@
 {
   "name": "drawler",
+  "authors": [
+    {
+      "name": "Kyrylo Serhiienko",
+      "email": "kirill.sergienko1989@gmail.com"
+    }
+  ],
   "private": true,
   "version": "0.0.0",
   "type": "module",
